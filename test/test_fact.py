@@ -3,7 +3,7 @@ import pytest
 from fact.lib import factorial
 
 
-@pytest.mark.parametrize("n,expected", [
+@pytest.mark.parametrize('n,expected', [
     (1, 1),
     (2, 2),
     (3, 6),
