@@ -11,6 +11,7 @@ from fact.lib import factorial
 
 def parse_args():
     # type: () -> argparse.Namespace
+    """Parse user command line arguments."""
     parser = argparse.ArgumentParser(description='Compute factorial of a given input.')
     parser.add_argument('-n',
                         type=int,
@@ -21,6 +22,7 @@ def parse_args():
 
 def main():
     # type: () -> int
+    """Accept arguments from the user, compute the factorial, and display the results."""
     colorama.init(autoreset=True, strip=False)
     args = parse_args()
 
@@ -35,5 +37,6 @@ def main():
     return ExitStatus.success
 
 
+# Allow the script to be run standalone (useful during development in PyCharm).
 if __name__ == '__main__':
     sys.exit(main())
