@@ -18,6 +18,8 @@ matrix:
           env: TOXENV=pep8
           dist: xenial
           sudo: true
+        - python: pypy
+          env: TOXENV=pypy
         - python: pypy3
           env: TOXENV=pypy3
 
