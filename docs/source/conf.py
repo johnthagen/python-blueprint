@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'fact'
-copyright = '2018, John Hagen'
-author = 'John Hagen'
+copyright = ''
+author = ''
 
 # The short X.Y version
 version = ''
@@ -134,7 +134,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'fact.tex', 'fact Documentation',
-     'John Hagen', 'manual'),
+     '', 'manual'),
 ]
 
 
