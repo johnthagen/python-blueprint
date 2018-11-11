@@ -2,3 +2,5 @@
 .tox
 .idea
 __pycache__
+.coverage
+htmlcov
