@@ -3,7 +3,7 @@
 import setuptools
 
 setuptools.setup(
-    name='python-blueprint',
+    name='fact',
     version='1.0.0',
 
     description='Example Python project',
@@ -32,4 +32,8 @@ setuptools.setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
+
+    entry_points={
+        'console_scripts': ['fact=fact.cli:main'],
+    }
 )
