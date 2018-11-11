@@ -12,6 +12,8 @@
    :maxdepth: 2
    :caption: Contents:
 
+   apidoc/modules.rst
+
 Indices and tables
 ==================
 
