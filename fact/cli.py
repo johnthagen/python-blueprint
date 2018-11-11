@@ -9,7 +9,8 @@ from exitstatus import ExitStatus
 from fact.lib import factorial
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args():
+    # type: () -> argparse.Namespace
     parser = argparse.ArgumentParser(description='Compute factorial of a given input.')
     parser.add_argument('-n',
                         type=int,
@@ -18,7 +19,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> int:
+def main():
+    # type: () -> int
     colorama.init(autoreset=True, strip=False)
     args = parse_args()
 

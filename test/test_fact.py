@@ -9,5 +9,6 @@ from fact.lib import factorial
     (3, 6),
     (10, 3628800)
 ])
-def test_eval(n: int, expected: int) -> None:
+def test_eval(n, expected):
+    # type: (int, int) -> None
     assert factorial(n) == expected
