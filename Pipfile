@@ -16,6 +16,3 @@ pytest-cov = "*"
 "flake8-quotes" = ">=0.8.1"
 "flake8-import-order" = ">=0.9.0"
 Sphinx = "*"
-
-[requires]
-python_version = "3.7"
