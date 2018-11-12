@@ -5,4 +5,5 @@ __pycache__
 .coverage
 htmlcov
 *.pyc
-docs/build
+build
+dist
