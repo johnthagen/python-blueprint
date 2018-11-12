@@ -7,7 +7,7 @@ def factorial(n):
     """Computes the factorial through a recursive algorithm.
 
     Args:
-        n: Input value.
+        n: A positive input value.
 
     Raises:
         InvalidFactorialError: If n is less than 0.
