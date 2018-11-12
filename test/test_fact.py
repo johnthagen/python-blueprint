@@ -1,6 +1,6 @@
 import pytest
 
-from fact.lib import factorial
+from fact.lib import InvalidFactorialError, factorial
 
 
 @pytest.mark.parametrize('n,expected', [
@@ -9,6 +9,16 @@ from fact.lib import factorial
     (3, 6),
     (10, 3628800)
 ])
-def test_eval(n, expected):
+def test_factorial(n, expected):
     # type: (int, int) -> None
     assert factorial(n) == expected
+
+
+@pytest.mark.parametrize('n', [
+    (-1),
+    (-100),
+])
+def test_invalid_factorial(n):
+    # type: (int) -> None
+    with pytest.raises(InvalidFactorialError):
+        factorial(n)
