@@ -8,7 +8,7 @@ setuptools.setup(
 
     description='Example Python project',
     long_description=open('README.rst').read(),
-    keywords=('python',),
+    keywords=['python'],
 
     author='',
     url='https://github.com/johnthagen/python-blueprint',
