@@ -10,7 +10,7 @@ setuptools.setup(
     long_description=open('README.rst').read(),
     keywords=('python',),
 
-    author='John Hagen',
+    author='',
     url='https://github.com/johnthagen/python-blueprint',
     packages=setuptools.find_packages(),
     include_package_data=True,
