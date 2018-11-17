@@ -18,6 +18,103 @@ Python 2.7 or 3.4+.
     may want to consider supporting Python 3 only, which is simpler than trying to support both.
     Support for Python 2.7 in this example project is provided only for completeness.
 
+
+Testing
+-------
+
+Automated testing is performed using `tox <https://tox.readthedocs.io/en/latest/index.html>`_.
+tox will automatically create virtual environments based on ``tox.ini`` for unit testing,
+PEP8 style guide checking, and documentation generation.
+
+.. code-block:: bash
+
+    # Install tox (only needed once).
+    $ pip3 install tox
+
+    # Run all environments.
+    #   To only run a single environment, specify it with: -e pep8
+    $ tox
+
+Unit Testing
+^^^^^^^^^^^^
+
+Unit testing is performed with `pytest <https://pytest.org/>`_. pytest has become the defacto
+Python unit testing framework. Some key advantages over the built in ``unittest`` module are:
+
+#. Significantly less boilerplate needed for tests.
+
+#. PEP8 compliant names (e.g. ``pytest.raises()`` instead of ``self.assertRaises()``).
+
+#. Vibrant ecosystem of plugins.
+
+Code coverage is provided by the `pytest-cov <https://pytest-cov.readthedocs.io/en/latest/>`_
+plugin.
+
+When running a unit test tox environment (e.g. ``tox``, ``tox -e py37``, etc.), a report
+showing each source file and which lines were executed during unit testing is generated in
+the ``htmlcov`` folder. Open ``htmlcov/index.html`` in a web browser to view the report.
+Code coverage reports help identify areas of the project that are currently not tested.
+
+Code coverage is configured in the ``.coveragerc`` file.
+
+Code Style Checking
+^^^^^^^^^^^^^^^^^^^
+
+`PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ is the universally accepted code style
+guide for Python. PEP8 code compliance is verified using `flake8 <http://flake8.pycqa.org/>`_.
+flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Three extra flake8 plugins
+are also included:
+
+- pep8-naming: Ensure functions, classes, and variables are named with correct casing.
+- flake8-quotes: Ensure that ``' '`` style string quoting is used consistently.
+- flake8-import-order: Ensure consistency in the way imports are grouped and sorted.
+
+Generated Documentation
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Documentation that includes the ``README.rst`` and the Python project modules is automatically
+generated using a `Sphinx <http://sphinx-doc.org/>`_ tox environment. Sphinx is a documentation
+generation tool that is the defacto tool for Python documentation. Sphinx uses the
+`RST <https://www.sphinx-doc.org/en/latest/usage/restructuredtext/basics.html>`_ mark up language.
+
+This project using the
+`napoleon <http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html>`_ plugin for
+Sphinx, which renders Google-style docstrings. Google-style docstrings provide a good mix
+of easy-to-read docstrings in code as well as nicely-rendered output.
+
+The Sphinx project is configured in ``docs/source/conf.py``.
+
+Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
+open ``docs/build/index.html`` in a web browser.
+
+Type Hinting
+------------
+
+`Type hinting <https://docs.python.org/3/library/typing.html>`_ allows developers to include
+optional static typing information to Python source code. This allows static analyzers such
+as `PyCharm <https://www.jetbrains.com/pycharm/>`_, `mypy <http://mypy-lang.org/>`_, or
+`pytype <https://github.com/google/pytype>`_ to check that functions are used with the correct
+types before run time.
+
+For
+`PyCharm in particular <https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html>`_,
+the IDE is able to provide much richer auto-completion, refactoring, and type checking while
+the user types, resulting in increased productivity and correctness.
+
+This project uses the Python 2.7-compatible type hinting syntax:
+
+.. code-block:: python
+
+    def factorial(n):
+    # type: (int) -> int
+
+
+But Python 3-only projects should prefer the cleaner Python 3-only syntx:
+
+.. code-block:: python
+
+    def factorial(n: int) -> int:
+
 Run CLI with ``pipenv``
 -----------------------
 
