@@ -89,7 +89,7 @@ of easy-to-read docstrings in code as well as nicely-rendered output.
 
 The Sphinx project is configured in ``docs/source/conf.py``.
 
-Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
+Build the docs uses the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
 open ``docs/build/index.html`` in a web browser.
 
 Type Hinting
