@@ -21,7 +21,7 @@ def parse_args():
 
 
 def main():
-    # type: () -> int
+    # type: () -> ExitStatus
     """Accept arguments from the user, compute the factorial, and display the results."""
     colorama.init(autoreset=True, strip=False)
     args = parse_args()
