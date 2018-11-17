@@ -99,7 +99,7 @@ Type Hinting
 optional static typing information to Python source code. This allows static analyzers such
 as `PyCharm <https://www.jetbrains.com/pycharm/>`_, `mypy <http://mypy-lang.org/>`_, or
 `pytype <https://github.com/google/pytype>`_ to check that functions are used with the correct
-types before run time.
+types before runtime.
 
 For
 `PyCharm in particular <https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html>`_,
