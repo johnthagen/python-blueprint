@@ -49,8 +49,8 @@ Python unit testing framework. Some key advantages over the built in
 
 #. Vibrant ecosystem of plugins.
 
-pytest will automatically discover and run tests by searching for folders, ``.py`` files
-prefixed with ``test`` for any free functions prefixed by ``test``.
+pytest will automatically discover and run tests by recursively searching for folders and ``.py``
+files prefixed with ``test`` for any free functions prefixed by ``test``.
 
 Code coverage is provided by the `pytest-cov <https://pytest-cov.readthedocs.io/en/latest/>`_
 plugin.
