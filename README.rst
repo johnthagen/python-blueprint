@@ -87,6 +87,20 @@ This project uses the
 Sphinx, which renders Google-style docstrings. Google-style docstrings provide a good mix
 of easy-to-read docstrings in code as well as nicely-rendered output.
 
+.. code-block:: python
+
+    """Computes the factorial through a recursive algorithm.
+
+    Args:
+        n: A positive input value.
+
+    Raises:
+        InvalidFactorialError: If n is less than 0.
+
+    Returns:
+        Computed factorial.
+    """
+
 The Sphinx project is configured in ``docs/source/conf.py``.
 
 Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
