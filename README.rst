@@ -114,7 +114,7 @@ This project uses the Python 2.7-compatible type hinting syntax:
     # type: (int) -> int
 
 
-But Python 3-only projects should prefer the cleaner Python 3-only syntx:
+But Python 3-only projects should prefer the cleaner Python 3-only syntax:
 
 .. code-block:: python
 
