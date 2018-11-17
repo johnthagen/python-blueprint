@@ -33,7 +33,7 @@ PEP8 style guide checking, and documentation generation.
     $ pip3 install tox
 
     # Run all environments.
-    #   To only run a single environment, specify it with: -e pep8
+    #   To only run a single environment, specify it like: -e pep8
     $ tox
 
 Unit Testing
