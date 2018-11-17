@@ -40,7 +40,8 @@ Unit Testing
 ^^^^^^^^^^^^
 
 Unit testing is performed with `pytest <https://pytest.org/>`_. pytest has become the defacto
-Python unit testing framework. Some key advantages over the built in ``unittest`` module are:
+Python unit testing framework. Some key advantages over the built in
+`unittest <https://docs.python.org/3/library/unittest.html>`_ module are:
 
 #. Significantly less boilerplate needed for tests.
 
