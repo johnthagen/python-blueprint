@@ -65,8 +65,8 @@ Code coverage is configured in the ``.coveragerc`` file.
 Code Style Checking
 ^^^^^^^^^^^^^^^^^^^
 
-`PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ is the universally accepted code style
-guide for Python. PEP8 code compliance is verified using `flake8 <http://flake8.pycqa.org/>`_.
+`PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ is the universally accepted style
+guide for Python code. PEP8 code compliance is verified using `flake8 <http://flake8.pycqa.org/>`_.
 flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Three extra flake8 plugins
 are also included:
 
