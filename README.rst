@@ -80,7 +80,7 @@ Generated Documentation
 Documentation that includes the ``README.rst`` and the Python project modules is automatically
 generated using a `Sphinx <http://sphinx-doc.org/>`_ tox environment. Sphinx is a documentation
 generation tool that is the defacto tool for Python documentation. Sphinx uses the
-`RST <https://www.sphinx-doc.org/en/latest/usage/restructuredtext/basics.html>`_ mark up language.
+`RST <https://www.sphinx-doc.org/en/latest/usage/restructuredtext/basics.html>`_ markup language.
 
 This project using the
 `napoleon <http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html>`_ plugin for
