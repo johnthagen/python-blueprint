@@ -4,7 +4,7 @@ python-blueprint
 .. image:: https://travis-ci.org/johnthagen/python-blueprint.svg?branch=master
     :target: https://travis-ci.org/johnthagen/python-blueprint
 
-Example Python project that demonstrates how to create a Python project using the latest
+Example Python project that demonstrates how to create a tested Python package using the latest
 Python testing and linting tooling.
 
 Requirements
@@ -121,7 +121,12 @@ But Python 3-only projects should prefer the cleaner Python 3-only syntx:
 Run CLI with ``pipenv``
 -----------------------
 
-Install `pipenv <https://pipenv.readthedocs.io/en/latest/>`_.
+`pipenv <https://pipenv.readthedocs.io/en/latest/>`_ is a tool that combines virtual
+environment creation and dependency installation into a single, easy-to-use interface.
+
+To run the CLI application included in this project, first install pipenv.
+
+Next, create a pipenv environment and launch a pipenv shell.
 
 .. code-block:: bash
 
@@ -131,6 +136,10 @@ Install `pipenv <https://pipenv.readthedocs.io/en/latest/>`_.
 
 Regenerate Pipfile from requirements.txt
 ----------------------------------------
+
+Since some information is duplicated in ``Pipfile`` and ``*requirements.txt``, the following
+commands can be used to regenerate the ``Pipfile`` if new dependencies are added to
+``requirements.txt``.
 
 .. code-block:: bash
 
