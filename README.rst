@@ -9,6 +9,35 @@ Python testing and linting tooling. The project contains a ``fact`` package that
 simple implementation of the `factorial algorithm <https://en.wikipedia.org/wiki/Factorial>`_
 (``fact.lib``) and a command line interface (``fact.cli``) to use it for educational purposes.
 
+Windows Support
+---------------
+
+Summary: On Windows, use ``py`` instead of ``python3`` for many of the examples in this
+documentation.
+
+The package fully supports Windows, along with Linux and macOS. Python is typically
+`installed differently on Windows <https://docs.python.org/3/using/windows.html>`_, however.
+Windows users typically access Python through the
+`py <https://www.python.org/dev/peps/pep-0397/>`_ launcher rather than a ``python3``
+link in their ``PATH``. Within a virtual environment, all platforms operate the same and use a
+``python`` link to access the Python version used in that virtual environment.
+
+Packaging
+---------
+
+This project is designed as a Python package, meaning that it can be bundled up and redistributed
+as a single zip file.
+
+To package the project:
+
+.. code-block:: bash
+
+    $ python3 setup.py sdist
+
+This will generate ``dist/fact-1.0.0.tar.gz``. This redistributable package can be
+`uploaded to PyPI <https://packaging.python.org/tutorials/packaging-projects/>`_ or installed
+directly from the filesystem using ``pip``.
+
 Requirements
 ------------
 
@@ -32,7 +61,7 @@ PEP8 style guide checking, and documentation generation.
 .. code-block:: bash
 
     # Install tox (only needed once).
-    $ pip3 install tox
+    $ python3 -m pip install tox
 
     # Run all environments.
     #   To only run a single environment, specify it like: -e pep8
