@@ -26,7 +26,13 @@ Packaging
 ---------
 
 This project is designed as a Python package, meaning that it can be bundled up and redistributed
-as a single zip file.
+as a single compressed file.
+
+Packaging is configured by:
+
+- ``setup.py``
+
+- ``MANIFEST.in``
 
 To package the project:
 

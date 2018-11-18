@@ -14,6 +14,10 @@ setuptools.setup(
     url='https://github.com/johnthagen/python-blueprint',
     packages=setuptools.find_packages(),
     include_package_data=True,
+
+    # This is a trick to avoid duplicating dependencies between both setup.py and
+    #   requirements.txt. It does not work for all types of dependencies (e.g. VCS dependencies).
+    #   requirements.txt must be included in MANIFEST.in for this to work.
     install_requires=open('requirements.txt').readlines(),
     zip_safe=False,
 
