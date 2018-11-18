@@ -7,7 +7,7 @@ python-blueprint
 Example Python project that demonstrates how to create a tested Python package using the latest
 Python testing and linting tooling. The project contains a ``fact`` package that provides a
 simple implementation of the `factorial algorithm <https://en.wikipedia.org/wiki/Factorial>`_
-(``fact.lib``) and a command line interface (``fact.cli``) to use it for educational purposes.
+(``fact.lib``) and a command line interface (``fact.cli``).
 
 Windows Support
 ---------------
