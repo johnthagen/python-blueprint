@@ -199,3 +199,28 @@ commands can be used to regenerate the ``Pipfile`` if new dependencies are added
     $ pipenv install -e .
     $ pipenv install -r requirements.txt
     $ pipenv install -r dev-requirements.txt --dev
+
+PyCharm Configuration
+---------------------
+
+To configure PyCharm 2018.3 and newer to align to the code style used in this project:
+
+#. Settings | Search "Hard wrap at"
+
+    #. Editor | Code Style | General | Hard wrap at: 99
+
+#. Settings | Search "Optimize Imports"
+
+    #. Editor | Code Style | Python | Imports
+
+        #. **Check:** Sort import statements
+
+        #. **Check:** Sort imported names in "from" imports
+
+        #. **Uncheck:** Sort plain and "from" imports separately within a group
+
+        #. **Check:** Sort case-insensitively
+
+#. Settings | Search "Docstrings"
+
+    #. Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
