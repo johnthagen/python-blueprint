@@ -6,5 +6,6 @@ __pycache__
 htmlcov
 *.pyc
 build
+_build
 venv
 dist

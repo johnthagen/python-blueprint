@@ -142,6 +142,38 @@ The Sphinx project is configured in ``docs/source/conf.py``.
 Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
 open ``docs/build/index.html`` in a web browser.
 
+Generate a New Sphinx Project
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To generate the Sphinx project shown in this project:
+
+.. code-block:: bash
+
+    $ sphinx-quickstart --no-makefile --no-batchfile --extensions sphinx.ext.napoleon
+    # When prompted, select all defaults.
+
+Modify ``conf.py`` appropriately:
+
+.. code-block:: python
+
+    import os
+    import sys
+    sys.path.insert(0, os.path.abspath('..'))
+
+    ...
+
+    html_theme_options = {
+        'page_width': 'auto',
+    }
+
+Modify ``index.rst`` appropriately:
+
+::
+
+    .. include:: ../../README.rst
+
+    apidoc/modules.rst
+
 Type Hinting
 ------------
 

@@ -1,12 +1,12 @@
-.. fact documentation master file, created by
-   sphinx-quickstart on Sun Nov 11 17:16:24 2018.
+.. a documentation master file, created by
+   sphinx-quickstart on Wed Dec 19 18:34:22 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
 ``fact`` Documentation
 ======================
 
-.. include:: ../../README.rst
+.. include:: ../README.rst
 
 .. toctree::
    :maxdepth: 2
