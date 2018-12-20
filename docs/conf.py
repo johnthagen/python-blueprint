@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'a'
-copyright = '2018, a'
+project = 'fact'
+copyright = ''
 author = 'a'
 
 # The short X.Y version
