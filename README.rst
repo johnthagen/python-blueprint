@@ -137,10 +137,10 @@ of easy-to-read docstrings in code as well as nicely-rendered output.
         Computed factorial.
     """
 
-The Sphinx project is configured in ``docs/source/conf.py``.
+The Sphinx project is configured in ``docs/conf.py``.
 
 Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
-open ``docs/build/index.html`` in a web browser.
+open ``docs/_build/index.html`` in a web browser.
 
 Generate a New Sphinx Project
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -149,6 +149,8 @@ To generate the Sphinx project shown in this project:
 
 .. code-block:: bash
 
+    $ mkdir docs
+    $ cd docs
     $ sphinx-quickstart --no-makefile --no-batchfile --extensions sphinx.ext.napoleon
     # When prompted, select all defaults.
 
