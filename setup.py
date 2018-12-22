@@ -12,7 +12,10 @@ setuptools.setup(
 
     author='',
     url='https://github.com/johnthagen/python-blueprint',
-    packages=setuptools.find_packages(),
+
+    # See https://stackoverflow.com/a/26288078/ for details on how this excludes the tests
+    # package.
+    packages=setuptools.find_packages(exclude=('tests', '*.tests', '*.tests.*')),
     include_package_data=True,
 
     # This is a trick to avoid duplicating dependencies between both setup.py and
