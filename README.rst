@@ -88,6 +88,10 @@ Python unit testing framework. Some key advantages over the built in
 pytest will automatically discover and run tests by recursively searching for folders and ``.py``
 files prefixed with ``test`` for any functions prefixed by ``test``.
 
+The ``tests`` folder is created as a Python package (i.e. there is an ``__init__.py`` file
+within it) because this helps ``pytest`` uniquely namespace the test files. Without this,
+two test files cannot be named the same, even if they are in different sub-directories.
+
 Code coverage is provided by the `pytest-cov <https://pytest-cov.readthedocs.io/en/latest/>`_
 plugin.
 
