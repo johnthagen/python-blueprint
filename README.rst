@@ -212,10 +212,12 @@ But Python 3-only projects should prefer the cleaner Python 3-only syntax:
 Run CLI with ``pipenv``
 -----------------------
 
-> Note: There is some discussion in the Python community as to whether ``pipenv`` is a good
-long term solution. For one, it is only designed for application dependency management, not
-for libraries, so it can't replace ``setup.py`` for building an egg or ``requirements.txt``
-that is needed for ``tox``. Nevertheless, it is a useful tool and as such is mentioned here.
+.. note::
+
+    There is some discussion in the Python community as to whether ``pipenv`` is a good
+    long term solution. For one, it is only designed for application dependency management, not
+    for libraries, so it can't replace ``setup.py`` for building an egg or ``requirements.txt``
+    that is needed for ``tox``. Nevertheless, it is a useful tool and as such is mentioned here.
 
 `pipenv <https://pipenv.readthedocs.io/en/latest/>`_ is a tool that combines virtual
 environment creation and dependency installation into a single, easy-to-use interface.
