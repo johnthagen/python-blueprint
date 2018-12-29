@@ -170,6 +170,7 @@ Modify ``conf.py`` appropriately:
     ...
 
     html_theme_options = {
+        # Override the default alabaster line wrap, which wraps tightly at 940px.
         'page_width': 'auto',
     }
 
