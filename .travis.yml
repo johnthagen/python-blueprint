@@ -20,7 +20,7 @@ matrix:
           env: TOXENV=docs
 
 install:
-  - pip install tox
+  pip install tox
 
 script:
   tox
