@@ -270,3 +270,8 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 #. Settings | Search "Docstrings"
 
     #. Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
+
+#. (Optional) Settings | Search "Force parentheses"
+
+    #. Editor | Code Style | Python | Wrapping and Braces | "From Import Statements:
+       Check Force parentheses if multiline
