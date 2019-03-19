@@ -16,11 +16,16 @@ setuptools.setup(
     # See https://stackoverflow.com/a/26288078/ for details on how this excludes the tests
     # package.
     packages=setuptools.find_packages(exclude=('tests', '*.tests', '*.tests.*')),
+
+    # There are some peculiarities on how to include package data for source
+    # distributions using setuptools. You also need to add entries for package
+    # data to MANIFEST.in.
+    # See https://stackoverflow.com/questions/7522250/
     include_package_data=True,
 
     # This is a trick to avoid duplicating dependencies between both setup.py and
-    #   requirements.txt. It does not work for all types of dependencies (e.g. VCS dependencies).
-    #   requirements.txt must be included in MANIFEST.in for this to work.
+    # requirements.txt. It does not work for all types of dependencies (e.g. VCS dependencies).
+    # requirements.txt must be included in MANIFEST.in for this to work.
     install_requires=open('requirements.txt').readlines(),
     zip_safe=False,
 
