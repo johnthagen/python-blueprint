@@ -95,10 +95,13 @@ two test files cannot be named the same, even if they are in different sub-direc
 Code coverage is provided by the `pytest-cov <https://pytest-cov.readthedocs.io/en/latest/>`_
 plugin.
 
-When running a unit test tox environment (e.g. ``tox``, ``tox -e py37``, etc.), a report
-showing each source file and which lines were executed during unit testing is generated in
-the ``htmlcov`` folder. Open ``htmlcov/index.html`` in a web browser to view the report.
-Code coverage reports help identify areas of the project that are currently not tested.
+When running a unit test tox environment (e.g. ``tox``, ``tox -e py37``, etc.), a data file
+(e.g. ``.coverage.py37``) containing the coverage data is generated. This file is not readable on
+its own, but when the ``coverage`` tox environment is run (e.g. ``tox`` or ``tox -e -coverage``),
+coverage from all unit test environments is combined into a single data file and an HTML report is
+generated in the ``htmlcov`` folder showing each source file and which lines were executed during
+unit testing is generated in Open ``htmlcov/index.html`` in a web browser to view the report. Code
+coverage reports help identify areas of the project that are currently not tested.
 
 Code coverage is configured in the ``.coveragerc`` file.
 
