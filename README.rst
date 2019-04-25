@@ -112,9 +112,9 @@ guide for Python code. PEP8 code compliance is verified using `flake8 <http://fl
 flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Three extra flake8 plugins
 are also included:
 
-- pep8-naming: Ensure functions, classes, and variables are named with correct casing.
-- flake8-quotes: Ensure that ``' '`` style string quoting is used consistently.
-- flake8-import-order: Ensure consistency in the way imports are grouped and sorted.
+- ``pep8-naming``: Ensure functions, classes, and variables are named with correct casing.
+- ``flake8-quotes``: Ensure that ``' '`` style string quoting is used consistently.
+- ``flake8-import-order``: Ensure consistency in the way imports are grouped and sorted.
 
 Generated Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^
