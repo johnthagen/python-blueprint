@@ -269,15 +269,7 @@ For
 the IDE is able to provide much richer auto-completion, refactoring, and type checking while
 the user types, resulting in increased productivity and correctness.
 
-This project uses the Python 2.7-compatible type hinting syntax:
-
-.. code-block:: python
-
-    def factorial(n):
-    # type: (int) -> int
-
-
-But Python 3-only projects should prefer the cleaner Python 3-only syntax:
+This project uses the type hinting syntax introduced in Python 3:
 
 .. code-block:: python
 
