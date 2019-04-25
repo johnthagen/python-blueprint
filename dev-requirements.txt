@@ -1,5 +1,6 @@
 pytest
 pytest-cov
+mypy
 flake8 >= 3.3.0
 pep8-naming >= 0.4.1
 flake8-quotes >= 0.8.1

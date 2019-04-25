@@ -275,6 +275,8 @@ This project uses the type hinting syntax introduced in Python 3:
 
     def factorial(n: int) -> int:
 
+Type checking is performed by mypy via ``tox -e mypy``. mypy is configured in ``setup.cfg``.
+
 PyCharm Configuration
 ---------------------
 
