@@ -7,7 +7,7 @@ setuptools.setup(
     version='1.0.0',
 
     description='Example Python project',
-    long_description=open('README.rst').read(),
+    long_description=open('README.rst', encoding="utf-8").read(),
     keywords=['python'],
 
     author='',

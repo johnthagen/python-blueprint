@@ -185,6 +185,77 @@ Modify ``index.rst`` appropriately:
 
     apidoc/modules.rst
 
+Project Structure
+-----------------
+
+Traditionally, Python projects place the source for their packages in the root of the project
+structure, like:
+
+.. code-block::
+
+    fact
+    ├── fact
+    │   ├── __init__.py
+    │   ├── cli.py
+    │   └── lib.py
+    ├── tests
+    │   ├── __init__.py
+    │   └── test_fact.py
+    ├── tox.ini
+    └── setup.py
+
+However, this structure is `known
+<https://docs.pytest.org/en/latest/goodpractices.html#tests-outside-application-code>`_ to have bad
+interactions with ``pytest`` and ``tox``, two standard tools maintaining Python projects. The
+fundamental issue is that tox creates an isolated virtual environment for testing. By installing
+the distribution into the virtual environment, ``tox`` ensures that the tests pass even after the
+distribution has been packaged and installed, thereby catching any errors in packaging and
+installation scripts, which are common. Having the Python packages in the project root subverts
+this isolation for two reasons:
+
+#. Calling ``python`` in the project root (for example, ``python -m pytest tests/``) `causes Python
+   to add the current working directory
+   <https://docs.pytest.org/en/latest/pythonpath.html#invoking-pytest-versus-python-m-pytest>`_
+   (the project root) to ``sys.path``, which Python uses to find modules. Because the source
+   package ``fact`` is in the project root, it shadows the ``fact`` package installed in the tox
+   environment.
+
+#. Calling ``pytest`` directly anywhere that it can find the tests will also add the project root
+   to ``sys.path`` if the ``tests`` folder is a a Python package (that is, it contains a
+   ``__init__.py`` file). `pytest adds all folders containing packages
+   <https://docs.pytest.org/en/latest/goodpractices.html#conventions-for-python-test-discovery>`_
+   to ``sys.path`` because it imports the tests like regular Python modules.
+
+In order to properly test the project, the source packages must not be on the Python path. To
+prevent this, there are three possible solutions:
+
+#. Remove the ``__init__.py`` file from ``tests`` and run ``pytest`` directly as a tox command.
+
+#. Remove the ``__init__.py`` file from tests and change the working directory of
+   ``python -m pytest`` to ``tests``.
+
+#. Move the source packages to a dedicated ``src`` folder.
+
+The dedicated ``src`` directory is the `recommended solution
+<https://docs.pytest.org/en/latest/pythonpath.html#test-modules-conftest-py-files-inside-packages>`_
+by ``pytest`` when using tox and the solution this blueprint promotes because it is the least
+brittle even though it deviates from the traditional Python project structure. It results is a
+directory structure like:
+
+.. code-block::
+
+    fact
+    ├── src
+    │   └── fact
+    │       ├── __init__.py
+    │       ├── cli.py
+    │       └── lib.py
+    ├── tests
+    │   ├── __init__.py
+    │   └── test_fact.py
+    ├── tox.ini
+    └── setup.py
+
 Type Hinting
 ------------
 
