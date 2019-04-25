@@ -7,6 +7,8 @@ setuptools.setup(
     version='1.0.0',
 
     description='Example Python project',
+
+    # Allow UTF-8 characters in README with encoding argument.
     long_description=open('README.rst', encoding="utf-8").read(),
     keywords=['python'],
 
@@ -37,8 +39,6 @@ setuptools.setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',

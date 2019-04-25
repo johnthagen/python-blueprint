@@ -2,8 +2,7 @@ class InvalidFactorialError(RuntimeError):
     """Error generated if an invalid factorial input is given."""
 
 
-def factorial(n):
-    # type: (int) -> int
+def factorial(n: int) -> int:
     """Computes the factorial through a recursive algorithm.
 
     Args:
