@@ -168,7 +168,7 @@ Modify ``conf.py`` appropriately:
     # Add the project's Python package to the path so that autodoc can find it.
     import os
     import sys
-    sys.path.insert(0, os.path.abspath('..'))
+    sys.path.insert(0, os.path.abspath('../src'))
 
     ...
 
