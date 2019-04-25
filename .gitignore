@@ -3,6 +3,7 @@
 .idea
 __pycache__
 .coverage
+.coverage.*
 htmlcov
 *.pyc
 build

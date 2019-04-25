@@ -7,15 +7,14 @@ setuptools.setup(
     version='1.0.0',
 
     description='Example Python project',
-    long_description=open('README.rst').read(),
+    long_description=open('README.rst', encoding="utf-8").read(),
     keywords=['python'],
 
     author='',
     url='https://github.com/johnthagen/python-blueprint',
 
-    # See https://stackoverflow.com/a/26288078/ for details on how this excludes the tests
-    # package.
-    packages=setuptools.find_packages(exclude=('tests', '*.tests', '*.tests.*')),
+    packages=setuptools.find_packages('src'),
+    package_dir={'': 'src'},
 
     # There are some peculiarities on how to include package data for source
     # distributions using setuptools. You also need to add entries for package
