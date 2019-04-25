@@ -275,42 +275,6 @@ This project uses the type hinting syntax introduced in Python 3:
 
     def factorial(n: int) -> int:
 
-Run CLI with ``pipenv``
------------------------
-
-.. note::
-
-    There is some discussion in the Python community as to whether ``pipenv`` is a good
-    long term solution. For one, it is only designed for application dependency management, not
-    for libraries, so it can't replace ``setup.py`` for building an egg or ``requirements.txt``
-    that is needed for ``tox``. Nevertheless, it is a useful tool and as such is mentioned here.
-
-`pipenv <https://pipenv.readthedocs.io/en/latest/>`_ is a tool that combines virtual
-environment creation and dependency installation into a single, easy-to-use interface.
-
-To run the CLI application included in this project, first install pipenv.
-
-Next, create a pipenv environment and launch a pipenv shell.
-
-.. code-block:: bash
-
-    $ pipenv install --dev
-    $ pipenv shell
-    (python-blueprint) $ fact -n 10
-
-Regenerate Pipfile from requirements.txt
-----------------------------------------
-
-Since some information is duplicated in ``Pipfile`` and ``*requirements.txt``, the following
-commands can be used to regenerate the ``Pipfile`` if new dependencies are added to
-``requirements.txt``.
-
-.. code-block:: bash
-
-    $ pipenv install -e .
-    $ pipenv install -r requirements.txt
-    $ pipenv install -r dev-requirements.txt --dev
-
 PyCharm Configuration
 ---------------------
 
