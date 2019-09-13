@@ -43,6 +43,8 @@ Packaging is configured by:
 
 - ``setup.py``
 
+- ``setup.cfg``
+
 - ``MANIFEST.in``
 
 To package the project:
