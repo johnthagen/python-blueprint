@@ -182,7 +182,7 @@ Modify ``index.rst`` appropriately:
 
 ::
 
-    .. include:: ../../README.rst
+    .. include:: ../README.rst
 
     apidoc/modules.rst
 
