@@ -6,7 +6,8 @@ __pycache__
 .coverage.*
 htmlcov
 *.pyc
-build
-_build
+docs/_build
 venv
 dist
+.pytest_cache
+.mypy_cache
