@@ -47,7 +47,8 @@ Packaging is configured by:
 
 - ``MANIFEST.in``
 
-To package the project:
+To package the project as a
+`source distribution <https://docs.python.org/3/distutils/sourcedist.html>`_:
 
 .. code-block:: bash
 
@@ -56,6 +57,21 @@ To package the project:
 This will generate ``dist/fact-1.0.0.tar.gz``. This redistributable package can be
 `uploaded to PyPI <https://packaging.python.org/tutorials/packaging-projects/>`_ or installed
 directly from the filesystem using ``pip``.
+
+It is normally most convenient to build a Python application as a binary
+`wheel <https://wheel.readthedocs.io/en/stable/>`_ for distribution. Read more about the
+`advantages of wheels <https://pythonwheels.com/>`_.
+
+To create a wheel:
+
+.. code-block:: bash
+
+    $ python3 -m pip install wheel
+    $ python3 setup.py bdist_wheel
+
+This will generate ``dist/fact-1.0.0-py2.py3-none-any.whl``, which can be distributed and
+installed. Unlike source distributions, users will not have to execute a ``setup.py`` in order to
+install the wheel.
 
 Testing
 -------
