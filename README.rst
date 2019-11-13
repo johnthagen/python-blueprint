@@ -69,7 +69,7 @@ To create a wheel:
     $ python3 -m pip install wheel
     $ python3 setup.py bdist_wheel
 
-This will generate ``dist/fact-1.0.0-py2.py3-none-any.whl``, which can be distributed and
+This will generate ``dist/fact-1.0.0-py3-none-any.whl``, which can be distributed and
 installed. Unlike source distributions, users will not have to execute a ``setup.py`` in order to
 install the wheel.
 
