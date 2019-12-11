@@ -38,6 +38,7 @@ setuptools.setup(
     install_requires=open('requirements.txt').readlines(),
     zip_safe=False,
 
+    license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
