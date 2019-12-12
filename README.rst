@@ -122,6 +122,12 @@ coverage reports help identify areas of the project that are currently not teste
 
 Code coverage is configured in the ``.coveragerc`` file.
 
+To pass arguments to ``pytest`` through ``tox``:
+
+.. code-block:: bash
+
+    $ tox -e py37 -- -k invalid_factorial
+
 Code Style Checking
 ^^^^^^^^^^^^^^^^^^^
 
