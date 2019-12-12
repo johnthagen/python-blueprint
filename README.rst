@@ -322,8 +322,8 @@ transitive dependencies) using
     $ tox -e licenses
     ...
      Name        Version  License
-    colorama    0.4.3    BSD License
-    exitstatus  1.3.0    MIT License
+     colorama    0.4.3    BSD License
+     exitstatus  1.3.0    MIT License
 
 PyCharm Configuration
 ---------------------
