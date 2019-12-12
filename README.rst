@@ -330,27 +330,27 @@ PyCharm Configuration
 
 To configure PyCharm 2018.3 and newer to align to the code style used in this project:
 
-#. Settings | Search "Hard wrap at"
+- Settings | Search "Hard wrap at"
 
-    #. Editor | Code Style | General | Hard wrap at: 99
+    - Editor | Code Style | General | Hard wrap at: 99
 
-#. Settings | Search "Optimize Imports"
+- Settings | Search "Optimize Imports"
 
-    #. Editor | Code Style | Python | Imports
+    - Editor | Code Style | Python | Imports
 
-        #. **Check:** Sort import statements
+        - ☑ Sort import statements
 
-        #. **Check:** Sort imported names in "from" imports
+            - ☑ Sort imported names in "from" imports
 
-        #. **Uncheck:** Sort plain and "from" imports separately within a group
+            - ☐ Sort plain and "from" imports separately within a group
 
-        #. **Check:** Sort case-insensitively
+            - ☑ Sort case-insensitively
 
-#. Settings | Search "Docstrings"
+- Settings | Search "Docstrings"
 
-    #. Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
+    - Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
 
-#. (Optional) Settings | Search "Force parentheses"
+- (Optional) Settings | Search "Force parentheses"
 
-    #. Editor | Code Style | Python | Wrapping and Braces | "From Import Statements:
+    - Editor | Code Style | Python | Wrapping and Braces | "From Import Statements:
        Check Force parentheses if multiline
