@@ -352,5 +352,6 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 
 - (Optional) Settings | Search "Force parentheses"
 
-    - Editor | Code Style | Python | Wrapping and Braces | "From Import Statements:
-       Check Force parentheses if multiline
+    - Editor | Code Style | Python | Wrapping and Braces | "From" Import Statements
+
+        - ☑ Force parentheses if multiline
