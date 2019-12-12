@@ -17,6 +17,8 @@ matrix:
         - python: 3.8
           env: TOXENV=pep8
         - python: 3.8
+          env: TOXENV=mypy
+        - python: 3.8
           env: TOXENV=docs
 
 install:
