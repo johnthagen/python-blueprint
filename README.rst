@@ -295,6 +295,30 @@ This project uses the type hinting syntax introduced in Python 3:
 
 Type checking is performed by mypy via ``tox -e mypy``. mypy is configured in ``setup.cfg``.
 
+Licensing
+---------
+
+Licensing for the project is defined in:
+
+    - ``LICENSE.txt``
+
+    - ``setup.py``
+
+This project uses a common permissive license, the MIT license.
+
+You may also want to list the licenses of all of the packages that your Python project depends on.
+To automatically list the licenses for all dependencies in ``requirements.txt`` (and their
+transitive dependencies) using
+`pip-licences <https://github.com/raimon49/pip-licenses>`_:
+
+.. code-block:: bash
+
+    $ tox -e licenses
+    ...
+     Name        Version  License
+    colorama    0.4.3    BSD License
+    exitstatus  1.3.0    MIT License
+
 PyCharm Configuration
 ---------------------
 
