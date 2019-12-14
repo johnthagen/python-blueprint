@@ -47,6 +47,9 @@ Packaging is configured by:
 
 - ``MANIFEST.in``
 
+Source Distribution
+^^^^^^^^^^^^^^^^^^^
+
 To package the project as a
 `source distribution <https://docs.python.org/3/distutils/sourcedist.html>`_:
 
@@ -54,11 +57,12 @@ To package the project as a
 
     $ python3 setup.py sdist
 
-This will generate ``dist/fact-1.0.0.tar.gz``. This redistributable package can be
-`uploaded to PyPI <https://packaging.python.org/tutorials/packaging-projects/>`_ or installed
-directly from the filesystem using ``pip``.
+This will generate ``dist/fact-1.0.0.tar.gz``.
 
-It is normally most convenient to build a Python application as a binary
+Wheel Distribution
+^^^^^^^^^^^^^^^^^^
+
+It is normally most convenient to build a Python application as a
 `wheel <https://wheel.readthedocs.io/en/stable/>`_ for distribution. Read more about the
 `advantages of wheels <https://pythonwheels.com/>`_.
 
@@ -72,6 +76,20 @@ To create a wheel:
 This will generate ``dist/fact-1.0.0-py3-none-any.whl``, which can be distributed and
 installed. Unlike source distributions, users will not have to execute a ``setup.py`` in order to
 install the wheel.
+
+Upload Distributions to PyPI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Source and wheel redistributable packages can be
+`uploaded to PyPI <https://packaging.python.org/tutorials/packaging-projects/>`_ or installed
+directly from the filesystem using ``pip``.
+
+To upload to PyPI:
+
+.. code-block:: bash
+
+    $ python3 -m pip install twine
+    $ twine upload dist/*
 
 Testing
 -------
