@@ -306,9 +306,9 @@ Licensing
 
 Licensing for the project is defined in:
 
-    - ``LICENSE.txt``
+- ``LICENSE.txt``
 
-    - ``setup.py``
+- ``setup.py``
 
 This project uses a common permissive license, the MIT license.
 
