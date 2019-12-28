@@ -128,7 +128,7 @@ Once activated, it is good practice to update ``pip`` to the latest version.
 This project uses `pip-tools <https://github.com/jazzband/pip-tools>`_ to lock project
 dependencies and create reproducible virtual environments.
 
-**Note:** *Library* projects should not lock their ``requirements.txt``. Since this example project
+**Note:** *Library* projects should not lock their ``requirements.txt``. Since ``python-blueprint``
 also has a CLI application, this end-user application example is used to demonstrate how to
 lock application dependencies.
 
