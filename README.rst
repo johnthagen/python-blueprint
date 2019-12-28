@@ -91,6 +91,67 @@ To upload to PyPI:
     $ python3 -m pip install twine
     $ twine upload dist/*
 
+Dependencies
+------------
+
+Virtual Environments
+^^^^^^^^^^^^^^^^^^^^
+
+It is best practice during development to create an isolated
+`Python virtual environment <https://docs.python.org/3/library/venv.html>`_ using the
+``venv`` standard library module. This will keep dependant Python packages from interfering
+with other Python projects on your system.
+
+On \*Nix:
+
+.. code-block:: bash
+
+    $ python3 -m venv venv
+    $ source venv/bin/activate
+
+On Windows:
+
+.. code-block:: bash
+
+    $ py -3 -m venv venv
+    $ venv\Scripts\activate
+
+Once activated, it is good practice to update ``pip`` to the latest version.
+
+.. code-block:: bash
+
+    (venv) $ pip install --upgrade pip
+
+(Applications Only) Locking Dependencies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This project uses `pip-tools <https://github.com/jazzband/pip-tools>`_ to lock project
+dependencies and create reproducible virtual environments.
+
+**Note:** *Library* projects should not lock their ``requirements.txt``. Since this example project
+also has a CLI application, this end-user application example is used to demonstrate how to
+lock application dependencies.
+
+To update dependencies:
+
+.. code-block:: bash
+
+    (venv) $ pip install pip-tools
+    (venv) $ pip-compile --upgrade
+    (venv) $ pip-compile --upgrade dev-requirements.in
+
+After upgrading dependencies, run the unit tests as described in the `Unit Testing`_ section
+to ensure that none of the updated packages caused incompatibilities in the current project.
+
+Syncing Virtual Environments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To cleanly install your dependencies into your virtual environment:
+
+.. code-block:: bash
+
+    (venv) $ pip-sync requirements.txt dev-requirements.txt
+
 Testing
 -------
 
