@@ -94,6 +94,16 @@ To upload to PyPI:
 Dependencies
 ------------
 
+Dependencies are defined in:
+
+- ``requirements.in``
+
+- ``requirements.txt``
+
+- ``dev-requirements.in``
+
+- ``dev-requirements.txt``
+
 Virtual Environments
 ^^^^^^^^^^^^^^^^^^^^
 
