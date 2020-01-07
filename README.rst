@@ -43,8 +43,6 @@ Packaging is configured by:
 
 - ``setup.py``
 
-- ``setup.cfg``
-
 - ``MANIFEST.in``
 
 Source Distribution

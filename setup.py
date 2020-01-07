@@ -39,6 +39,7 @@ setuptools.setup(
     zip_safe=False,
 
     license='MIT',
+    license_files=['LICENSE.txt'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
