@@ -117,12 +117,12 @@ On \*Nix:
     $ python3 -m venv venv
     $ source venv/bin/activate
 
-On Windows:
+On Windows ``cmd``:
 
 .. code-block:: bash
 
-    $ py -3 -m venv venv
-    $ venv\Scripts\activate
+    > py -m venv venv
+    > venv\Scripts\activate.bat
 
 Once activated, it is good practice to update ``pip`` to the latest version.
 
