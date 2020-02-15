@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import setuptools
+from pathlib import Path
+
+project_dir = Path(__file__).parent
 
 setuptools.setup(
     name='fact',
@@ -9,7 +12,7 @@ setuptools.setup(
     description='Example Python project',
 
     # Allow UTF-8 characters in README with encoding argument.
-    long_description=open('README.rst', encoding="utf-8").read(),
+    long_description=project_dir.joinpath('README.rst').read_text(encoding="utf-8"),
     keywords=['python'],
 
     author='',
@@ -35,7 +38,7 @@ setuptools.setup(
     # For VCS dependencies, use pip >= 19 and the PEP 508 syntax.
     #   Example: 'requests @ git+https://github.com/requests/requests.git@branch_or_tag'
     #   See: https://github.com/pypa/pip/issues/6162
-    install_requires=open('requirements.txt').readlines(),
+    install_requires=project_dir.joinpath('requirements.txt').read_text().split('\n'),
     zip_safe=False,
 
     license='MIT',
