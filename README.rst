@@ -433,6 +433,14 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 
             - ☑ Sort case-insensitively
 
+        - Structure of "from" imports
+            
+            - ◎ Leave as is
+            
+            - ◉ Join imports with the same source
+            
+            - ◎ Always split imports
+
 - Settings | Search "Docstrings"
 
     - Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
