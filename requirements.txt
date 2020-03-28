@@ -4,5 +4,5 @@
 #
 #    pip-compile
 #
-colorama==0.4.3
-exitstatus==1.4.0
+colorama==0.4.3           # via -r requirements.in
+exitstatus==1.4.0         # via -r requirements.in

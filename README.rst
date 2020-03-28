@@ -33,62 +33,6 @@ Windows users typically access Python through the
 link in their ``PATH``. Within a virtual environment, all platforms operate the same and use a
 ``python`` link to access the Python version used in that virtual environment.
 
-Packaging
----------
-
-This project is designed as a Python package, meaning that it can be bundled up and redistributed
-as a single compressed file.
-
-Packaging is configured by:
-
-- ``setup.py``
-
-- ``MANIFEST.in``
-
-Source Distribution
-^^^^^^^^^^^^^^^^^^^
-
-To package the project as a
-`source distribution <https://docs.python.org/3/distutils/sourcedist.html>`_:
-
-.. code-block:: bash
-
-    $ python3 setup.py sdist
-
-This will generate ``dist/fact-1.0.0.tar.gz``.
-
-Wheel Distribution
-^^^^^^^^^^^^^^^^^^
-
-It is normally most convenient to build a Python application as a
-`wheel <https://wheel.readthedocs.io/en/stable/>`_ for distribution. Read more about the
-`advantages of wheels <https://pythonwheels.com/>`_.
-
-To create a wheel:
-
-.. code-block:: bash
-
-    $ python3 -m pip install wheel
-    $ python3 setup.py bdist_wheel
-
-This will generate ``dist/fact-1.0.0-py3-none-any.whl``, which can be distributed and
-installed. Unlike source distributions, users will not have to execute a ``setup.py`` in order to
-install the wheel.
-
-Upload Distributions to PyPI
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Source and wheel redistributable packages can be
-`uploaded to PyPI <https://packaging.python.org/tutorials/packaging-projects/>`_ or installed
-directly from the filesystem using ``pip``.
-
-To upload to PyPI:
-
-.. code-block:: bash
-
-    $ python3 -m pip install twine
-    $ twine upload dist/*
-
 Dependencies
 ------------
 
@@ -128,7 +72,7 @@ Once activated, it is good practice to update ``pip`` to the latest version.
 
 .. code-block:: bash
 
-    (venv) $ pip install --upgrade pip
+    (venv) $ python -m pip install --upgrade pip
 
 (Applications Only) Locking Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -144,7 +88,7 @@ To update dependencies:
 
 .. code-block:: bash
 
-    (venv) $ pip install pip-tools
+    (venv) $ python -m pip install pip-tools
     (venv) $ pip-compile --upgrade
     (venv) $ pip-compile --upgrade dev-requirements.in
 
@@ -160,6 +104,62 @@ To cleanly install your dependencies into your virtual environment:
 
     (venv) $ pip-sync requirements.txt dev-requirements.txt
 
+Packaging
+---------
+
+This project is designed as a Python package, meaning that it can be bundled up and redistributed
+as a single compressed file.
+
+Packaging is configured by:
+
+- ``setup.py``
+
+- ``MANIFEST.in``
+
+Source Distribution
+^^^^^^^^^^^^^^^^^^^
+
+To package the project as a
+`source distribution <https://docs.python.org/3/distutils/sourcedist.html>`_:
+
+.. code-block:: bash
+
+    (venv) $ python setup.py sdist
+
+This will generate ``dist/fact-1.0.0.tar.gz``.
+
+Wheel Distribution
+^^^^^^^^^^^^^^^^^^
+
+It is normally most convenient to build a Python application as a
+`wheel <https://wheel.readthedocs.io/en/stable/>`_ for distribution. Read more about the
+`advantages of wheels <https://pythonwheels.com/>`_.
+
+To create a wheel:
+
+.. code-block:: bash
+
+    (venv) $ python -m pip install wheel
+    (venv) $ python setup.py bdist_wheel
+
+This will generate ``dist/fact-1.0.0-py3-none-any.whl``, which can be distributed and
+installed. Unlike source distributions, users will not have to execute a ``setup.py`` in order to
+install the wheel.
+
+Upload Distributions to PyPI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Source and wheel redistributable packages can be
+`uploaded to PyPI <https://packaging.python.org/tutorials/packaging-projects/>`_ or installed
+directly from the filesystem using ``pip``.
+
+To upload to PyPI:
+
+.. code-block:: bash
+
+    (venv) $ python -m pip install twine
+    (venv) $ twine upload dist/*
+
 Testing
 -------
 
@@ -169,12 +169,10 @@ PEP8 style guide checking, and documentation generation.
 
 .. code-block:: bash
 
-    # Install tox (only needed once).
-    $ python3 -m pip install tox
-
     # Run all environments.
     #   To only run a single environment, specify it like: -e pep8
-    $ tox
+    # Note: tox is installed into the virtual environment automatically by pip-sync command above.
+    (venv) $ tox
 
 Unit Testing
 ^^^^^^^^^^^^
@@ -213,7 +211,7 @@ To pass arguments to ``pytest`` through ``tox``:
 
 .. code-block:: bash
 
-    $ tox -e py37 -- -k invalid_factorial
+    (venv) $ tox -e py37 -- -k invalid_factorial
 
 Code Style Checking
 ^^^^^^^^^^^^^^^^^^^
@@ -266,9 +264,11 @@ To generate the Sphinx project shown in this project:
 
 .. code-block:: bash
 
-    $ mkdir docs
-    $ cd docs
-    $ sphinx-quickstart --no-makefile --no-batchfile --extensions sphinx.ext.napoleon
+    # Note: Sphinx is installed into the virtual environment automatically by pip-sync command
+    # above.
+    (venv) $ mkdir docs
+    (venv) $ cd docs
+    (venv) $ sphinx-quickstart --no-makefile --no-batchfile --extensions sphinx.ext.napoleon
     # When prompted, select all defaults.
 
 Modify ``conf.py`` appropriately:
@@ -406,7 +406,7 @@ transitive dependencies) using
 
 .. code-block:: bash
 
-    $ tox -e licenses
+    (venv) $ tox -e licenses
     ...
      Name        Version  License
      colorama    0.4.3    BSD License
