@@ -12,7 +12,7 @@ simple implementation of the `factorial algorithm <https://en.wikipedia.org/wiki
 Requirements
 ------------
 
-Python 3.5+.
+Python 3.6+.
 
 .. note::
 

@@ -25,14 +25,8 @@ def main() -> ExitStatus:
     colorama.init(autoreset=True, strip=False)
     args = parse_args()
 
-    print('fact({}{}{}) = {}{}{}'.format(
-        colorama.Fore.CYAN,
-        args.n,
-        colorama.Fore.RESET,
-        colorama.Fore.GREEN,
-        factorial(args.n),
-        colorama.Fore.RESET)
-    )
+    print(f'fact({colorama.Fore.CYAN}{args.n}{colorama.Fore.RESET}) = '
+          f'{colorama.Fore.GREEN}{factorial(args.n)}{colorama.Fore.RESET}')
     return ExitStatus.success
 
 
