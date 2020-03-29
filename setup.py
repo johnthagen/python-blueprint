@@ -13,7 +13,7 @@ setuptools.setup(
     description='Example Python project',
 
     # Allow UTF-8 characters in README with encoding argument.
-    long_description=project_dir.joinpath('README.rst').read_text(encoding="utf-8"),
+    long_description=project_dir.joinpath('README.rst').read_text(encoding='utf-8'),
     keywords=['python'],
 
     author='',
