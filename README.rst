@@ -1,8 +1,8 @@
 python-blueprint
 ================
 
-.. image:: https://travis-ci.org/johnthagen/python-blueprint.svg?branch=master
-    :target: https://travis-ci.org/johnthagen/python-blueprint
+.. image:: https://travis-ci.com/johnthagen/python-blueprint.svg?branch=master
+    :target: https://travis-ci.com/johnthagen/python-blueprint
 
 Example Python project that demonstrates how to create a tested Python package using the latest
 Python testing and linting tooling. The project contains a ``fact`` package that provides a
