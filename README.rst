@@ -68,11 +68,11 @@ On Windows ``cmd``:
     > py -m venv venv
     > venv\Scripts\activate.bat
 
-Once activated, it is good practice to update ``pip`` to the latest version.
+Once activated, it is good practice to update ``pip`` and ``wheel`` to the latest version.
 
 .. code-block:: bash
 
-    (venv) $ python -m pip install --upgrade pip
+    (venv) $ python -m pip install --upgrade pip wheel
 
 (Applications Only) Locking Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
