@@ -68,11 +68,12 @@ On Windows ``cmd``:
     > py -m venv venv
     > venv\Scripts\activate.bat
 
-Once activated, it is good practice to update ``pip`` and ``wheel`` to the latest version.
+Once activated, it is good practice to update core packaging tools (``pip``, ``setuptools``, and
+``wheel``) to the latest versions.
 
 .. code-block:: bash
 
-    (venv) $ python -m pip install --upgrade pip wheel
+    (venv) $ python -m pip install --upgrade pip setuptools wheel
 
 (Applications Only) Locking Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -116,35 +117,18 @@ Packaging is configured by:
 
 - ``MANIFEST.in``
 
-Source Distribution
-^^^^^^^^^^^^^^^^^^^
-
-To package the project as a
-`source distribution <https://docs.python.org/3/distutils/sourcedist.html>`_:
+To package the project as both a
+`source distribution <https://docs.python.org/3/distutils/sourcedist.html>`_ and a
+`wheel <https://wheel.readthedocs.io/en/stable/>`_:
 
 .. code-block:: bash
 
-    (venv) $ python setup.py sdist
+    (venv) $ python setup.py sdist bdist_wheel
 
-This will generate ``dist/fact-1.0.0.tar.gz``.
+This will generate ``dist/fact-1.0.0.tar.gz`` and ``dist/fact-1.0.0-py3-none-any.whl``.
 
-Wheel Distribution
-^^^^^^^^^^^^^^^^^^
-
-It is normally most convenient to build a Python application as a
-`wheel <https://wheel.readthedocs.io/en/stable/>`_ for distribution. Read more about the
-`advantages of wheels <https://pythonwheels.com/>`_.
-
-To create a wheel:
-
-.. code-block:: bash
-
-    (venv) $ python -m pip install wheel
-    (venv) $ python setup.py bdist_wheel
-
-This will generate ``dist/fact-1.0.0-py3-none-any.whl``, which can be distributed and
-installed. Unlike source distributions, users will not have to execute a ``setup.py`` in order to
-install the wheel.
+Read more about the `advantages of wheels <https://pythonwheels.com/>`_ to understand why
+generating wheel distributions are important.
 
 Upload Distributions to PyPI
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
