@@ -18,11 +18,11 @@ coverage==5.1             # via pytest-cov
 distlib==0.3.1            # via virtualenv
 docutils==0.16            # via sphinx
 filelock==3.0.12          # via tox, virtualenv
-flake8-import-order==0.18.1  # via -r dev-requirements.in
 flake8-polyfill==1.0.2    # via pep8-naming
 flake8==3.8.3             # via -r dev-requirements.in, flake8-polyfill
 idna==2.10                # via requests
 imagesize==1.2.0          # via sphinx
+isort==5.0.2              # via -r dev-requirements.in
 jinja2==2.11.2            # via sphinx
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via flake8
@@ -34,7 +34,7 @@ pathspec==0.8.0           # via black
 pep8-naming==0.11.1       # via -r dev-requirements.in
 pluggy==0.13.1            # via pytest, tox
 py==1.9.0                 # via pytest, tox
-pycodestyle==2.6.0        # via flake8, flake8-import-order
+pycodestyle==2.6.0        # via flake8
 pyflakes==2.2.0           # via flake8
 pygments==2.6.1           # via sphinx
 pyparsing==2.4.7          # via packaging

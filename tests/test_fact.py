@@ -1,6 +1,6 @@
 import pytest
 
-from fact.lib import factorial, InvalidFactorialError
+from fact.lib import InvalidFactorialError, factorial
 
 
 # fmt: off

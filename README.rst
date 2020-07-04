@@ -213,7 +213,12 @@ are also included:
 Automated Code Formatting
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Code is automatically formatted using `black <https://github.com/psf/black>`_.
+Code is automatically formatted using `black <https://github.com/psf/black>`_. Imports are
+automatically sorted and grouped using `isort <https://github.com/timothycrosley/isort/>`_.
+
+These tools are configured by:
+
+- ``pyproject.toml``
 
 To automatically format code, run:
 
@@ -433,7 +438,7 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 
             - ☐ Sort plain and "from" imports separately within a group
 
-            - ☑ Sort case-insensitively
+            - ☐ Sort case-insensitively
 
         - Structure of "from" imports
             
