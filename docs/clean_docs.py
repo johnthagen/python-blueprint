@@ -12,11 +12,11 @@ import shutil
 
 def main() -> None:
     docs_dir = Path(__file__).resolve().parent
-    for folder in ('_build', 'apidoc'):
+    for folder in ("_build", "apidoc"):
         delete_dir = docs_dir / folder
         if delete_dir.exists():
             shutil.rmtree(delete_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

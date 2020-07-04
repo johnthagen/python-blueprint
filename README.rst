@@ -113,6 +113,8 @@ as a single compressed file.
 
 Packaging is configured by:
 
+- ``pyproject.toml``
+
 - ``setup.py``
 
 - ``MANIFEST.in``
@@ -202,12 +204,28 @@ Code Style Checking
 
 `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ is the universally accepted style
 guide for Python code. PEP8 code compliance is verified using `flake8 <http://flake8.pycqa.org/>`_.
-flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Three extra flake8 plugins
+flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Extra flake8 plugins
 are also included:
 
 - ``pep8-naming``: Ensure functions, classes, and variables are named with correct casing.
-- ``flake8-quotes``: Ensure that ``' '`` style string quoting is used consistently.
 - ``flake8-import-order``: Ensure consistency in the way imports are grouped and sorted.
+
+Automated Code Formatting
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Code is automatically formatted using `black <https://github.com/psf/black>`_.
+
+To automatically format code, run:
+
+.. code-block:: bash
+
+    (venv) $ tox -e fmt
+
+To verify code has been formatted, such as in a CI job:
+
+.. code-block:: bash
+
+    (venv) $ tox -e fmt-check
 
 Generated Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^
