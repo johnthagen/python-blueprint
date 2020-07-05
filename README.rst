@@ -191,7 +191,7 @@ generated in the ``htmlcov`` folder showing each source file and which lines wer
 unit testing. Open ``htmlcov/index.html`` in a web browser to view the report. Code coverage 
 reports help identify areas of the project that are currently not tested.
 
-Code coverage is configured in the ``.coveragerc`` file.
+Code coverage is configured in ``pyproject.toml``.
 
 To pass arguments to ``pytest`` through ``tox``:
 
