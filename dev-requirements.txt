@@ -22,7 +22,7 @@ flake8-polyfill==1.0.2    # via pep8-naming
 flake8==3.8.3             # via -r dev-requirements.in, flake8-polyfill
 idna==2.10                # via requests
 imagesize==1.2.0          # via sphinx
-isort==5.0.2              # via -r dev-requirements.in
+isort==5.0.3              # via -r dev-requirements.in
 jinja2==2.11.2            # via sphinx
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via flake8
@@ -45,7 +45,7 @@ regex==2020.6.8           # via black
 requests==2.24.0          # via sphinx
 six==1.15.0               # via packaging, tox, virtualenv
 snowballstemmer==2.0.0    # via sphinx
-sphinx==3.1.1             # via -r dev-requirements.in
+sphinx==3.1.2             # via -r dev-requirements.in
 sphinxcontrib-applehelp==1.0.2  # via sphinx
 sphinxcontrib-devhelp==1.0.2  # via sphinx
 sphinxcontrib-htmlhelp==1.0.3  # via sphinx
