@@ -208,7 +208,6 @@ flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Extra flake8 pl
 are also included:
 
 - ``pep8-naming``: Ensure functions, classes, and variables are named with correct casing.
-- ``flake8-import-order``: Ensure consistency in the way imports are grouped and sorted.
 
 Automated Code Formatting
 ^^^^^^^^^^^^^^^^^^^^^^^^^
