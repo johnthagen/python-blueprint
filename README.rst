@@ -113,6 +113,8 @@ as a single compressed file.
 
 Packaging is configured by:
 
+- ``pyproject.toml``
+
 - ``setup.py``
 
 - ``MANIFEST.in``
@@ -189,7 +191,7 @@ generated in the ``htmlcov`` folder showing each source file and which lines wer
 unit testing. Open ``htmlcov/index.html`` in a web browser to view the report. Code coverage 
 reports help identify areas of the project that are currently not tested.
 
-Code coverage is configured in the ``.coveragerc`` file.
+Code coverage is configured in ``pyproject.toml``.
 
 To pass arguments to ``pytest`` through ``tox``:
 
@@ -202,12 +204,32 @@ Code Style Checking
 
 `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ is the universally accepted style
 guide for Python code. PEP8 code compliance is verified using `flake8 <http://flake8.pycqa.org/>`_.
-flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Three extra flake8 plugins
+flake8 is configured in the ``[flake8]`` section of ``tox.ini``. Extra flake8 plugins
 are also included:
 
 - ``pep8-naming``: Ensure functions, classes, and variables are named with correct casing.
-- ``flake8-quotes``: Ensure that ``' '`` style string quoting is used consistently.
-- ``flake8-import-order``: Ensure consistency in the way imports are grouped and sorted.
+
+Automated Code Formatting
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Code is automatically formatted using `black <https://github.com/psf/black>`_. Imports are
+automatically sorted and grouped using `isort <https://github.com/timothycrosley/isort/>`_.
+
+These tools are configured by:
+
+- ``pyproject.toml``
+
+To automatically format code, run:
+
+.. code-block:: bash
+
+    (venv) $ tox -e fmt
+
+To verify code has been formatted, such as in a CI job:
+
+.. code-block:: bash
+
+    (venv) $ tox -e fmt-check
 
 Generated Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -429,8 +451,21 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 
     - Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
 
-- (Optional) Settings | Search "Force parentheses"
+- Settings | Search "Force parentheses"
 
     - Editor | Code Style | Python | Wrapping and Braces | "From" Import Statements
 
         - ☑ Force parentheses if multiline
+
+Integrate Code Formatters
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To integrate automatic code formatters into PyCharm, reference the following instructions:
+
+- `black integration <https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-idea>`_
+
+    - The File Watchers method (step 3) is recommended. This will run ``black`` on every save.
+
+- `isort integration <https://github.com/timothycrosley/isort/wiki/isort-Plugins>`_
+
+    - The File Watchers method (option 1) is recommended. This will run ``isort`` on every save.

@@ -15,7 +15,7 @@ def factorial(n: int) -> int:
         Computed factorial.
     """
     if n < 0:
-        raise InvalidFactorialError(f'n is less than zero: {n}')
+        raise InvalidFactorialError(f"n is less than zero: {n}")
     elif n == 0:
         return 1
 
