@@ -437,7 +437,7 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 
             - ☐ Sort plain and "from" imports separately within a group
 
-            - ☑ Sort case-insensitively
+            - ☐ Sort case-insensitively
 
         - Structure of "from" imports
             

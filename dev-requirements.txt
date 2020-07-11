@@ -14,7 +14,7 @@ certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 click==7.1.2              # via black
 colorama==0.4.3           # via pytest, sphinx, tox
-coverage==5.1             # via pytest-cov
+coverage==5.2             # via pytest-cov
 distlib==0.3.1            # via virtualenv
 docutils==0.16            # via sphinx
 filelock==3.0.12          # via tox, virtualenv
@@ -22,7 +22,7 @@ flake8-polyfill==1.0.2    # via pep8-naming
 flake8==3.8.3             # via -r dev-requirements.in, flake8-polyfill
 idna==2.10                # via requests
 imagesize==1.2.0          # via sphinx
-isort==5.0.3              # via -r dev-requirements.in
+isort==5.0.9              # via -r dev-requirements.in
 jinja2==2.11.2            # via sphinx
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via flake8
@@ -57,7 +57,7 @@ tox==3.16.1               # via -r dev-requirements.in
 typed-ast==1.4.1          # via black, mypy
 typing-extensions==3.7.4.2  # via mypy
 urllib3==1.25.9           # via requests
-virtualenv==20.0.25       # via tox
+virtualenv==20.0.26       # via tox
 wcwidth==0.2.5            # via pytest
 
 # The following packages are considered to be unsafe in a requirements file:
