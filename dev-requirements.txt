@@ -14,7 +14,7 @@ certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 click==7.1.2              # via black
 colorama==0.4.3           # via pytest, sphinx, tox
-coverage==5.2             # via pytest-cov
+coverage==5.2.1           # via pytest-cov
 distlib==0.3.1            # via virtualenv
 docutils==0.16            # via sphinx
 filelock==3.0.12          # via tox, virtualenv
@@ -22,7 +22,8 @@ flake8-polyfill==1.0.2    # via pep8-naming
 flake8==3.8.3             # via -r dev-requirements.in, flake8-polyfill
 idna==2.10                # via requests
 imagesize==1.2.0          # via sphinx
-isort==5.0.9              # via -r dev-requirements.in
+iniconfig==1.0.1          # via pytest
+isort==5.3.2              # via -r dev-requirements.in
 jinja2==2.11.2            # via sphinx
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via flake8
@@ -39,26 +40,25 @@ pyflakes==2.2.0           # via flake8
 pygments==2.6.1           # via sphinx
 pyparsing==2.4.7          # via packaging
 pytest-cov==2.10.0        # via -r dev-requirements.in
-pytest==5.4.3             # via -r dev-requirements.in, pytest-cov
+pytest==6.0.1             # via -r dev-requirements.in, pytest-cov
 pytz==2020.1              # via babel
-regex==2020.6.8           # via black
+regex==2020.7.14          # via black
 requests==2.24.0          # via sphinx
 six==1.15.0               # via packaging, tox, virtualenv
 snowballstemmer==2.0.0    # via sphinx
-sphinx==3.1.2             # via -r dev-requirements.in
+sphinx==3.2.0             # via -r dev-requirements.in
 sphinxcontrib-applehelp==1.0.2  # via sphinx
 sphinxcontrib-devhelp==1.0.2  # via sphinx
 sphinxcontrib-htmlhelp==1.0.3  # via sphinx
 sphinxcontrib-jsmath==1.0.1  # via sphinx
 sphinxcontrib-qthelp==1.0.3  # via sphinx
 sphinxcontrib-serializinghtml==1.1.4  # via sphinx
-toml==0.10.1              # via black, tox
-tox==3.16.1               # via -r dev-requirements.in
+toml==0.10.1              # via black, pytest, tox
+tox==3.19.0               # via -r dev-requirements.in
 typed-ast==1.4.1          # via black, mypy
 typing-extensions==3.7.4.2  # via mypy
-urllib3==1.25.9           # via requests
-virtualenv==20.0.26       # via tox
-wcwidth==0.2.5            # via pytest
+urllib3==1.25.10          # via requests
+virtualenv==20.0.30       # via tox
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
