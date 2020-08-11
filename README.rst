@@ -400,6 +400,17 @@ This project uses the type hinting syntax introduced in Python 3:
 
 Type checking is performed by mypy via ``tox -e mypy``. mypy is configured in ``setup.cfg``.
 
+Distributing Type Hints
+^^^^^^^^^^^^^^^^^^^^^^^
+
+`PEP 561 <https://www.python.org/dev/peps/pep-0561/>`_ defines how a Python package should
+communicate the presence of inline type hints to static type checkers.
+`mypy's documentation <https://mypy.readthedocs.io/en/stable/installed_packages.html>`_ provides
+further examples on how to do this as well.
+
+``mypy`` looks for the existence of a file named ``py.typed`` in the root of the installed
+package to indicate that inline type hints should be checked.
+
 Licensing
 ---------
 
