@@ -25,6 +25,9 @@ setuptools.setup(
     # data to MANIFEST.in.
     # See https://stackoverflow.com/questions/7522250/
     include_package_data=True,
+    # This file is required to inform mypy that inline type hints are used.
+    #   See: https://mypy.readthedocs.io/en/stable/installed_packages.html
+    package_data={"fact": ["py.typed"]},
     # This is a trick to avoid duplicating dependencies between both setup.py and
     # requirements.txt.
     # requirements.txt must be included in MANIFEST.in for this to work.
