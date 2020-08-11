@@ -4,6 +4,12 @@ python-blueprint
 .. image:: https://travis-ci.com/johnthagen/python-blueprint.svg?branch=master
     :target: https://travis-ci.com/johnthagen/python-blueprint
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://black.readthedocs.io/en/stable/
+
+.. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+    :target: https://timothycrosley.github.io/isort/
+
 Example Python project that demonstrates how to create a tested Python package using the latest
 Python testing and linting tooling. The project contains a ``fact`` package that provides a
 simple implementation of the `factorial algorithm <https://en.wikipedia.org/wiki/Factorial>`_
