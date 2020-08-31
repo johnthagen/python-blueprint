@@ -477,6 +477,13 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 Integrate Code Formatters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. tip::
+
+    These tools work best if you properly mark directories as excluded from the project that should
+    be, such as ``.tox``. See
+    https://www.jetbrains.com/help/pycharm/project-tool-window.html#content_pane_context_menu
+    on how to Right Click | Mark Directory as | Excluded.
+
 To integrate automatic code formatters into PyCharm, reference the following instructions:
 
 - `black integration <https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-idea>`_
