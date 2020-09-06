@@ -6,19 +6,7 @@ build-backend = "setuptools.build_meta"
 # Use the more relaxed max line length permitted in PEP8.
 line-length = 99
 target-version = ["py36", "py37", "py38"]
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.mypy_cache
-  | \.tox
-  | \.idea
-  | venv
-  | build
-  | dist
-  | htmlcov
-)/
-'''
+# black will automatically exclude all files listed in .gitignore
 
 [tool.isort]
 profile = "black"
