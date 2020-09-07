@@ -219,7 +219,7 @@ Automated Code Formatting
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Code is automatically formatted using `black <https://github.com/psf/black>`_. Imports are
-automatically sorted and grouped using `isort <https://github.com/timothycrosley/isort/>`_.
+automatically sorted and grouped using `isort <https://github.com/PyCQA/isort/>`_.
 
 These tools are configured by:
 
