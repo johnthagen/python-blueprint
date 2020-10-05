@@ -162,7 +162,7 @@ PEP8 style guide checking, and documentation generation.
 .. code-block:: bash
 
     # Run all environments.
-    #   To only run a single environment, specify it like: -e pep8
+    #   To only run a single environment, specify it like: -e lint
     # Note: tox is installed into the virtual environment automatically by pip-sync command above.
     (venv) $ tox
 
@@ -398,7 +398,7 @@ This project uses the type hinting syntax introduced in Python 3:
 
     def factorial(n: int) -> int:
 
-Type checking is performed by mypy via ``tox -e mypy``. mypy is configured in ``setup.cfg``.
+Type checking is performed by mypy via ``tox -e type-check``. mypy is configured in ``setup.cfg``.
 
 Distributing Type Hints
 ^^^^^^^^^^^^^^^^^^^^^^^
