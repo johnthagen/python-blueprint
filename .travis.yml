@@ -18,8 +18,6 @@ matrix:
           env: TOXENV=docs
 
 install:
-  # Ensure virtualenv is up to date to avoid DeprecationWarning in bundled site.py.
-  - pip install --upgrade virtualenv
   - pip install tox
 
 script:
