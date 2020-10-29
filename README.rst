@@ -64,6 +64,7 @@ On \*Nix:
 
 .. code-block:: bash
 
+    # On Python 3.9+, add --upgrade-deps
     $ python3 -m venv venv
     $ source venv/bin/activate
 
