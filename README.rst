@@ -308,6 +308,15 @@ Modify ``index.rst`` appropriately:
 
     apidoc/modules.rst
 
+Continuous Integration
+^^^^^^^^^^^^^^^^^^^^^^
+
+Continuous integration is provided by `GitHub Actions <https://github.com/features/actions>`_.
+This runs all tests and lints for every commit and pull request to the repository.
+
+GitHub Actions is configured in ``.github/workflows/python.yml`` and ``tox.ini`` using the
+`tox-gh-actions plugin <https://github.com/ymyzk/tox-gh-actions>`_.
+
 Project Structure
 -----------------
 
