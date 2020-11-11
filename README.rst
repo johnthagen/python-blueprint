@@ -1,8 +1,8 @@
 python-blueprint
 ================
 
-.. image:: https://travis-ci.com/johnthagen/python-blueprint.svg?branch=master
-    :target: https://travis-ci.com/johnthagen/python-blueprint
+.. image:: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg?branch=master
+    :target: https://github.com/johnthagen/python-blueprint/actions
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://black.readthedocs.io/en/stable/
