@@ -1,0 +1,15 @@
+# Ignore everything.
+**
+
+# Except the following.
+!src
+!LICENSE.txt
+!MANIFEST.in
+!pyproject.toml
+!README.rst
+!requirements.txt
+!setup.py
+
+# Filter unwanted files from included folders.
+**/__pycache__
+**.py[cod]
