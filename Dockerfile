@@ -38,7 +38,7 @@ COPY LICENSE.txt MANIFEST.in pyproject.toml README.rst requirements.txt setup.py
 COPY src src
 
 # Install console script.
-RUN pip install .
+RUN pip instal .
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
