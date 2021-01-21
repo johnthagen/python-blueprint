@@ -442,6 +442,33 @@ transitive dependencies) using
      colorama    0.4.3    BSD License
      exitstatus  1.3.0    MIT License
 
+Docker
+------
+
+`Docker <https://www.docker.com/>`_ is a tool that allows for software to be packaged into
+isolated containers. It is not necessary to use Docker in a Python project, but for the purposes
+of presenting best practice examples, a Docker configuration is provided in this project. The
+Docker configuration in this repository is optimized for small size and increased security,
+rather than simplicity.
+
+Docker is configured in:
+
+- ``Dockerfile``
+- ``.dockerignore``
+
+To build the Docker image:
+
+.. code-block:: bash
+
+    $ docker build --tag fact .
+
+To run the image in a container:
+
+.. code-block:: bash
+
+    # Example calculating the factorial of 5.
+    $ docker run --rm --interactive --tty fact -n 5
+
 PyCharm Configuration
 ---------------------
 
