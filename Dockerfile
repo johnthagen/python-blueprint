@@ -1,6 +1,13 @@
 # Use a multi-stage build to reduce the size of the final image.
 #   This example is optimized to reduce final image size rather than for simplicity.
 # Using a -slim also greatly reduced image size.
+# It is possible to use -alpine images instead to further reduce image size, but this comes
+# with several important caveats.
+#   - Alpine images use MUSL rather than GLIBC (as used in the default Debian-based images).
+#   - Most Python packages that require C code are tested against GLIBC, so there could be
+#     subtle errors when using MUSL.
+#   - These Python packages usually only provide binary wheels for GLIBC, so the packages
+#     will need to be recompiled fully within the Docker images, increasing build times.
 FROM python:3.8-slim-buster AS python_builder
 
 # Set ENV variables that make Python more friendly to running inside a container.
