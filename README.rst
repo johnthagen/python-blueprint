@@ -407,6 +407,8 @@ This project uses the type hinting syntax introduced in Python 3:
 
 Type checking is performed by mypy via ``tox -e type-check``. mypy is configured in ``setup.cfg``.
 
+See also `awesome-python-typing <https://github.com/typeddjango/awesome-python-typing>`_.
+
 Distributing Type Hints
 ^^^^^^^^^^^^^^^^^^^^^^^
 
