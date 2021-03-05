@@ -265,6 +265,9 @@ of easy-to-read docstrings in code as well as nicely-rendered output.
 
 The Sphinx project is configured in ``docs/conf.py``.
 
+This project uses the `furo <https://pradyunsg.me/furo/>`_ Sphinx theme for its elegant, simple
+to use, dark theme.
+
 Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
 open ``docs/_build/index.html`` in a web browser.
 

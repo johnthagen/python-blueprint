@@ -16,6 +16,8 @@ attrs==20.3.0
     # via pytest
 babel==2.9.0
     # via sphinx
+beautifulsoup4==4.9.3
+    # via furo
 black==20.8b1
     # via -r dev-requirements.in
 certifi==2020.12.5
@@ -46,6 +48,8 @@ flake8==3.8.4
     # via
     #   -r dev-requirements.in
     #   flake8-polyfill
+furo==2021.2.28b28
+    # via -r dev-requirements.in
 idna==2.10
     # via requests
 imagesize==1.2.0
@@ -109,8 +113,12 @@ six==1.15.0
     #   virtualenv
 snowballstemmer==2.1.0
     # via sphinx
+soupsieve==2.2
+    # via beautifulsoup4
 sphinx==3.5.1
-    # via -r dev-requirements.in
+    # via
+    #   -r dev-requirements.in
+    #   furo
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
 sphinxcontrib-devhelp==1.0.2
