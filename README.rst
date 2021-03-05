@@ -97,8 +97,8 @@ To update dependencies:
 .. code-block:: bash
 
     (venv) $ python -m pip install pip-tools
-    (venv) $ pip-compile --upgrade
-    (venv) $ pip-compile --upgrade dev-requirements.in
+    (venv) $ python -m piptools compile --upgrade
+    (venv) $ python -m piptools compile --upgrade dev-requirements.in
 
 After upgrading dependencies, run the unit tests as described in the `Unit Testing`_ section
 to ensure that none of the updated packages caused incompatibilities in the current project.
@@ -110,7 +110,7 @@ To cleanly install your dependencies into your virtual environment:
 
 .. code-block:: bash
 
-    (venv) $ pip-sync requirements.txt dev-requirements.txt
+    (venv) $ python -m piptools sync requirements.txt dev-requirements.txt
 
 Packaging
 ---------
@@ -164,7 +164,8 @@ PEP8 style guide checking, and documentation generation.
 
     # Run all environments.
     #   To only run a single environment, specify it like: -e lint
-    # Note: tox is installed into the virtual environment automatically by pip-sync command above.
+    # Note: tox is installed into the virtual environment automatically by ``piptools sync``
+    # command above.
     (venv) $ tox
 
 Unit Testing
@@ -274,8 +275,8 @@ To generate the Sphinx project shown in this project:
 
 .. code-block:: bash
 
-    # Note: Sphinx is installed into the virtual environment automatically by pip-sync command
-    # above.
+    # Note: Sphinx is installed into the virtual environment automatically by ``piptools sync``
+    # command above.
     (venv) $ mkdir docs
     (venv) $ cd docs
     (venv) $ sphinx-quickstart --no-makefile --no-batchfile --extensions sphinx.ext.napoleon
