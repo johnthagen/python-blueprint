@@ -1,3 +1,6 @@
+# Constrain dev-requirements by requirements to avoid clashing requirements.
+-c requirements.txt
+
 tox
 
 # Testing.
