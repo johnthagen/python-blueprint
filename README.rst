@@ -97,7 +97,7 @@ To update dependencies:
 .. code-block:: bash
 
     (venv) $ python -m pip install pip-tools
-    (venv) $ python -m piptools compile --upgrade
+    (venv) $ python -m piptools compile --upgrade requirements.in
     (venv) $ python -m piptools compile --upgrade dev-requirements.in
 
 After upgrading dependencies, run the unit tests as described in the `Unit Testing`_ section
