@@ -473,7 +473,7 @@ To run the image in a container:
 .. code-block:: bash
 
     # Example calculating the factorial of 5.
-    $ docker run --rm --interactive --tty fact -n 5
+    $ docker run --rm --interactive --tty fact 5
 
 PyCharm Configuration
 ---------------------
