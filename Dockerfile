@@ -1,6 +1,6 @@
 # Use a multi-stage build to reduce the size of the final image.
 #   This example is optimized to reduce final image size rather than for simplicity.
-# Using a -slim also greatly reduced image size.
+# Using a -slim image also greatly reduces image size.
 # It is possible to use -alpine images instead to further reduce image size, but this comes
 # with several important caveats.
 #   - Alpine images use MUSL rather than GLIBC (as used in the default Debian-based images).
