@@ -521,7 +521,7 @@ To integrate automatic code formatters into PyCharm, reference the following ins
 
 - `black integration <https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea>`_
 
-    - The File Watchers method (step 3) is recommended. This will run ``black`` on every save.
+    - The File Watchers method (step 6) is recommended. This will run ``black`` on every save.
 
 - `isort integration <https://github.com/timothycrosley/isort/wiki/isort-Plugins>`_
 
