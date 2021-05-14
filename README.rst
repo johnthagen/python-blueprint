@@ -508,6 +508,10 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
 
     - Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
 
+- Settings | Search "pytest"
+
+    - Tools | Python Integrated Tools | Testing | Default test runner: pytest
+
 - Settings | Search "Force parentheses"
 
     - Editor | Code Style | Python | Wrapping and Braces | "From" Import Statements
