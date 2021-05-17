@@ -7,6 +7,8 @@ build-backend = "setuptools.build_meta"
 line-length = 99
 target-version = ["py36", "py37", "py38", "py39"]
 # black will automatically exclude all files listed in .gitignore
+# If you need to exclude additional folders, consider using extend-exclude to avoid disabling the
+# default .gitignore behaviour.
 
 [tool.isort]
 profile = "black"
