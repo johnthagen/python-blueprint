@@ -191,7 +191,7 @@ two test files cannot be named the same, even if they are in different sub-direc
 Code coverage is provided by the `pytest-cov <https://pytest-cov.readthedocs.io/en/latest/>`_
 plugin.
 
-When running a unit test tox environment (e.g. ``tox -e py37``), an HTML report is
+When running a unit test tox environment (e.g. ``tox -e py39``), an HTML report is
 generated in the ``htmlcov`` folder showing each source file and which lines were executed during
 unit testing. Open ``htmlcov/index.html`` in a web browser to view the report. Code coverage 
 reports help identify areas of the project that are currently not tested.
@@ -202,7 +202,7 @@ To pass arguments to ``pytest`` through ``tox``:
 
 .. code-block:: bash
 
-    (venv) $ tox -e py37 -- -k invalid_factorial
+    (venv) $ tox -e py39 -- -k invalid_factorial
 
 Code Style Checking
 ^^^^^^^^^^^^^^^^^^^
