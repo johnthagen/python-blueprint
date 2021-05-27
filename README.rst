@@ -271,6 +271,9 @@ to use, dark theme.
 Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
 open ``docs/_build/index.html`` in a web browser.
 
+To configure Sphinx to automatically rebuild when it detects changes, run ``tox -e docs-serve``
+and open http://127.0.0.1:8000 in a browser.
+
 Generate a New Sphinx Project
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
