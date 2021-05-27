@@ -20,4 +20,5 @@ isort
 
 # Documentation.
 Sphinx
+sphinx-autobuild
 furo
