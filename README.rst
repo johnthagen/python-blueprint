@@ -412,7 +412,8 @@ This project uses the type hinting syntax introduced in Python 3:
 
     def factorial(n: int) -> int:
 
-Type checking is performed by mypy via ``tox -e type-check``. mypy is configured in ``setup.cfg``.
+Type checking is performed by mypy via ``tox -e type-check``. mypy is configured in
+``pyproject.toml``.
 
 See also `awesome-python-typing <https://github.com/typeddjango/awesome-python-typing>`_.
 
