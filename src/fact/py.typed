@@ -1,1 +1,2 @@
-See PEP 561 for the purpose of this file.
+# Instruct type checkers to look for inline type annotations.
+# See PEP 561.
