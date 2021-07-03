@@ -1,9 +1,7 @@
 # python-blueprint
 
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
-
 [![Code style: black][black-badge]](https://github.com/psf/black)
-
 [![Imports: isort][isort-badge]](https://pycqa.github.io/isort/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
