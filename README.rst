@@ -322,7 +322,9 @@ To build and serve the user guide with automatic rebuilding as you change the co
 ``tox -e docs-user-guide-serve`` and open http://127.0.0.1:8000 in a browser.
 
 Each time the ``master`` Git branch is updated, the ``pages`` GitHub Action will automatically
-build the user guide and publish it to GitHub Pages.
+build the user guide and publish it to `GitHub Pages <https://pages.github.com/>`_. This is
+configured in the ``docs-user-guide-github-pages`` ``tox`` environment. This can be viewed at
+https://johnthagen.github.io/python-blueprint/
 
 Continuous Integration
 ^^^^^^^^^^^^^^^^^^^^^^
