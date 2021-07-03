@@ -41,7 +41,7 @@ RUN pip install --upgrade pip wheel && \
     pip install -r requirements.txt
 
 # Copy in source files.
-COPY LICENSE.txt MANIFEST.in pyproject.toml README.rst requirements.txt setup.py ./
+COPY LICENSE.txt MANIFEST.in pyproject.toml README.md requirements.txt setup.py ./
 COPY src src
 
 # Install console script.
