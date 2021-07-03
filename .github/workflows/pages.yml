@@ -3,10 +3,9 @@
 # configured to be served automatically using GitHub Pages.
 name: pages
 
-on: [push, pull_request]
-#on:
-#  push:
-#    branches: [master]
+on:
+  push:
+    branches: [master]
 
 jobs:
   deploy:
