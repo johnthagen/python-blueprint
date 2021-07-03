@@ -1,0 +1,22 @@
+# This GitHub Actions job will build the user guide and publish it to the
+# gh-pages branch each time the master branch is updated. This branch is
+# configured to be served automatically using GitHub Pages.
+name: pages
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+      - run: tox -e docs-user-guide-github-pages

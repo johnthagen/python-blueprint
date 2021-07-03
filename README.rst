@@ -236,8 +236,8 @@ To verify code has been formatted, such as in a CI job:
 
     (venv) $ tox -e fmt-check
 
-Generated Documentation
-^^^^^^^^^^^^^^^^^^^^^^^
+Generated API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Documentation that includes the ``README.rst`` and the Python project modules is automatically
 generated using a `Sphinx <http://sphinx-doc.org/>`_ tox environment. Sphinx is a documentation
@@ -263,15 +263,15 @@ of easy-to-read docstrings in code as well as nicely-rendered output.
         Computed factorial.
     """
 
-The Sphinx project is configured in ``docs/conf.py``.
+The Sphinx project is configured in ``docs/api/conf.py``.
 
 This project uses the `furo <https://pradyunsg.me/furo/>`_ Sphinx theme for its elegant, simple
 to use, dark theme.
 
-Build the docs using the ``docs`` tox environment (e.g. ``tox`` or ``tox -e docs``). Once built,
-open ``docs/_build/index.html`` in a web browser.
+Build the docs using the ``docs-api`` tox environment (e.g. ``tox`` or ``tox -e docs-api``). Once
+built, open ``docs/api/_build/index.html`` in a web browser.
 
-To configure Sphinx to automatically rebuild when it detects changes, run ``tox -e docs-serve``
+To configure Sphinx to automatically rebuild when it detects changes, run ``tox -e docs-api-serve``
 and open http://127.0.0.1:8000 in a browser.
 
 Generate a New Sphinx Project
@@ -283,8 +283,8 @@ To generate the Sphinx project shown in this project:
 
     # Note: Sphinx is installed into the virtual environment automatically by ``piptools sync``
     # command above.
-    (venv) $ mkdir docs
-    (venv) $ cd docs
+    (venv) $ mkdir -p docs/api
+    (venv) $ cd docs/api
     (venv) $ sphinx-quickstart --no-makefile --no-batchfile --extensions sphinx.ext.napoleon
     # When prompted, select all defaults.
 
@@ -295,22 +295,36 @@ Modify ``conf.py`` appropriately:
     # Add the project's Python package to the path so that autodoc can find it.
     import os
     import sys
-    sys.path.insert(0, os.path.abspath('../src'))
-
-    ...
-
-    html_theme_options = {
-        # Override the default alabaster line wrap, which wraps tightly at 940px.
-        'page_width': 'auto',
-    }
+    sys.path.insert(0, os.path.abspath("../../src"))
 
 Modify ``index.rst`` appropriately:
 
 ::
 
-    .. include:: ../README.rst
+    .. include:: ../../README.rst
 
     apidoc/modules.rst
+
+Generating a User Guide
+^^^^^^^^^^^^^^^^^^^^^^^
+
+`Material for MkDocs <https://squidfunk.github.io/mkdocs-material/>`_ is a powerful static site
+generator that combines easy-to-write Markdown, with a number of Markdown extensions that increase
+the power of Markdown. This makes it a great fit for user guides and other technical documentation.
+
+The example MkDocs project included in this project is configured to allow the built documentation
+to be hosted at any URL or viewed offline from the file system.
+
+To build the user guide, run ``tox -e docs-user-guide``. Open ``docs/user_guide/site/index.html``
+using a web browser.
+
+To build and serve the user guide with automatic rebuilding as you change the contents, run
+``tox -e docs-user-guide-serve`` and open http://127.0.0.1:8000 in a browser.
+
+Each time the ``master`` Git branch is updated, the ``pages`` GitHub Action will automatically
+build the user guide and publish it to `GitHub Pages <https://pages.github.com/>`_. This is
+configured in the ``docs-user-guide-github-pages`` ``tox`` environment. This can be viewed at
+https://johnthagen.github.io/python-blueprint/
 
 Continuous Integration
 ^^^^^^^^^^^^^^^^^^^^^^

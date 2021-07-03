@@ -6,9 +6,11 @@ __pycache__
 .coverage.*
 htmlcov
 *.pyc
-docs/_build
 venv
 dist
 .pytest_cache
 .mypy_cache
 build
+
+docs/api/_build
+docs/user_guide/site
