@@ -24,6 +24,9 @@ black
 isort
 
 # Documentation.
+## API.
 Sphinx
 sphinx-autobuild
 furo
+## User Guide.
+mkdocs-material

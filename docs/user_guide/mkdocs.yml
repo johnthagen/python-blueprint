@@ -1,0 +1,32 @@
+site_name: fact
+# Set strict to true to turn warnings into errors to catch warnings within CI.
+strict: true
+copyright: Copyright &copy; 2018-2021 John Hagen
+theme:
+  name: material
+  # By default fonts are pulled from Google on the Internet. To support offline usage, disable
+  # this.
+  font: false
+  palette:
+    scheme: slate
+    primary: green
+    accent: yellow
+  icon:
+    logo: material/math-integral-box
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.highlight
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/johnthagen/python-blueprint
+# This is needed to allow links to work when opened from the file system.
+use_directory_urls: false
+# If building the docs in an agnostic way where it is not known what the final
+# hosting URL will be, set this to empty string.
+site_url: ""
