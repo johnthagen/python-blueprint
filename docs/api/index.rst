@@ -6,7 +6,7 @@
 ``fact`` Documentation
 ======================
 
-.. include:: ../README.rst
+.. include:: ../../README.rst
 
 .. toctree::
    :maxdepth: 2
