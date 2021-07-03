@@ -11,7 +11,8 @@ setuptools.setup(
     version="1.0.0",
     description="Example Python project",
     # Allow UTF-8 characters in README with encoding argument.
-    long_description=project_dir.joinpath("README.rst").read_text(encoding="utf-8"),
+    long_description=project_dir.joinpath("README.md").read_text(encoding="utf-8"),
+    long_description_content_type="text/markdown",
     keywords=["python"],
     author="",
     url="https://github.com/johnthagen/python-blueprint",
