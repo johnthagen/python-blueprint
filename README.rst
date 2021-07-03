@@ -236,8 +236,8 @@ To verify code has been formatted, such as in a CI job:
 
     (venv) $ tox -e fmt-check
 
-Generated Documentation
-^^^^^^^^^^^^^^^^^^^^^^^
+Generated API Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Documentation that includes the ``README.rst`` and the Python project modules is automatically
 generated using a `Sphinx <http://sphinx-doc.org/>`_ tox environment. Sphinx is a documentation
@@ -304,6 +304,25 @@ Modify ``index.rst`` appropriately:
     .. include:: ../../README.rst
 
     apidoc/modules.rst
+
+Generating a User Guide
+^^^^^^^^^^^^^^^^^^^^^^^
+
+`Material for MkDocs <https://squidfunk.github.io/mkdocs-material/>`_ is a powerful static site
+generator that combines easy-to-write Markdown, with a number of Markdown extensions that increase
+the power of Markdown. This makes it a great fit for user guides and other technical documentation.
+
+The example MkDocs project included in this project is configured to allow the built documentation
+to be hosted at any URL or viewed offline from the file system.
+
+To build the user guide, run ``tox -e docs-user-guide``. Open ``docs/user_guide/site/index.html``
+using a web browser.
+
+To build and serve the user guide with automatic rebuilding as you change the contents, run
+``tox -e docs-user-guide-serve`` and open http://127.0.0.1:8000 in a browser.
+
+Each time the ``master`` Git branch is updated, the ``pages`` GitHub Action will automatically
+build the user guide and publish it to GitHub Pages.
 
 Continuous Integration
 ^^^^^^^^^^^^^^^^^^^^^^

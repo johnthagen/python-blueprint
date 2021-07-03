@@ -15,11 +15,10 @@ theme:
     logo: material/math-integral-box
 markdown_extensions:
   - admonition
-  - attr_list
-  - pymdownx.highlight
   - pymdownx.keys
-  - pymdownx.snippets
+  - pymdownx.highlight
   - pymdownx.superfences
+  - pymdownx.snippets
   - pymdownx.tabbed
 extra:
   social:
