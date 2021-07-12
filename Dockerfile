@@ -69,9 +69,9 @@ RUN groupadd -r user && \
 # Setup application install directory.
 RUN mkdir ${APP_HOME}
 
-# If you use Docker Compose volumes, you might need to create the directories in the image, or
-# when Docker Compose creates them they are owned by the root user and are inaccessible by the
-# non-root user. See https://github.com/docker/compose/issues/3270
+# If you use Docker Compose volumes, you might need to create the directories in the image,
+# otherwise when Docker Compose creates them they are owned by the root user and are inaccessible
+# by the non-root user. See https://github.com/docker/compose/issues/3270
 
 WORKDIR ${APP_HOME}
 
