@@ -10,7 +10,7 @@ setuptools.setup(
     name="fact",
     version="1.0.0",
     description="Example Python project",
-    # Allow UTF-8 characters in README with encoding argument.
+    # Use UTF-8 encoding for README even on Windows by using the encoding argument.
     long_description=project_dir.joinpath("README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
     keywords=["python"],

@@ -17,7 +17,9 @@ attrs==21.2.0
 babel==2.9.1
     # via sphinx
 beautifulsoup4==4.9.3
-    # via furo
+    # via
+    #   furo
+    #   mkdocs-htmlproofer-plugin
 black==21.6b0
     # via -r dev-requirements.in
 certifi==2021.5.30
@@ -84,7 +86,11 @@ mccabe==0.6.1
 mergedeep==1.3.4
     # via mkdocs
 mkdocs==1.2.1
-    # via mkdocs-material
+    # via
+    #   mkdocs-htmlproofer-plugin
+    #   mkdocs-material
+mkdocs-htmlproofer-plugin==0.4.0
+    # via -r dev-requirements.in
 mkdocs-material==7.1.9
     # via
     #   -r dev-requirements.in
@@ -146,7 +152,9 @@ pyyaml-env-tag==0.1
 regex==2021.7.1
     # via black
 requests==2.25.1
-    # via sphinx
+    # via
+    #   mkdocs-htmlproofer-plugin
+    #   sphinx
 six==1.16.0
     # via
     #   livereload
