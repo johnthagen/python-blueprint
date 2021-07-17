@@ -30,3 +30,4 @@ sphinx-autobuild
 furo
 ## User Guide.
 mkdocs-material
+mkdocs-htmlproofer-plugin

@@ -4,8 +4,8 @@ strict: true
 copyright: Copyright &copy; 2018-2021 John Hagen
 theme:
   name: material
-  # By default fonts are pulled from Google on the Internet. To support offline usage, disable
-  # this.
+  # By default fonts are pulled from Google on the Internet. To support offline usage, this is
+  # disabled.
   font: false
   palette:
     scheme: slate
@@ -13,6 +13,7 @@ theme:
     accent: yellow
   icon:
     logo: material/math-integral-box
+  favicon: static/math-integral-box.png
 markdown_extensions:
   - admonition
   - pymdownx.keys
@@ -29,3 +30,12 @@ use_directory_urls: false
 # If building the docs in an agnostic way where it is not known what the final
 # hosting URL will be, set this to empty string.
 site_url: ""
+plugins:
+  - search
+  # This plugin is used to validate URLs (including some anchors).
+  # Uncomment to build the docs with this validation enabled.
+  # This is commented out by default because this requires network I/O to validate URLs, so it is
+  # inherently not exactly reproducible. But this plugin is none-the-less helpful at detecting
+  # incorrect URLs.
+#  - htmlproofer:
+#      raise_error: True
