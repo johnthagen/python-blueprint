@@ -13,6 +13,7 @@ theme:
     accent: yellow
   icon:
     logo: material/math-integral-box
+  favicon: static/math-integral-box.png
 markdown_extensions:
   - admonition
   - pymdownx.keys
