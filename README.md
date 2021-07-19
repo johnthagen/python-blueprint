@@ -88,8 +88,9 @@ To update dependencies:
 (venv) $ python -m piptools compile --upgrade dev-requirements.in
 ```
 
-After upgrading dependencies, run the unit tests as described in the Unit Testing\_ section to
-ensure that none of the updated packages caused incompatibilities in the current project.
+After upgrading dependencies, run the unit tests as described in the [Unit Testing](#unit-testing)
+section to ensure that none of the updated packages caused incompatibilities in the current
+project.
 
 ### Syncing Virtual Environments
 
