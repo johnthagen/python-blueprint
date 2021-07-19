@@ -1,7 +1,5 @@
-site_name: fact
 # Set strict to true to turn warnings into errors to catch warnings within CI.
 strict: true
-copyright: Copyright &copy; 2018-2021 John Hagen
 theme:
   name: material
   # By default fonts are pulled from Google on the Internet. To support offline usage, this is
@@ -13,6 +11,8 @@ theme:
     accent: yellow
   icon:
     logo: material/math-integral-box
+    # GitHub specific.
+    repo: fontawesome/brands/github
   favicon: static/math-integral-box.png
 markdown_extensions:
   - admonition
@@ -39,3 +39,9 @@ plugins:
   # incorrect URLs.
 #  - htmlproofer:
 #      raise_error: True
+site_name: fact
+copyright: Copyright &copy; 2018-2021 John Hagen
+# GitHub Specific Configuration.
+repo_name: python-blueprint
+repo_url: https://github.com/johnthagen/python-blueprint
+edit_uri: edit/master/docs/user_guide/docs/
