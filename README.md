@@ -396,7 +396,7 @@ communicate the presence of inline type hints to static type
 checkers. [mypy's documentation](https://mypy.readthedocs.io/en/stable/installed_packages.html)
 provides further examples on how to do this as well.
 
-`mypy` looks for the existence of a file named `py.typed` in the root of the installed package to
+Mypy looks for the existence of a file named `py.typed` in the root of the installed package to
 indicate that inline type hints should be checked.
 
 ## Licensing
