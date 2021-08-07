@@ -7,24 +7,24 @@
 alabaster==0.7.12
     # via sphinx
 appdirs==1.4.4
-    # via
-    #   black
-    #   virtualenv
+    # via black
 atomicwrites==1.4.0
     # via pytest
 attrs==21.2.0
     # via pytest
 babel==2.9.1
     # via sphinx
+backports.entry-points-selectable==1.1.0
+    # via virtualenv
 beautifulsoup4==4.9.3
     # via
     #   furo
     #   mkdocs-htmlproofer-plugin
-black==21.6b0
+black==21.7b0
     # via -r dev-requirements.in
 certifi==2021.5.30
     # via requests
-chardet==4.0.0
+charset-normalizer==2.0.4
     # via requests
 click==7.1.2
     # via
@@ -52,21 +52,22 @@ flake8==3.9.2
     # via
     #   -r dev-requirements.in
     #   flake8-polyfill
+    #   pep8-naming
 flake8-polyfill==1.0.2
     # via pep8-naming
-furo==2021.6.24b37
+furo==2021.7.31b41
     # via -r dev-requirements.in
 ghp-import==2.0.1
     # via mkdocs
-idna==2.10
+idna==3.2
     # via requests
 imagesize==1.2.0
     # via sphinx
-importlib-metadata==4.6.0
+importlib-metadata==4.6.3
     # via mkdocs
 iniconfig==1.1.1
     # via pytest
-isort==5.8.0
+isort==5.9.3
     # via -r dev-requirements.in
 jinja2==3.0.1
     # via
@@ -77,6 +78,7 @@ livereload==2.6.3
 markdown==3.3.4
     # via
     #   mkdocs
+    #   mkdocs-htmlproofer-plugin
     #   mkdocs-material
     #   pymdown-extensions
 markupsafe==2.0.1
@@ -85,13 +87,13 @@ mccabe==0.6.1
     # via flake8
 mergedeep==1.3.4
     # via mkdocs
-mkdocs==1.2.1
+mkdocs==1.2.2
     # via
     #   mkdocs-htmlproofer-plugin
     #   mkdocs-material
-mkdocs-htmlproofer-plugin==0.4.0
+mkdocs-htmlproofer-plugin==0.5.0
     # via -r dev-requirements.in
-mkdocs-material==7.1.9
+mkdocs-material==7.2.2
     # via
     #   -r dev-requirements.in
     #   mkdocs-material-extensions
@@ -109,10 +111,12 @@ packaging==21.0
     #   pytest
     #   sphinx
     #   tox
-pathspec==0.8.1
+pathspec==0.9.0
     # via black
-pep8-naming==0.11.1
+pep8-naming==0.12.0
     # via -r dev-requirements.in
+platformdirs==2.2.0
+    # via virtualenv
 pluggy==0.13.1
     # via
     #   pytest
@@ -139,7 +143,7 @@ pytest==6.2.4
     #   pytest-cov
 pytest-cov==2.12.1
     # via -r dev-requirements.in
-python-dateutil==2.8.1
+python-dateutil==2.8.2
     # via ghp-import
 pytz==2021.1
     # via babel
@@ -149,9 +153,9 @@ pyyaml==5.4.1
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2021.7.1
+regex==2021.8.3
     # via black
-requests==2.25.1
+requests==2.26.0
     # via
     #   mkdocs-htmlproofer-plugin
     #   sphinx
@@ -165,7 +169,7 @@ snowballstemmer==2.1.0
     # via sphinx
 soupsieve==2.2.1
     # via beautifulsoup4
-sphinx==4.0.2
+sphinx==4.1.2
     # via
     #   -r dev-requirements.in
     #   furo
@@ -186,20 +190,21 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 toml==0.10.2
     # via
-    #   black
     #   mypy
     #   pytest
     #   pytest-cov
     #   tox
+tomli==1.2.1
+    # via black
 tornado==6.1
     # via livereload
-tox==3.23.1
+tox==3.24.1
     # via -r dev-requirements.in
 typing-extensions==3.10.0.0
     # via mypy
 urllib3==1.26.6
     # via requests
-virtualenv==20.4.7
+virtualenv==20.7.0
     # via tox
 watchdog==2.1.3
     # via mkdocs
