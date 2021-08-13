@@ -14,6 +14,10 @@ theme:
     # GitHub specific.
     repo: fontawesome/brands/github
   favicon: static/math-integral-box.png
+  features:
+    - search.highlight
+    - search.share
+    - search.suggest
 markdown_extensions:
   - admonition
   - pymdownx.keys
