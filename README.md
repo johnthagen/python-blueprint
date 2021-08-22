@@ -57,7 +57,7 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 ```
 
-On Windows `cmd`:
+On Windows Powershell / `cmd`:
 
 ```bash
 > py -m venv venv
