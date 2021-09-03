@@ -61,7 +61,7 @@ On Windows Powershell / `cmd`:
 
 ```bash
 > py -m venv venv
-> venv\Scripts\activate.bat
+> venv\Scripts\activate
 ```
 
 Once activated, it is good practice to update core packaging tools (`pip`, `setuptools`,
