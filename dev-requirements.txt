@@ -4,20 +4,14 @@
 #
 #    pip-compile '.\dev-requirements.in'
 #
-alabaster==0.7.12
-    # via sphinx
 atomicwrites==1.4.0
     # via pytest
 attrs==21.2.0
     # via pytest
-babel==2.9.1
-    # via sphinx
 backports.entry-points-selectable==1.1.0
     # via virtualenv
 beautifulsoup4==4.10.0
-    # via
-    #   furo
-    #   mkdocs-htmlproofer-plugin
+    # via mkdocs-htmlproofer-plugin
 black==21.9b0
     # via -r .\dev-requirements.in
 certifi==2021.10.8
@@ -34,15 +28,11 @@ colorama==0.4.4
     #   -c .\requirements.txt
     #   click
     #   pytest
-    #   sphinx
-    #   sphinx-autobuild
     #   tox
 coverage[toml]==6.0.2
     # via pytest-cov
 distlib==0.3.3
     # via virtualenv
-docutils==0.17.1
-    # via sphinx
 filelock==3.3.1
     # via
     #   tox
@@ -54,14 +44,10 @@ flake8==4.0.1
     #   pep8-naming
 flake8-polyfill==1.0.2
     # via pep8-naming
-furo==2021.10.9
-    # via -r .\dev-requirements.in
 ghp-import==2.0.2
     # via mkdocs
 idna==3.3
     # via requests
-imagesize==1.2.0
-    # via sphinx
 importlib-metadata==4.2.0
     # via
     #   -r .\dev-requirements.in
@@ -74,33 +60,41 @@ jinja2==3.0.2
     # via
     #   mkdocs
     #   mkdocs-material
-    #   sphinx
-livereload==2.6.3
-    # via sphinx-autobuild
+    #   mkdocstrings
 lxml==4.6.3
     # via mkdocs-htmlproofer-plugin
 markdown==3.3.4
     # via
     #   mkdocs
+    #   mkdocs-autorefs
     #   mkdocs-htmlproofer-plugin
     #   mkdocs-material
+    #   mkdocstrings
     #   pymdown-extensions
 markupsafe==2.0.1
-    # via jinja2
+    # via
+    #   jinja2
+    #   mkdocstrings
 mccabe==0.6.1
     # via flake8
 mergedeep==1.3.4
     # via mkdocs
 mkdocs==1.2.3
     # via
+    #   mkdocs-autorefs
     #   mkdocs-htmlproofer-plugin
     #   mkdocs-material
+    #   mkdocstrings
+mkdocs-autorefs==0.3.0
+    # via mkdocstrings
 mkdocs-htmlproofer-plugin==0.7.0
     # via -r .\dev-requirements.in
 mkdocs-material==7.3.4
     # via -r .\dev-requirements.in
 mkdocs-material-extensions==1.0.3
     # via mkdocs-material
+mkdocstrings==0.16.2
+    # via -r .\dev-requirements.in
 mypy==0.910
     # via -r .\dev-requirements.in
 mypy-extensions==0.4.3
@@ -111,7 +105,6 @@ packaging==21.0
     # via
     #   mkdocs
     #   pytest
-    #   sphinx
     #   tox
 pathspec==0.9.0
     # via black
@@ -134,11 +127,11 @@ pycodestyle==2.8.0
 pyflakes==2.4.0
     # via flake8
 pygments==2.10.0
+    # via mkdocs-material
+pymdown-extensions==9.0
     # via
     #   mkdocs-material
-    #   sphinx
-pymdown-extensions==9.0
-    # via mkdocs-material
+    #   mkdocstrings
 pyparsing==2.4.7
     # via packaging
 pytest==6.2.5
@@ -149,8 +142,8 @@ pytest-cov==3.0.0
     # via -r .\dev-requirements.in
 python-dateutil==2.8.2
     # via ghp-import
-pytz==2021.3
-    # via babel
+pytkdocs==0.12.0
+    # via mkdocstrings
 pyyaml==6.0
     # via
     #   mkdocs
@@ -160,38 +153,14 @@ pyyaml-env-tag==0.1
 regex==2021.10.8
     # via black
 requests==2.26.0
-    # via
-    #   mkdocs-htmlproofer-plugin
-    #   sphinx
+    # via mkdocs-htmlproofer-plugin
 six==1.16.0
     # via
-    #   livereload
     #   python-dateutil
     #   tox
     #   virtualenv
-snowballstemmer==2.1.0
-    # via sphinx
 soupsieve==2.2.1
     # via beautifulsoup4
-sphinx==4.2.0
-    # via
-    #   -r .\dev-requirements.in
-    #   furo
-    #   sphinx-autobuild
-sphinx-autobuild==2021.3.14
-    # via -r .\dev-requirements.in
-sphinxcontrib-applehelp==1.0.2
-    # via sphinx
-sphinxcontrib-devhelp==1.0.2
-    # via sphinx
-sphinxcontrib-htmlhelp==2.0.0
-    # via sphinx
-sphinxcontrib-jsmath==1.0.1
-    # via sphinx
-sphinxcontrib-qthelp==1.0.3
-    # via sphinx
-sphinxcontrib-serializinghtml==1.1.5
-    # via sphinx
 toml==0.10.2
     # via
     #   mypy
@@ -201,8 +170,6 @@ tomli==1.2.1
     # via
     #   black
     #   coverage
-tornado==6.1
-    # via livereload
 tox==3.24.4
     # via -r .\dev-requirements.in
 typing-extensions==3.10.0.2
@@ -217,6 +184,3 @@ watchdog==2.1.6
     # via mkdocs
 zipp==3.6.0
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
