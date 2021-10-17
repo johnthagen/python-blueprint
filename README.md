@@ -13,7 +13,7 @@ Python testing and linting tooling. The project contains a `fact` package that p
 implementation of the [factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`)
 and a command line interface (`fact.cli`).
 
-## Requirements
+# Requirements
 
 Python 3.7+.
 
@@ -23,7 +23,7 @@ Python 3.7+.
 > should consider supporting Python 3 only, which is simpler than trying to support both. As a 
 > result, support for Python 2.7 in this example project has been dropped.
 
-## Windows Support
+# Windows Support
 
 Summary: On Windows, use `py` instead of `python3` for many of the examples in this documentation.
 
@@ -33,7 +33,7 @@ users typically access Python through the [py](https://www.python.org/dev/peps/p
 rather than a `python3` link in their `PATH`. Within a virtual environment, all platforms operate
 the same and use a `python` link to access the Python version used in that virtual environment.
 
-## Dependencies
+# Dependencies
 
 Dependencies are defined in:
 
@@ -42,7 +42,7 @@ Dependencies are defined in:
 - `dev-requirements.in`
 - `dev-requirements.txt`
 
-### Virtual Environments
+## Virtual Environments
 
 It is best practice during development to create an
 isolated [Python virtual environment](https://docs.python.org/3/library/venv.html) using the `venv`
@@ -71,7 +71,7 @@ and `wheel`) to the latest versions.
 (venv) $ python -m pip install --upgrade pip setuptools wheel
 ```
 
-### (Applications Only) Locking Dependencies
+## (Applications Only) Locking Dependencies
 
 This project uses [pip-tools](https://github.com/jazzband/pip-tools) to lock project dependencies
 and create reproducible virtual environments.
@@ -92,7 +92,7 @@ After upgrading dependencies, run the unit tests as described in the [Unit Testi
 section to ensure that none of the updated packages caused incompatibilities in the current
 project.
 
-### Syncing Virtual Environments
+## Syncing Virtual Environments
 
 To cleanly install your dependencies into your virtual environment:
 
@@ -100,7 +100,7 @@ To cleanly install your dependencies into your virtual environment:
 (venv) $ python -m piptools sync requirements.txt dev-requirements.txt
 ```
 
-## Packaging
+# Packaging
 
 This project is designed as a Python package, meaning that it can be bundled up and redistributed
 as a single compressed file.
@@ -124,7 +124,7 @@ This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.wh
 Read more about the [advantages of wheels](https://pythonwheels.com/) to understand why generating
 wheel distributions are important.
 
-### Upload Distributions to PyPI
+## Upload Distributions to PyPI
 
 Source and wheel redistributable packages can
 be [uploaded to PyPI](https://packaging.python.org/tutorials/packaging-projects/) or installed
@@ -137,7 +137,7 @@ To upload to PyPI:
 (venv) $ twine upload dist/*
 ```
 
-## Testing
+# Testing
 
 Automated testing is performed using [tox](https://tox.readthedocs.io/en/latest/index.html). tox
 will automatically create virtual environments based on `tox.ini` for unit testing, PEP8 style
@@ -151,7 +151,7 @@ guide checking, and documentation generation.
 (venv) $ tox
 ```
 
-### Unit Testing
+## Unit Testing
 
 Unit testing is performed with [pytest](https://pytest.org/). pytest has become the defacto Python
 unit testing framework. Some key advantages over the built
@@ -183,7 +183,7 @@ To pass arguments to `pytest` through `tox`:
 (venv) $ tox -e py39 -- -k invalid_factorial
 ```
 
-### Code Style Checking
+## Code Style Checking
 
 [PEP8](https://www.python.org/dev/peps/pep-0008/) is the universally accepted style guide for
 Python code. PEP8 code compliance is verified using [flake8](http://flake8.pycqa.org/). flake8 is
@@ -191,7 +191,7 @@ configured in the `[flake8]` section of `tox.ini`. Extra flake8 plugins are also
 
 - `pep8-naming`: Ensure functions, classes, and variables are named with correct casing.
 
-### Automated Code Formatting
+## Automated Code Formatting
 
 Code is automatically formatted using [black](https://github.com/psf/black). Imports are
 automatically sorted and grouped using [isort](https://github.com/PyCQA/isort/).
@@ -212,17 +212,76 @@ To verify code has been formatted, such as in a CI job:
 (venv) $ tox -e fmt-check
 ```
 
-### Generated API Documentation
+## Continuous Integration
 
-API Documentation for the `fact` Python project modules is automatically
-generated using a [Sphinx](http://sphinx-doc.org/) tox environment. Sphinx is a documentation
-generation tool that is the defacto tool for Python API documentation. Sphinx uses
-the [RST](https://www.sphinx-doc.org/en/latest/usage/restructuredtext/basics.html) markup language.
+Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
+runs all tests and lints for every commit and pull request to the repository.
 
-This project uses
-the [napoleon](http://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html) plugin for
-Sphinx, which renders Google-style docstrings. Google-style docstrings provide a good mix of
-easy-to-read docstrings in code as well as nicely-rendered output.
+GitHub Actions is configured in `.github/workflows/python.yml` and `tox.ini` using
+the [tox-gh-actions plugin](https://github.com/ymyzk/tox-gh-actions).
+
+# Type Hinting
+
+[Type hinting](https://docs.python.org/3/library/typing.html) allows developers to include optional
+static typing information to Python source code. This allows static analyzers such
+as [PyCharm](https://www.jetbrains.com/pycharm/), [mypy](http://mypy-lang.org/),
+or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the
+correct types before runtime.
+
+For [PyCharm in particular](https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html),
+the IDE is able to provide much richer auto-completion, refactoring, and type checking while the
+user types, resulting in increased productivity and correctness.
+
+This project uses the type hinting syntax introduced in Python 3:
+
+```python
+def factorial(n: int) -> int:
+    ...
+```
+
+Type checking is performed by mypy via `tox -e type-check`. mypy is configured in `pyproject.toml`.
+
+See also [awesome-python-typing](https://github.com/typeddjango/awesome-python-typing).
+
+## Distributing Type Hints
+
+[PEP 561](https://www.python.org/dev/peps/pep-0561/) defines how a Python package should
+communicate the presence of inline type hints to static type
+checkers. [mypy's documentation](https://mypy.readthedocs.io/en/stable/installed_packages.html)
+provides further examples on how to do this as well.
+
+Mypy looks for the existence of a file named `py.typed` in the root of the installed package to
+indicate that inline type hints should be checked.
+
+# Documentation
+
+## Generating a User Guide
+
+[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) is a powerful static site
+generator that combines easy-to-write Markdown, with a number of Markdown extensions that increase
+the power of Markdown. This makes it a great fit for user guides and other technical documentation.
+
+The example MkDocs project included in this project is configured to allow the built documentation
+to be hosted at any URL or viewed offline from the file system.
+
+To build the user guide, run `tox -e docs`. Open `docs/user_guide/site/index.html` using
+a web browser.
+
+To build and serve the user guide with automatic rebuilding as you change the contents,
+run `tox -e docs-serve` and open <http://127.0.0.1:8000> in a browser.
+
+Each time the `master` Git branch is updated, the `.github/workflows/pages.yml` GitHub Action will
+automatically build the user guide and publish it to [GitHub Pages](https://pages.github.com/).
+This is configured in the `docs-user-guide-github-pages` `tox` environment. This hosted user guide
+can be viewed at <https://johnthagen.github.io/python-blueprint/>
+
+## Generating API Documentation
+
+This project uses [mkdocstrings](https://github.com/mkdocstrings/mkdocstrings) plugin for
+MkDocs, which renders
+[Google-style docstrings](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html)
+into an MkDocs project. Google-style docstrings provide a good mix of easy-to-read docstrings in
+code as well as nicely-rendered output.
 
 ```python
 """Computes the factorial through a recursive algorithm.
@@ -238,69 +297,7 @@ Returns:
 """
 ```
 
-The Sphinx project is configured in `docs/api/conf.py`.
-
-This project uses the [furo](https://pradyunsg.me/furo/) Sphinx theme for its elegant, simple to
-use, dark theme.
-
-Build the docs using the `docs-api` tox environment (e.g. `tox` or `tox -e docs-api`). Once built,
-open `docs/api/_build/index.html` in a web browser.
-
-To configure Sphinx to automatically rebuild when it detects changes, run `tox -e docs-api-serve`
-and open <http://127.0.0.1:8000> in a browser.
-
-#### Generate a New Sphinx Project
-
-To generate the Sphinx project shown in this project:
-
-```bash
-# Note: Sphinx is installed into the virtual environment automatically by ``piptools sync``
-# command above.
-(venv) $ mkdir -p docs/api
-(venv) $ cd docs/api
-(venv) $ sphinx-quickstart --no-makefile --no-batchfile --extensions sphinx.ext.napoleon
-# When prompted, select all defaults.
-```
-
-Modify `conf.py` appropriately:
-
-```python
-# Add the project's Python package to the path so that autodoc can find it.
-import os
-import sys
-sys.path.insert(0, os.path.abspath("../../src"))
-```
-
-### Generating a User Guide
-
-[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) is a powerful static site
-generator that combines easy-to-write Markdown, with a number of Markdown extensions that increase
-the power of Markdown. This makes it a great fit for user guides and other technical documentation.
-
-The example MkDocs project included in this project is configured to allow the built documentation
-to be hosted at any URL or viewed offline from the file system.
-
-To build the user guide, run `tox -e docs-user-guide`. Open `docs/user_guide/site/index.html` using
-a web browser.
-
-To build and serve the user guide with automatic rebuilding as you change the contents,
-run `tox -e docs-user-guide-serve` and open <http://127.0.0.1:8000> in a browser.
-
-Each time the `master` Git branch is updated, the `.github/workflows/pages.yml` GitHub Action will
-automatically build the user guide and publish it to [GitHub Pages](https://pages.github.com/).
-This is configured in the `docs-user-guide-github-pages` `tox` environment. This hosted user guide
-can be viewed at <https://johnthagen.github.io/python-blueprint/>
-
-### Continuous Integration
-
-Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
-runs all tests and lints for every commit and pull request to the repository.
-
-GitHub Actions is configured in `.github/workflows/python.yml` and `tox.ini` using
-the [tox-gh-actions plugin](https://github.com/ymyzk/tox-gh-actions).
-
-Project Structure
------------------
+# Project Structure
 
 Traditionally, Python projects place the source for their packages in the root of the project
 structure, like:
@@ -366,40 +363,7 @@ fact
 └── setup.py
 ```
 
-Type Hinting
-------------
-
-[Type hinting](https://docs.python.org/3/library/typing.html) allows developers to include optional
-static typing information to Python source code. This allows static analyzers such
-as [PyCharm](https://www.jetbrains.com/pycharm/), [mypy](http://mypy-lang.org/),
-or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the
-correct types before runtime.
-
-For [PyCharm in particular](https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html),
-the IDE is able to provide much richer auto-completion, refactoring, and type checking while the
-user types, resulting in increased productivity and correctness.
-
-This project uses the type hinting syntax introduced in Python 3:
-
-```python
-def factorial(n: int) -> int:
-```
-
-Type checking is performed by mypy via `tox -e type-check`. mypy is configured in `pyproject.toml`.
-
-See also [awesome-python-typing](https://github.com/typeddjango/awesome-python-typing).
-
-### Distributing Type Hints
-
-[PEP 561](https://www.python.org/dev/peps/pep-0561/) defines how a Python package should
-communicate the presence of inline type hints to static type
-checkers. [mypy's documentation](https://mypy.readthedocs.io/en/stable/installed_packages.html)
-provides further examples on how to do this as well.
-
-Mypy looks for the existence of a file named `py.typed` in the root of the installed package to
-indicate that inline type hints should be checked.
-
-## Licensing
+# Licensing
 
 Licensing for the project is defined in:
 
@@ -420,7 +384,7 @@ dependencies) using [pip-licenses](https://github.com/raimon49/pip-licenses):
  exitstatus  1.3.0    MIT License
 ```
 
-## Docker
+# Docker
 
 [Docker](https://www.docker.com/) is a tool that allows for software to be packaged into isolated
 containers. It is not necessary to use Docker in a Python project, but for the purposes of
@@ -446,7 +410,7 @@ To run the image in a container:
 $ docker run --rm --interactive --tty fact 5
 ```
 
-## PyCharm Configuration
+# PyCharm Configuration
 
 To configure PyCharm 2018.3 and newer to align to the code style used in this project:
 
@@ -474,7 +438,7 @@ To configure PyCharm 2018.3 and newer to align to the code style used in this pr
   - Editor | Code Style | Python | Wrapping and Braces | "From" Import Statements
     - ☑ Force parentheses if multiline
 
-### Integrate Code Formatters
+## Integrate Code Formatters
 
 To integrate automatic code formatters into PyCharm, reference the following instructions:
 
