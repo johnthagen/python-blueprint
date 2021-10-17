@@ -20,7 +20,7 @@ setuptools.setup(
     package_dir={"": "src"},
     # pip 9.0+ will inspect this field when installing to help users install a
     # compatible version of the library for their Python version.
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     # There are some peculiarities on how to include package data for source
     # distributions using setuptools. You also need to add entries for package
     # data to MANIFEST.in.
@@ -46,10 +46,10 @@ setuptools.setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     entry_points={"console_scripts": ["fact=fact.cli:main"]},
 )

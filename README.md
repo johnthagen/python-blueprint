@@ -15,7 +15,7 @@ and a command line interface (`fact.cli`).
 
 ## Requirements
 
-Python 3.6+.
+Python 3.7+.
 
 > **Note**
 >
@@ -333,7 +333,7 @@ this isolation for two reasons:
    package `fact` is in the project root, it shadows the `fact` package installed in the tox
    environment.
 2. Calling `pytest` directly anywhere that it can find the tests will also add the project root
-   to `sys.path` if the `tests` folder is a a Python package (that is, it contains a `__init__.py`
+   to `sys.path` if the `tests` folder is a Python package (that is, it contains a `__init__.py`
    file).
    [pytest adds all folders containing packages](https://docs.pytest.org/en/latest/goodpractices.html#conventions-for-python-test-discovery)
    to `sys.path` because it imports the tests like regular Python modules.
@@ -372,8 +372,8 @@ Type Hinting
 [Type hinting](https://docs.python.org/3/library/typing.html) allows developers to include optional
 static typing information to Python source code. This allows static analyzers such
 as [PyCharm](https://www.jetbrains.com/pycharm/), [mypy](http://mypy-lang.org/),
-or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the correct
-types before runtime.
+or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the
+correct types before runtime.
 
 For [PyCharm in particular](https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html),
 the IDE is able to provide much richer auto-completion, refactoring, and type checking while the

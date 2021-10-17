@@ -31,3 +31,7 @@ furo
 ## User Guide.
 mkdocs-material
 mkdocs-htmlproofer-plugin
+
+# TODO: Remove this once flake8 remove cap on importlib-metadata, or Python 3.7 support is dropped.
+# https://github.com/PyCQA/flake8/commit/975a3f45334861ebd8960c00e881443c23654bca
+importlib-metadata<4.3

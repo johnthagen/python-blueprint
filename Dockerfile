@@ -8,7 +8,7 @@
 #     subtle errors when using MUSL.
 #   - These Python packages usually only provide binary wheels for GLIBC, so the packages
 #     will need to be recompiled fully within the Docker images, increasing build times.
-FROM python:3.8-slim-buster AS python_builder
+FROM python:3.9-slim-buster AS python_builder
 
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -49,7 +49,7 @@ RUN pip install .
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
-FROM python:3.8-slim-buster
+FROM python:3.9-slim-buster
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
