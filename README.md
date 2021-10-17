@@ -212,6 +212,14 @@ To verify code has been formatted, such as in a CI job:
 (venv) $ tox -e fmt-check
 ```
 
+## Continuous Integration
+
+Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
+runs all tests and lints for every commit and pull request to the repository.
+
+GitHub Actions is configured in `.github/workflows/python.yml` and `tox.ini` using
+the [tox-gh-actions plugin](https://github.com/ymyzk/tox-gh-actions).
+
 # Type Hinting
 
 [Type hinting](https://docs.python.org/3/library/typing.html) allows developers to include optional
@@ -244,14 +252,6 @@ provides further examples on how to do this as well.
 
 Mypy looks for the existence of a file named `py.typed` in the root of the installed package to
 indicate that inline type hints should be checked.
-
-## Continuous Integration
-
-Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
-runs all tests and lints for every commit and pull request to the repository.
-
-GitHub Actions is configured in `.github/workflows/python.yml` and `tox.ini` using
-the [tox-gh-actions plugin](https://github.com/ymyzk/tox-gh-actions).
 
 # Documentation
 
