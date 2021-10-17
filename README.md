@@ -15,7 +15,7 @@ and a command line interface (`fact.cli`).
 
 ## Requirements
 
-Python 3.6+.
+Python 3.7+.
 
 > **Note**
 >
