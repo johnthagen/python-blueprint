@@ -372,8 +372,8 @@ Type Hinting
 [Type hinting](https://docs.python.org/3/library/typing.html) allows developers to include optional
 static typing information to Python source code. This allows static analyzers such
 as [PyCharm](https://www.jetbrains.com/pycharm/), [mypy](http://mypy-lang.org/),
-or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the correct
-types before runtime.
+or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the
+correct types before runtime.
 
 For [PyCharm in particular](https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html),
 the IDE is able to provide much richer auto-completion, refactoring, and type checking while the
