@@ -333,7 +333,7 @@ this isolation for two reasons:
    package `fact` is in the project root, it shadows the `fact` package installed in the tox
    environment.
 2. Calling `pytest` directly anywhere that it can find the tests will also add the project root
-   to `sys.path` if the `tests` folder is a a Python package (that is, it contains a `__init__.py`
+   to `sys.path` if the `tests` folder is a Python package (that is, it contains a `__init__.py`
    file).
    [pytest adds all folders containing packages](https://docs.pytest.org/en/latest/goodpractices.html#conventions-for-python-test-discovery)
    to `sys.path` because it imports the tests like regular Python modules.

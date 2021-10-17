@@ -62,8 +62,10 @@ idna==3.3
     # via requests
 imagesize==1.2.0
     # via sphinx
-importlib-metadata==4.8.1
-    # via mkdocs
+importlib-metadata==4.2.0
+    # via
+    #   -r .\dev-requirements.in
+    #   mkdocs
 iniconfig==1.1.1
     # via pytest
 isort==5.9.3
