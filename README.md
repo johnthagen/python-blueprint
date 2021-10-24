@@ -113,10 +113,11 @@ Packaging is configured by:
 
 To package the project as both a 
 [source distribution](https://docs.python.org/3/distutils/sourcedist.html) and
-a [wheel](https://wheel.readthedocs.io/en/stable/):
+a [wheel](https://wheel.readthedocs.io/en/stable/) using the
+[`build`](https://pypa-build.readthedocs.io/en/stable/) package:
 
 ```bash
-(venv) $ python setup.py sdist bdist_wheel
+(venv) $ tox -e build
 ```
 
 This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.whl`.
@@ -130,11 +131,10 @@ Source and wheel redistributable packages can
 be [uploaded to PyPI](https://packaging.python.org/tutorials/packaging-projects/) or installed
 directly from the filesystem using `pip`.
 
-To upload to PyPI:
+After running the `build` `tox` environment, to upload to PyPI:
 
 ```bash
-(venv) $ python -m pip install twine
-(venv) $ twine upload dist/*
+(venv) $ tox -e upload
 ```
 
 # Testing
