@@ -131,7 +131,8 @@ Source and wheel redistributable packages can
 be [uploaded to PyPI](https://packaging.python.org/tutorials/packaging-projects/) or installed
 directly from the filesystem using `pip`.
 
-After running the `build` `tox` environment, to upload to PyPI:
+After running the `build` `tox` environment, to upload to PyPI using
+[`twine`](https://twine.readthedocs.io/en/latest/):
 
 ```bash
 (venv) $ tox -e upload
