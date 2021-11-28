@@ -10,7 +10,7 @@
     This user guide is purely an illustrative example that shows off several features of MkDocs
     and included Markdown extensions.
 
-## Installation 
+## Installation
 
 First, create and activate a Python virtual environment:
 
