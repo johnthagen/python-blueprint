@@ -15,6 +15,8 @@ theme:
     repo: fontawesome/brands/github
   favicon: static/math-integral-box.png
   features:
+    - content.code.annotate
+    - navigation.tracking
     - search.highlight
     - search.share
     - search.suggest
@@ -24,7 +26,8 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
   - pymdownx.snippets
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true
 extra:
   social:
     - icon: fontawesome/brands/github
