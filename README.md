@@ -147,7 +147,7 @@ guide checking, and documentation generation.
 ```bash
 # Run all environments.
 #   To only run a single environment, specify it like: -e lint
-# Note: tox is installed into the virtual environment automatically by ``piptools sync``
+# Note: tox is installed into the virtual environment automatically by `piptools sync`
 # command above.
 (venv) $ tox
 ```
