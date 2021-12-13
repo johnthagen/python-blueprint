@@ -4,8 +4,6 @@
 #
 #    pip-compile '.\dev-requirements.in'
 #
-atomicwrites==1.4.0
-    # via pytest
 attrs==21.2.0
     # via pytest
 backports.entry-points-selectable==1.1.1
@@ -13,22 +11,16 @@ backports.entry-points-selectable==1.1.1
 beautifulsoup4==4.10.0
     # via mkdocs-htmlproofer-plugin
 black==21.11b1
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 certifi==2021.10.8
     # via requests
 charset-normalizer==2.0.8
     # via requests
 click==8.0.3
     # via
-    #   -c .\requirements.txt
+    #   -c requirements.txt
     #   black
     #   mkdocs
-colorama==0.4.4
-    # via
-    #   -c .\requirements.txt
-    #   click
-    #   pytest
-    #   tox
 coverage[toml]==6.2
     # via pytest-cov
 distlib==0.3.3
@@ -39,7 +31,7 @@ filelock==3.4.0
     #   virtualenv
 flake8==4.0.1
     # via
-    #   -r .\dev-requirements.in
+    #   -r dev-requirements.in
     #   flake8-polyfill
     #   pep8-naming
 flake8-polyfill==1.0.2
@@ -49,19 +41,17 @@ ghp-import==2.0.2
 idna==3.3
     # via requests
 importlib-metadata==4.8.2
-    # via
-    #   markdown
-    #   mkdocs
+    # via mkdocs
 iniconfig==1.1.1
     # via pytest
 isort==5.10.1
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 jinja2==3.0.3
     # via
     #   mkdocs
     #   mkdocs-material
     #   mkdocstrings
-lxml==4.6.4
+lxml==4.6.5
     # via mkdocs-htmlproofer-plugin
 markdown==3.3.6
     # via
@@ -88,15 +78,15 @@ mkdocs==1.2.3
 mkdocs-autorefs==0.3.0
     # via mkdocstrings
 mkdocs-htmlproofer-plugin==0.7.0
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 mkdocs-material==8.0.0
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 mkdocs-material-extensions==1.0.3
     # via mkdocs-material
 mkdocstrings==0.16.2
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 mypy==0.910
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 mypy-extensions==0.4.3
     # via
     #   black
@@ -109,7 +99,7 @@ packaging==21.3
 pathspec==0.9.0
     # via black
 pep8-naming==0.12.1
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 platformdirs==2.4.0
     # via
     #   black
@@ -136,10 +126,10 @@ pyparsing==3.0.6
     # via packaging
 pytest==6.2.5
     # via
-    #   -r .\dev-requirements.in
+    #   -r dev-requirements.in
     #   pytest-cov
 pytest-cov==3.0.0
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 python-dateutil==2.8.2
     # via ghp-import
 pytkdocs==0.12.0
@@ -171,7 +161,7 @@ tomli==1.2.2
     #   black
     #   coverage
 tox==3.24.4
-    # via -r .\dev-requirements.in
+    # via -r dev-requirements.in
 typing-extensions==4.0.0
     # via
     #   black
