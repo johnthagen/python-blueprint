@@ -12,11 +12,11 @@ backports.entry-points-selectable==1.1.1
     # via virtualenv
 beautifulsoup4==4.10.0
     # via mkdocs-htmlproofer-plugin
-black==21.11b1
+black==21.12b0
     # via -r .\dev-requirements.in
 certifi==2021.10.8
     # via requests
-charset-normalizer==2.0.8
+charset-normalizer==2.0.9
     # via requests
 click==8.0.3
     # via
@@ -31,7 +31,7 @@ colorama==0.4.4
     #   tox
 coverage[toml]==6.2
     # via pytest-cov
-distlib==0.3.3
+distlib==0.3.4
     # via virtualenv
 filelock==3.4.0
     # via
@@ -48,7 +48,7 @@ ghp-import==2.0.2
     # via mkdocs
 idna==3.3
     # via requests
-importlib-metadata==4.8.2
+importlib-metadata==4.10.0
     # via
     #   markdown
     #   mkdocs
@@ -61,7 +61,7 @@ jinja2==3.0.3
     #   mkdocs
     #   mkdocs-material
     #   mkdocstrings
-lxml==4.6.4
+lxml==4.7.1
     # via mkdocs-htmlproofer-plugin
 markdown==3.3.6
     # via
@@ -87,15 +87,15 @@ mkdocs==1.2.3
     #   mkdocstrings
 mkdocs-autorefs==0.3.0
     # via mkdocstrings
-mkdocs-htmlproofer-plugin==0.7.0
+mkdocs-htmlproofer-plugin==0.8.0
     # via -r .\dev-requirements.in
-mkdocs-material==8.0.0
+mkdocs-material==8.1.3
     # via -r .\dev-requirements.in
 mkdocs-material-extensions==1.0.3
     # via mkdocs-material
 mkdocstrings==0.16.2
     # via -r .\dev-requirements.in
-mypy==0.910
+mypy==0.930
     # via -r .\dev-requirements.in
 mypy-extensions==0.4.3
     # via
@@ -150,8 +150,6 @@ pyyaml==6.0
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2021.11.10
-    # via black
 requests==2.26.0
     # via mkdocs-htmlproofer-plugin
 six==1.16.0
@@ -163,16 +161,16 @@ soupsieve==2.3.1
     # via beautifulsoup4
 toml==0.10.2
     # via
-    #   mypy
     #   pytest
     #   tox
-tomli==1.2.2
+tomli==1.2.3
     # via
     #   black
     #   coverage
+    #   mypy
 tox==3.24.4
     # via -r .\dev-requirements.in
-typing-extensions==4.0.0
+typing-extensions==4.0.1
     # via
     #   black
     #   mypy
