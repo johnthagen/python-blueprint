@@ -19,8 +19,8 @@ def test_factorial(n: int, expected: int) -> None:
 @pytest.mark.parametrize(
     "n",
     [
-        (-1),
-        (-100),
+        -1,
+        -100,
     ],
 )
 def test_invalid_factorial(n: int) -> None:
