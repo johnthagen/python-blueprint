@@ -34,7 +34,7 @@ setuptools.setup(
     # requirements.txt must be included in MANIFEST.in for this to work.
     # It does not work for all types of dependencies (e.g. VCS dependencies).
     # For VCS dependencies, use pip >= 19 and the PEP 508 syntax.
-    #   Example: 'requests @ git+https://github.com/requests/requests.git@branch_or_tag'
+    #   Example: requests @ git+https://github.com/requests/requests.git@branch_or_tag
     #   See: https://github.com/pypa/pip/issues/6162
     install_requires=project_dir.joinpath("requirements.txt").read_text().split("\n"),
     zip_safe=False,
