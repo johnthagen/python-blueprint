@@ -11,7 +11,7 @@ strict = true
 [tool.black]
 # Use the more relaxed max line length permitted in PEP8.
 line-length = 99
-target-version = ["py38", "py39"]
+target-version = ["py38", "py39", "py310"]
 # black will automatically exclude all files listed in .gitignore
 # If you need to exclude additional folders, consider using extend-exclude to avoid disabling the
 # default .gitignore behaviour.
