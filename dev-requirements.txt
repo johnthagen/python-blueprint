@@ -9,7 +9,6 @@ atomicwrites==1.4.0
 attrs==21.2.0
     # via
     #   flake8-bugbear
-    #   flake8-eradicate
     #   pytest
 backports.entry-points-selectable==1.1.1
     # via virtualenv
@@ -36,8 +35,6 @@ coverage[toml]==6.2
     # via pytest-cov
 distlib==0.3.4
     # via virtualenv
-eradicate==2.0.0
-    # via flake8-eradicate
 filelock==3.4.0
     # via
     #   tox
@@ -48,7 +45,6 @@ flake8==4.0.1
     #   flake8-broken-line
     #   flake8-bugbear
     #   flake8-comprehensions
-    #   flake8-eradicate
     #   flake8-polyfill
     #   pep8-naming
 flake8-broken-line==0.4.0
@@ -56,8 +52,6 @@ flake8-broken-line==0.4.0
 flake8-bugbear==21.11.29
     # via -r .\dev-requirements.in
 flake8-comprehensions==3.7.0
-    # via -r .\dev-requirements.in
-flake8-eradicate==1.2.0
     # via -r .\dev-requirements.in
 flake8-polyfill==1.0.2
     # via pep8-naming
