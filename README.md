@@ -187,9 +187,12 @@ To pass arguments to `pytest` through `tox`:
 ## Code Style Checking
 
 [PEP8](https://www.python.org/dev/peps/pep-0008/) is the universally accepted style guide for
-Python code. PEP8 code compliance is verified using [flake8](http://flake8.pycqa.org/). flake8 is
-configured in the `[flake8]` section of `tox.ini`. Extra flake8 plugins are also included:
+Python code. PEP8 code compliance is verified using [Flake8](http://flake8.pycqa.org/). Flake8 is
+configured in the `[flake8]` section of `tox.ini`. Extra Flake8 plugins are also included:
 
+- `flake8-bugbear`: Find likely bugs and design problems in your program.
+- `flake8-broken-line`: Forbid using backslashes (`\`) for line breaks.
+- `flake8-comprehensions`: Helps write better `list`/`set`/`dict` comprehensions.
 - `pep8-naming`: Ensure functions, classes, and variables are named with correct casing.
 
 ## Automated Code Formatting
