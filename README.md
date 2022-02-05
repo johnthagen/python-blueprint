@@ -64,7 +64,7 @@ On Windows Powershell / `cmd`:
 > venv\Scripts\activate
 ```
 
-Once activated, it is good practice to update core packaging tools (`pip`, `setuptools`,
+Once activated, it is a good practice to update core packaging tools (`pip`, `setuptools`,
 and `wheel`) to the latest versions.
 
 ```bash
@@ -194,6 +194,9 @@ configured in the `[flake8]` section of `tox.ini`. Extra Flake8 plugins are also
 - `flake8-broken-line`: Forbid using backslashes (`\`) for line breaks.
 - `flake8-comprehensions`: Helps write better `list`/`set`/`dict` comprehensions.
 - `pep8-naming`: Ensure functions, classes, and variables are named with correct casing.
+
+Some code style settings are included in [`.editorconfig`](https://editorconfig.org/) and will be
+configured automatically in editors such as PyCharm.
 
 ## Automated Code Formatting
 
@@ -418,7 +421,7 @@ $ docker run --rm --interactive --tty fact 5
 
 To configure PyCharm 2018.3 and newer to align to the code style used in this project:
 
-- Settings | Search "Hard wrap at"
+- Settings | Search "Hard wrap at" (Note, this will be automatically set by `.editorconfig`)
   - Editor | Code Style | General | Hard wrap at: 99
 
 - Settings | Search "Optimize Imports"

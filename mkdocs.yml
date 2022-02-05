@@ -2,7 +2,7 @@
 strict: true
 theme:
   name: material
-  # By default fonts are pulled from Google on the Internet. To support offline usage, this is
+  # By default, fonts are pulled from Google on the Internet. To support offline usage, this is
   # disabled.
   font: false
   palette:
