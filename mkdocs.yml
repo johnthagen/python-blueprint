@@ -39,9 +39,8 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          setup_commands:
-            - import sys
-            - sys.path.append("src")
+          selection:
+            show_if_no_docstring: true
       watch:
           - src
   # This plugin is used to validate URLs (including some anchors).
