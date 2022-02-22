@@ -1,3 +1,0 @@
-# `fact` API Documentation
-
-::: fact
