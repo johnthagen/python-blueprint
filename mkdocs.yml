@@ -45,6 +45,7 @@ plugins:
       watch:
         - src
   # Autodoc configuration.
+  # https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
   - gen-files:
       scripts:
         - docs/gen_ref_pages.py
