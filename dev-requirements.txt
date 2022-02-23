@@ -85,12 +85,18 @@ mergedeep==1.3.4
 mkdocs==1.2.3
     # via
     #   mkdocs-autorefs
+    #   mkdocs-gen-files
     #   mkdocs-htmlproofer-plugin
+    #   mkdocs-literate-nav
     #   mkdocs-material
     #   mkdocstrings
 mkdocs-autorefs==0.3.1
     # via mkdocstrings
+mkdocs-gen-files==0.3.4
+    # via -r dev-requirements.in
 mkdocs-htmlproofer-plugin==0.8.0
+    # via -r dev-requirements.in
+mkdocs-literate-nav==0.4.1
     # via -r dev-requirements.in
 mkdocs-material==8.2.1
     # via -r dev-requirements.in

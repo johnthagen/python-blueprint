@@ -30,3 +30,6 @@ isort
 mkdocs-material
 mkdocs-htmlproofer-plugin
 mkdocstrings[python]
+## Autodoc.
+mkdocs-gen-files
+mkdocs-literate-nav

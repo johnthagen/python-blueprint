@@ -43,7 +43,14 @@ plugins:
             show_if_no_docstring: true
             show_signature_annotations: true
       watch:
-          - src
+        - src
+  # Autodoc configuration.
+  # https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
   # This plugin is used to validate URLs (including some anchors).
   # Uncomment to build the docs with this validation enabled.
   # This is commented out by default because this requires network I/O to validate URLs, so it is
@@ -57,3 +64,6 @@ copyright: Copyright &copy; 2018-2021 John Hagen
 repo_name: python-blueprint
 repo_url: https://github.com/johnthagen/python-blueprint
 edit_uri: edit/master/docs/user_guide/docs/
+nav:
+  - index.md
+  - Code Reference: reference/
