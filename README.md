@@ -141,7 +141,7 @@ After running the `build` `tox` environment, to upload to PyPI using
 # Testing
 
 Automated testing is performed using [tox](https://tox.readthedocs.io/en/latest/index.html). tox
-will automatically create virtual environments based on `tox.ini` for unit testing, PEP8 style
+will automatically create virtual environments based on `tox.ini` for unit testing, PEP 8 style
 guide checking, and documentation generation.
 
 ```bash
@@ -159,7 +159,7 @@ unit testing framework. Some key advantages over the built
 in [unittest](https://docs.python.org/3/library/unittest.html) module are:
 
 1. Significantly less boilerplate needed for tests.
-2. PEP8 compliant names (e.g. `pytest.raises()` instead of `self.assertRaises()`).
+2. PEP 8 compliant names (e.g. `pytest.raises()` instead of `self.assertRaises()`).
 3. Vibrant ecosystem of plugins.
 
 pytest will automatically discover and run tests by recursively searching for folders and `.py`
@@ -186,8 +186,8 @@ To pass arguments to `pytest` through `tox`:
 
 ## Code Style Checking
 
-[PEP8](https://www.python.org/dev/peps/pep-0008/) is the universally accepted style guide for
-Python code. PEP8 code compliance is verified using [Flake8](http://flake8.pycqa.org/). Flake8 is
+[PEP 8](https://peps.python.org/pep-0008/) is the universally accepted style guide for
+Python code. PEP 8 code compliance is verified using [Flake8](http://flake8.pycqa.org/). Flake8 is
 configured in the `[flake8]` section of `tox.ini`. Extra Flake8 plugins are also included:
 
 - `flake8-bugbear`: Find likely bugs and design problems in your program.
