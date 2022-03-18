@@ -59,7 +59,7 @@ plugins:
 #  - htmlproofer:
 #      raise_error: True
 site_name: fact
-copyright: Copyright &copy; 2018-2021 John Hagen
+copyright: Copyright &copy; 2018-2022 John Hagen
 # GitHub Specific Configuration.
 repo_name: python-blueprint
 repo_url: https://github.com/johnthagen/python-blueprint
