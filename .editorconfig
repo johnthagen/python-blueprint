@@ -1,6 +1,6 @@
 root = true
 
 # For ease of fitting multiple editor panes side by side consistently, set all files types to use
-# the same relaxed max line length permitted in PEP8.
+# the same relaxed max line length permitted in PEP 8.
 [*]
 max_line_length = 99
