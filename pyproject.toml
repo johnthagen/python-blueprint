@@ -26,5 +26,15 @@ skip_gitignore = true
 # If you need to skip/exclude folders, consider using skip_glob as that will allow the
 # isort defaults for skip to remain without the need to duplicate them.
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    # When running tests, treat warnings as errors (e.g. -Werror).
+    # See: https://docs.pytest.org/en/latest/reference/reference.html#confval-filterwarnings
+    "error",
+    # Add additional warning supressions as needed here. For example, if a third-party library
+    # is throwing a deprecation warning that needs to be fixed upstream:
+    # "ignore::DeprecationWarning:typer",
+]
+
 [tool.coverage.run]
 branch = true
