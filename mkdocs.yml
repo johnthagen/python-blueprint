@@ -28,6 +28,9 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true
+  - md_in_html
+extra_css:
+  - static/stylesheets/extra.css
 extra:
   social:
     - icon: fontawesome/brands/github

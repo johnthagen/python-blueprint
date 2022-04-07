@@ -50,3 +50,16 @@ assert factorial(3) == 6
 !!! tip
 
     Within PyCharm, use ++tab++ to auto-complete suggested imports while typing.
+
+### Expected Results
+
+<div class="center-table" markdown>
+
+| Input | Output |
+|:-----:|:------:|
+|   1   |   1    |
+|   2   |   2    |
+|   3   |   6    |
+|   4   |   24   | 
+
+</div>
