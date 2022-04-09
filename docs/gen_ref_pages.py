@@ -3,7 +3,7 @@
 Source: https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
 """
 
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import mkdocs_gen_files
 
@@ -21,7 +21,7 @@ for path in sorted(Path("src").rglob("*.py")):
     elif parts[-1] == "__main__":
         continue
 
-    nav[parts] = str(doc_path)
+    nav[parts] = str(PurePosixPath(doc_path))
 
     with mkdocs_gen_files.open(full_doc_path, "w") as fd:
         ident = ".".join(parts)
