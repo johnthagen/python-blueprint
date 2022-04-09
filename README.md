@@ -17,16 +17,6 @@ and a command line interface (`fact.cli`).
 
 Python 3.8+.
 
-# Windows Support
-
-> Summary: On Windows, use `py` instead of `python3` for many of the examples in this documentation.
-
-This package fully supports Windows, along with Linux and macOS, but Python is
-typically [installed differently on Windows](https://docs.python.org/3/using/windows.html). Windows
-users typically access Python through the [py](https://www.python.org/dev/peps/pep-0397/) launcher
-rather than a `python3` link in their `PATH`. Within a virtual environment, all platforms operate
-the same and use a `python` link to access the Python version used in that virtual environment.
-
 # Dependencies
 
 Dependencies are defined in:
@@ -51,7 +41,7 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 ```
 
-On Windows Powershell / `cmd`:
+On Windows Powershell using the [`py` launcher](https://www.python.org/dev/peps/pep-0397/):
 
 ```bash
 > py -m venv venv
