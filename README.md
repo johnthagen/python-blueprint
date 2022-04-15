@@ -122,11 +122,12 @@ After running the `build` `tox` environment, to upload to PyPI using
 (venv) $ tox -e upload
 ```
 
-# Testing
+# Enforcing Code Quality
 
-Automated testing is performed using [tox](https://tox.readthedocs.io/en/latest/index.html). tox
-will automatically create virtual environments based on [`tox.ini`](./tox.ini) for unit testing,
-PEP 8 style guide checking, and documentation generation.
+Automated code quality checks are performed using 
+[tox](https://tox.readthedocs.io/en/latest/index.html). tox will automatically create virtual
+environments based on [`tox.ini`](./tox.ini) for unit testing, PEP 8 style guide checking, 
+type checking and documentation generation.
 
 ```bash
 # Run all environments.
@@ -203,19 +204,10 @@ To verify code has been formatted, such as in a CI job:
 (venv) $ tox -e fmt-check
 ```
 
-## Continuous Integration
+## Type Checking
 
-Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
-runs all tests and lints for every commit and pull request to the repository.
-
-GitHub Actions is configured in [`.github/workflows/python.yml`](./.github/workflows/python.yml)
-and [`tox.ini`](./tox.ini) using the
-[tox-gh-actions plugin](https://github.com/ymyzk/tox-gh-actions).
-
-# Type Hinting
-
-[Type hinting](https://docs.python.org/3/library/typing.html) allows developers to include optional
-static typing information to Python source code. This allows static analyzers such
+[Type annotations](https://docs.python.org/3/library/typing.html) allows developers to include
+optional static typing information to Python source code. This allows static analyzers such
 as [mypy](http://mypy-lang.org/), [PyCharm](https://www.jetbrains.com/pycharm/),
 or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the
 correct types before runtime.
@@ -234,15 +226,24 @@ Type checking is performed by mypy via `tox -e type-check`. mypy is configured i
 
 See also [awesome-python-typing](https://github.com/typeddjango/awesome-python-typing).
 
-## Distributing Type Hints
+### Distributing Type Annotations
 
 [PEP 561](https://www.python.org/dev/peps/pep-0561/) defines how a Python package should
-communicate the presence of inline type hints to static type
+communicate the presence of inline type annotations to static type
 checkers. [mypy's documentation](https://mypy.readthedocs.io/en/stable/installed_packages.html)
-provides further examples on how to do this as well.
+provides further examples on how to do this.
 
 Mypy looks for the existence of a file named [`py.typed`](./src/fact/py.typed) in the root of the
-installed package to indicate that inline type hints should be checked.
+installed package to indicate that inline type annotations should be checked.
+
+## Continuous Integration
+
+Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
+runs all tests, lints, and type checking for every commit and pull request to the repository.
+
+GitHub Actions is configured in [`.github/workflows/python.yml`](./.github/workflows/python.yml)
+and [`tox.ini`](./tox.ini) using the
+[tox-gh-actions plugin](https://github.com/ymyzk/tox-gh-actions).
 
 # Documentation
 
@@ -265,7 +266,7 @@ Each time the `master` Git branch is updated, the
 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) GitHub Action will
 automatically build the user guide and publish it to [GitHub Pages](https://pages.github.com/).
 This is configured in the `docs-user-guide-github-pages` `tox` environment. This hosted user guide
-can be viewed at <https://johnthagen.github.io/python-blueprint/>
+can be viewed at <https://johnthagen.github.io/python-blueprint/>.
 
 ## Generating API Documentation
 
