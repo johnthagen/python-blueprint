@@ -19,6 +19,6 @@ jobs:
       - name: Install Poetry
         run: pipx install poetry
       - name: Install nox-poetry
-        run: pipx install nox-poetry
+        run: pipx install nox-poetry --include-deps
       - name: Test with Nox
         run: pipx run nox
