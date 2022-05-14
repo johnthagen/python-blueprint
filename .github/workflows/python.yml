@@ -3,7 +3,7 @@ name: python
 on: [push, pull_request]
 
 jobs:
-  tox:
+  nox:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
