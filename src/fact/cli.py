@@ -17,6 +17,10 @@ def main(n: int = Argument(..., min=0, help="The input n of fact(n)")) -> None:
     )
 
 
+def entry_point() -> None:
+    typer.run(main)
+
+
 # Allow the script to be run standalone (useful during development).
 if __name__ == "__main__":
-    typer.run(main)
+    entry_point()

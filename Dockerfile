@@ -23,6 +23,9 @@ ENV WORKDIR /src
 # absoulte symlinks in it.
 ENV VIRTUAL_ENV /opt/venv
 
+# Pin Poetry to a specific version to make Docker builds reproducible.
+ENV POETRY_VERSION 1.1.13
+
 WORKDIR ${WORKDIR}
 
 # Install any system depdendencies required to build wheels, such as C compilers or system packages
@@ -31,21 +34,29 @@ WORKDIR ${WORKDIR}
 #    gcc \
 #    && rm -rf /var/lib/apt/lists/*
 
+# Install Poetry into the global environment to isolate it from the venv. This prevents Poetry
+# from uninstalling parts of itself.
+RUN pip install "poetry==${POETRY_VERSION}"
+
+# Copy in project dependency specification.
+COPY pyproject.toml poetry.lock ./
+RUN poetry export --format requirements.txt --output requirements.txt
+
 # Pre-download/compile wheel dependencies into a virtual environment.
 # Doing this in a multi-stage build allows ommitting compile dependencies from the final image.
 RUN python -m venv ${VIRTUAL_ENV}
 ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
 
-COPY requirements.txt ${WORKDIR}
 RUN pip install --upgrade pip wheel && \
     pip install -r requirements.txt
 
 # Copy in source files.
-COPY LICENSE.txt MANIFEST.in pyproject.toml README.md requirements.txt setup.py ./
+COPY README.md ./
 COPY src src
 
-# Install console script.
-RUN pip install .
+# Don't install the package itself with Poetry becuase it will install it as an editable install.
+RUN poetry build && \
+    pip install dist/*.whl
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
