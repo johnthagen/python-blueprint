@@ -1,6 +1,73 @@
+[tool.poetry]
+name = "fact"
+version = "1.0.0"
+description = "Example Python project using best practices"
+authors = ["John Hagen <johnthagen@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/johnthagen/python-blueprint"
+documentation = "https://johnthagen.github.io/python-blueprint/"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Typing :: Typed",
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+colorama = "*"
+typer = "*"
+
+[tool.poetry.dev-dependencies]
+nox-poetry = "*"
+
+# Testing.
+pytest = "*"
+pytest-cov = "*"
+
+# Type Checking.
+mypy = "*"
+# As of mypy 0.900, mypy no longer bundles the stubs for third-party libraries that reside
+# in the typeshed project. Add these "types-" packages here if you depend on them in
+# requirements.in (e.g. types-requests).
+# See: http://mypy-lang.blogspot.com/2021/06/mypy-0900-released.html
+#      https://github.com/python/typeshed/tree/master/stubs
+
+# Linting.
+flake8 = "*"
+flake8-bugbear = "*"
+flake8-broken-line = "*"
+flake8-comprehensions = "*"
+pep8-naming = "*"
+# TODO: Remove this when flake8 adds native support for pyproject.toml.
+pyproject-flake8 = "*"
+
+# Formatting.
+black = "*"
+isort = "*"
+
+# Documentation.
+mkdocs-material = "*"
+mkdocs-htmlproofer-plugin = "*"
+mkdocstrings = { version = "*", extras = ["python"] }
+## Autodoc.
+mkdocs-gen-files = "*"
+mkdocs-literate-nav = "*"
+
+[tool.poetry.scripts]
+fact = "fact.cli:entry_point"
+
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -8,8 +75,20 @@ strict = true
 # If certain strict config options are too pedantic for a project,
 # disable them selectively here by setting to false.
 
-[tool.black]
+# Note: This configuration is suppported by pyproject-flake8.
+[tool.flake8]
 # Use the more relaxed max line length permitted in PEP 8.
+max-line-length = 99
+# This ignore is required by black.
+extend-ignore = "E203,"
+# flake8-bugbear config.
+# This argument is not needed if not using Typer as a dependency.
+extend-immutable-calls = "Argument,"
+# TODO: Remove this once flake8 > 4.0.1 is released as this has been fixed
+#   upstream: https://github.com/PyCQA/flake8/pull/1443
+extend-exclude = ".nox,"
+
+[tool.black]
 line-length = 99
 target-version = ["py38", "py39", "py310"]
 # black will automatically exclude all files listed in .gitignore

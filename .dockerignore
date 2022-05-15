@@ -4,11 +4,9 @@
 # Except the following.
 !src
 !LICENSE.txt
-!MANIFEST.in
 !pyproject.toml
+!poetry.lock
 !README.md
-!requirements.txt
-!setup.py
 
 # Filter unwanted files from included folders.
 **/__pycache__

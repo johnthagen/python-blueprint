@@ -10,6 +10,9 @@
 #     will need to be recompiled fully within the Docker images, increasing build times.
 FROM python:3.9-slim-bullseye AS python_builder
 
+# Pin Poetry to a specific version to make Docker builds reproducible.
+ENV POETRY_VERSION 1.1.13
+
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
@@ -31,21 +34,32 @@ WORKDIR ${WORKDIR}
 #    gcc \
 #    && rm -rf /var/lib/apt/lists/*
 
+# Install Poetry into the global environment to isolate it from the venv. This prevents Poetry
+# from uninstalling parts of itself.
+# TODO: Improve Poetry usage in multi-stage Dockerfiles once these issues are fixed in Poetry.
+#   Non-editable `poetry install`: https://github.com/python-poetry/poetry/issues/1382
+#   Specifying venv path: https://github.com/python-poetry/poetry/issues/1579
+RUN pip install "poetry==${POETRY_VERSION}"
+
+# Copy in project dependency specification.
+COPY pyproject.toml poetry.lock ./
+RUN poetry export --output requirements.txt
+
 # Pre-download/compile wheel dependencies into a virtual environment.
 # Doing this in a multi-stage build allows ommitting compile dependencies from the final image.
 RUN python -m venv ${VIRTUAL_ENV}
 ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
 
-COPY requirements.txt ${WORKDIR}
 RUN pip install --upgrade pip wheel && \
     pip install -r requirements.txt
 
 # Copy in source files.
-COPY LICENSE.txt MANIFEST.in pyproject.toml README.md requirements.txt setup.py ./
+COPY README.md ./
 COPY src src
 
-# Install console script.
-RUN pip install .
+# Don't install the package itself with Poetry because it will install it as an editable install.
+RUN poetry build && \
+    pip install dist/*.whl
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
