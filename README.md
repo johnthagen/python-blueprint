@@ -283,7 +283,7 @@ this isolation for two reasons:
    (the project root) to `sys.path`, which Python uses to find modules. Because the source
    package `fact` is in the project root, it shadows the `fact` package installed in the Nox
    session.
-3. Calling `pytest` directly anywhere that it can find the tests will also add the project root
+2. Calling `pytest` directly anywhere that it can find the tests will also add the project root
    to `sys.path` if the `tests` folder is a Python package (that is, it contains a `__init__.py`
    file).
    [pytest adds all folders containing packages](https://docs.pytest.org/en/latest/goodpractices.html#conventions-for-python-test-discovery)
