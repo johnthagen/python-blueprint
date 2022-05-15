@@ -57,7 +57,7 @@ RUN pip install --upgrade pip wheel && \
 COPY README.md ./
 COPY src src
 
-# Don't install the package itself with Poetry becuase it will install it as an editable install.
+# Don't install the package itself with Poetry because it will install it as an editable install.
 RUN poetry build && \
     pip install dist/*.whl
 
