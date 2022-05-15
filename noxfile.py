@@ -42,6 +42,7 @@ def lint(s: Session) -> None:
         "pep8-naming",
         "pyproject-flake8",
     )
+    # Run pyproject-flake8 entrypoint to support reading configuration from pyproject.toml.
     s.run("pflake8")
 
 

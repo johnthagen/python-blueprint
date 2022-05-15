@@ -17,74 +17,40 @@ and a command line interface (`fact.cli`).
 
 Python 3.8+.
 
-# Dependencies
+# Package Management
 
-Dependencies are defined in:
+This package uses [Poetry](https://python-poetry.org/) to manage dependencies and
+isolated [Python virtual environments](https://docs.python.org/3/library/venv.html).
 
-- [`requirements.in`](./requirements.in)
-- [`requirements.txt`](./requirements.txt)
-- [`dev-requirements.in`](./dev-requirements.in)
-- [`dev-requirements.txt`](./dev-requirements.txt)
+To proceed, 
+[install Poetry globally onto your system](https://python-poetry.org/docs/#installation).
 
-## Virtual Environments
+## Dependencies
 
-It is best practice during development to create an
-isolated [Python virtual environment](https://docs.python.org/3/library/venv.html) using the `venv`
-standard library module. This will keep dependant Python packages from interfering with other
-Python projects on your system.
+Dependencies are defined in [`pyproject.toml`](./pyproject.toml) and specific versions are locked
+into [`poetry.lock`](./poetry.lock). This allows for exact reproducible environments across
+all machines that use the project, both during development and in production.
 
-On *Nix:
+To install all dependencies into an isolated virtual environment:
 
 ```bash
-# On Python 3.9+, add --upgrade-deps
-$ python3 -m venv venv
-$ source venv/bin/activate
+# Append --remove-untracked to remove any dependencies no longer in use.
+$ poetry install
 ```
 
-On Windows Powershell using the [`py` launcher](https://www.python.org/dev/peps/pep-0397/):
+To activate the virtual environment that is automatically created by Poetry:
 
 ```bash
-> py -m venv venv
-> venv\Scripts\activate
+$ poetry shell
 ```
 
-Once activated, it is a good practice to update core packaging tools (`pip`, `setuptools`,
-and `wheel`) to the latest versions.
+To upgrade all dependencies to their latest versions:
 
 ```bash
-(venv) $ python -m pip install --upgrade pip setuptools wheel
+$ poetry update
 ```
 
-## (Applications Only) Locking Dependencies
-
-This project uses [pip-tools](https://github.com/jazzband/pip-tools) to lock project dependencies
-and create reproducible virtual environments.
-
-**Note:** *Library* projects should not lock their `requirements.txt`. Since `python-blueprint`
-also has a CLI application, this end-user application example is used to demonstrate how to lock
-application dependencies.
-
-To update dependencies:
-
-```bash
-(venv) $ python -m pip install pip-tools
-(venv) $ python -m piptools compile --upgrade requirements.in
-(venv) $ python -m piptools compile --upgrade dev-requirements.in
-```
-
-After upgrading dependencies, run the unit tests as described in the [Unit Testing](#unit-testing)
-section to ensure that none of the updated packages caused incompatibilities in the current
-project.
-
-## Syncing Virtual Environments
-
-To cleanly install your dependencies into your virtual environment:
-
-```bash
-(venv) $ python -m piptools sync requirements.txt dev-requirements.txt
-```
-
-# Packaging
+## Packaging
 
 This project is designed as a Python package, meaning that it can be bundled up and redistributed
 as a single compressed file.
@@ -92,16 +58,13 @@ as a single compressed file.
 Packaging is configured by:
 
 - [`pyproject.toml`](./pyproject.toml)
-- [`setup.py`](./setup.py)
-- [`MANIFEST.in`](./MANIFEST.in)
 
 To package the project as both a 
 [source distribution](https://docs.python.org/3/distutils/sourcedist.html) and
-a [wheel](https://wheel.readthedocs.io/en/stable/) using the
-[`build`](https://pypa-build.readthedocs.io/en/stable/) package:
+a [wheel](https://wheel.readthedocs.io/en/stable/):
 
 ```bash
-(venv) $ tox -e build
+$ poetry build 
 ```
 
 This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.whl`.
@@ -109,32 +72,30 @@ This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.wh
 Read more about the [advantages of wheels](https://pythonwheels.com/) to understand why generating
 wheel distributions are important.
 
-## Upload Distributions to PyPI
+## Publish Distributions to PyPI
 
 Source and wheel redistributable packages can
-be [uploaded to PyPI](https://packaging.python.org/tutorials/packaging-projects/) or installed
+be [published to PyPI](https://python-poetry.org/docs/cli#publish) or installed
 directly from the filesystem using `pip`.
 
-After running the `build` `tox` environment, to upload to PyPI using
-[`twine`](https://twine.readthedocs.io/en/latest/):
-
 ```bash
-(venv) $ tox -e upload
+$ poetry publish
 ```
 
 # Enforcing Code Quality
 
 Automated code quality checks are performed using 
-[tox](https://tox.readthedocs.io/en/latest/index.html). tox will automatically create virtual
-environments based on [`tox.ini`](./tox.ini) for unit testing, PEP 8 style guide checking, 
-type checking and documentation generation.
+[Nox](https://nox.thea.codes/en/stable/) and
+[`nox-poetry`](https://nox-poetry.readthedocs.io/en/stable/). Nox will automatically create virtual
+environments and run commands based on [`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style
+guide checking, type checking and documentation generation.
 
 ```bash
-# Run all environments.
-#   To only run a single environment, specify it like: -e lint
-# Note: tox is installed into the virtual environment automatically by `piptools sync`
-# command above.
-(venv) $ tox
+# Run all sessions.
+#   To only run a single session, append its name: -s lint
+# Note: Nox is installed into the virtual environment automatically by `poetry install`
+# command above. Run `poetry shell` to activate the virtual environment.
+(fact) $ nox
 ```
 
 ## Unit Testing
@@ -156,29 +117,31 @@ be named the same, even if they are in different subdirectories.
 
 Code coverage is provided by the [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) plugin.
 
-When running a unit test tox environment (e.g. `tox -e py`), an HTML report is generated in
+When running a unit test Nox session (e.g. `nox -s test`), an HTML report is generated in
 the `htmlcov` folder showing each source file and which lines were executed during unit testing.
 Open `htmlcov/index.html` in a web browser to view the report. Code coverage reports help identify
 areas of the project that are currently not tested.
 
 pytest and code coverage are configured in [`pyproject.toml`](./pyproject.toml).
 
-To pass arguments to `pytest` through `tox`:
+To pass arguments to `pytest` through `nox`:
 
 ```bash
-(venv) $ tox -e py -- -k invalid_factorial
+(fact) $ nox -s test -- -k invalid_factorial
 ```
 
 ## Code Style Checking
 
 [PEP 8](https://peps.python.org/pep-0008/) is the universally accepted style guide for
 Python code. PEP 8 code compliance is verified using [Flake8](http://flake8.pycqa.org/). Flake8 is
-configured in the `[flake8]` section of `tox.ini`. Extra Flake8 plugins are also included:
+configured in the `[tool.flake8]` section of `pyproject.toml`. Extra Flake8 plugins are also
+included:
 
 - `flake8-bugbear`: Find likely bugs and design problems in your program.
 - `flake8-broken-line`: Forbid using backslashes (`\`) for line breaks.
 - `flake8-comprehensions`: Helps write better `list`/`set`/`dict` comprehensions.
 - `pep8-naming`: Ensure functions, classes, and variables are named with correct casing.
+- `pyproject-flake8`: Allow configuration of `flake8` through `pyproject.toml`.
 
 Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be
 configured automatically in editors such as PyCharm.
@@ -195,13 +158,13 @@ These tools are configured by:
 To automatically format code, run:
 
 ```bash
-(venv) $ tox -e fmt
+(fact) $ nox -s fmt
 ```
 
 To verify code has been formatted, such as in a CI job:
 
 ```bash
-(venv) $ tox -e fmt-check
+(fact) $ nox -s fmt_check
 ```
 
 ## Type Checking
@@ -221,7 +184,7 @@ def factorial(n: int) -> int:
     ...
 ```
 
-Type checking is performed by mypy via `tox -e type-check`. mypy is configured in 
+Type checking is performed by mypy via `nox -s type_check`. mypy is configured in 
 [`pyproject.toml`](./pyproject.toml).
 
 See also [awesome-python-typing](https://github.com/typeddjango/awesome-python-typing).
@@ -241,9 +204,7 @@ installed package to indicate that inline type annotations should be checked.
 Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
 runs all tests, lints, and type checking for every commit and pull request to the repository.
 
-GitHub Actions is configured in [`.github/workflows/python.yml`](./.github/workflows/python.yml)
-and [`tox.ini`](./tox.ini) using the
-[tox-gh-actions plugin](https://github.com/ymyzk/tox-gh-actions).
+GitHub Actions is configured in [`.github/workflows/python.yml`](./.github/workflows/python.yml).
 
 # Documentation
 
@@ -256,16 +217,16 @@ the power of Markdown. This makes it a great fit for user guides and other techn
 The example MkDocs project included in this project is configured to allow the built documentation
 to be hosted at any URL or viewed offline from the file system.
 
-To build the user guide, run `tox -e docs`. Open `docs/user_guide/site/index.html` using
+To build the user guide, run `nox -s docs`. Open `docs/user_guide/site/index.html` using
 a web browser.
 
 To build and serve the user guide with automatic rebuilding as you change the contents,
-run `tox -e docs-serve` and open <http://127.0.0.1:8000> in a browser.
+run `nox -s docs_serve` and open <http://127.0.0.1:8000> in a browser.
 
 Each time the `master` Git branch is updated, the 
 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) GitHub Action will
 automatically build the user guide and publish it to [GitHub Pages](https://pages.github.com/).
-This is configured in the `docs-user-guide-github-pages` `tox` environment. This hosted user guide
+This is configured in the `docs_github_pages` Nox session. This hosted user guide
 can be viewed at <https://johnthagen.github.io/python-blueprint/>.
 
 ## Generating API Documentation
@@ -304,25 +265,25 @@ fact
 ├── tests
 │   ├── __init__.py
 │   └── test_fact.py
-├── tox.ini
-└── setup.py
+├── noxfile.py
+└── pyproject.toml
 ```
 
 However, this structure
 is [known](https://docs.pytest.org/en/latest/goodpractices.html#tests-outside-application-code) to
-have bad interactions with `pytest` and `tox`, two standard tools maintaining Python projects. The
-fundamental issue is that tox creates an isolated virtual environment for testing. By installing
-the distribution into the virtual environment, `tox` ensures that the tests pass even after the
+have bad interactions with `pytest` and `nox`, two standard tools maintaining Python projects. The
+fundamental issue is that Nox creates an isolated virtual environment for testing. By installing
+the distribution into the virtual environment, `nox` ensures that the tests pass even after the
 distribution has been packaged and installed, thereby catching any errors in packaging and
 installation scripts, which are common. Having the Python packages in the project root subverts
 this isolation for two reasons:
 
 1. Calling `python` in the project root (for example, `python -m pytest tests/`) 
-   [causes Python to add the current working directory](https://docs.pytest.org/en/latest/pythonpath.html#invoking-pytest-versus-python-m-pytest) (
-   the project root) to `sys.path`, which Python uses to find modules. Because the source
-   package `fact` is in the project root, it shadows the `fact` package installed in the tox
-   environment.
-2. Calling `pytest` directly anywhere that it can find the tests will also add the project root
+   [causes Python to add the current working directory](https://docs.pytest.org/en/latest/pythonpath.html#invoking-pytest-versus-python-m-pytest)
+   (the project root) to `sys.path`, which Python uses to find modules. Because the source
+   package `fact` is in the project root, it shadows the `fact` package installed in the Nox
+   session.
+3. Calling `pytest` directly anywhere that it can find the tests will also add the project root
    to `sys.path` if the `tests` folder is a Python package (that is, it contains a `__init__.py`
    file).
    [pytest adds all folders containing packages](https://docs.pytest.org/en/latest/goodpractices.html#conventions-for-python-test-discovery)
@@ -331,14 +292,14 @@ this isolation for two reasons:
 In order to properly test the project, the source packages must not be on the Python path. To
 prevent this, there are three possible solutions:
 
-1. Remove the `__init__.py` file from `tests` and run `pytest` directly as a tox command.
+1. Remove the `__init__.py` file from `tests` and run `pytest` directly as a Nox session.
 2. Remove the `__init__.py` file from tests and change the working directory of `python -m pytest`
    to `tests`.
 3. Move the source packages to a dedicated `src` folder.
 
 The dedicated `src` directory is the 
 [recommended solution](https://docs.pytest.org/en/latest/pythonpath.html#test-modules-conftest-py-files-inside-packages)
-by `pytest` when using tox and the solution this blueprint promotes because it is the least brittle
+by `pytest` when using Nox and the solution this blueprint promotes because it is the least brittle
 even though it deviates from the traditional Python project structure. It results is a directory
 structure like:
 
@@ -352,8 +313,8 @@ fact
 ├── tests
 │   ├── __init__.py
 │   └── test_fact.py
-├── tox.ini
-└── setup.py
+├── noxfile.py
+└── pyproject.toml
 ```
 
 # Licensing
@@ -361,16 +322,16 @@ fact
 Licensing for the project is defined in:
 
 - [`LICENSE.txt`](./LICENSE.txt)
-- [`setup.py`](./setup.py)
+- [`pyproject.toml`](./pyproject.toml)
 
 This project uses a common permissive license, the MIT license.
 
 You may also want to list the licenses of all the packages that your Python project depends on.
-To automatically list the licenses for all dependencies in `requirements.txt` (and their transitive
-dependencies) using [pip-licenses](https://github.com/raimon49/pip-licenses):
+To automatically list the licenses for all dependencies in (and their transitive dependencies)
+using [pip-licenses](https://github.com/raimon49/pip-licenses):
 
 ```bash
-(venv) $ tox -e licenses
+(fact) $ nox -s licenses
 ...
  Name        Version  License
  colorama    0.4.3    BSD License
@@ -445,6 +406,6 @@ To integrate automatic code formatters into PyCharm, reference the following ins
 > **Tip**
 >
 > These tools work best if you properly mark directories as excluded from the project that should 
-> be, such as `.tox`. See 
+> be, such as `.nox`. See 
 > <https://www.jetbrains.com/help/pycharm/project-tool-window.html#content_pane_context_menu> on 
-> how to Right Click | Mark Directory as | Excluded.
+> how to Right-Click | Mark Directory as | Excluded.
