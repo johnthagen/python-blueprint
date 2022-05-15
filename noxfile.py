@@ -22,8 +22,8 @@ def test(s: Session) -> None:
     )
 
 
-# For some sessions, set venv_backend="none" to simply execute scripts using the existing
-# environment. This requires that nox is installed and run using `poetry install`.
+# For some sessions, set venv_backend="none" to simply execute scripts within the existing Poetry
+# environment. This requires that nox is run within `poetry shell` or using `poetry run nox ...`.
 @session(venv_backend="none")
 def type_check(s: Session) -> None:
     # It is important to install the main project and test dependencies, as some packages contain
