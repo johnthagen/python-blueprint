@@ -10,6 +10,9 @@
 #     will need to be recompiled fully within the Docker images, increasing build times.
 FROM python:3.9-slim-bullseye AS python_builder
 
+# Pin Poetry to a specific version to make Docker builds reproducible.
+ENV POETRY_VERSION 1.1.13
+
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
@@ -22,9 +25,6 @@ ENV WORKDIR /src
 # This must be the same path that is used in the final image as the virtual environment has
 # absoulte symlinks in it.
 ENV VIRTUAL_ENV /opt/venv
-
-# Pin Poetry to a specific version to make Docker builds reproducible.
-ENV POETRY_VERSION 1.1.13
 
 WORKDIR ${WORKDIR}
 
