@@ -64,7 +64,7 @@ To package the project as both a
 a [wheel](https://wheel.readthedocs.io/en/stable/):
 
 ```bash
-$ poetry build 
+$ poetry build
 ```
 
 This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.whl`.
