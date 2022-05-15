@@ -19,7 +19,7 @@ jobs:
         run: python -m pip install --upgrade pip
       - name: Install Poetry
         run: pipx install poetry
-      - name: Install nox-poetry
-        run: pipx install nox-poetry --include-deps
+      - name: Install all dependencies, including Nox
+        run: poetry install --no-root
       - name: Publish Docs
-        run: nox -s docs_github_pages
+        run: poetry run nox -s docs_github_pages
