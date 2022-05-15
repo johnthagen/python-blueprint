@@ -36,11 +36,14 @@ WORKDIR ${WORKDIR}
 
 # Install Poetry into the global environment to isolate it from the venv. This prevents Poetry
 # from uninstalling parts of itself.
+# TODO: Improve Poetry usage in multi-stage Dockerfiles once these issues are fixed in Poetry.
+#   Non-editable `poetry install`: https://github.com/python-poetry/poetry/issues/1382
+#   Specifying venv path: https://github.com/python-poetry/poetry/issues/1579
 RUN pip install "poetry==${POETRY_VERSION}"
 
 # Copy in project dependency specification.
 COPY pyproject.toml poetry.lock ./
-RUN poetry export --format requirements.txt --output requirements.txt
+RUN poetry export --output requirements.txt
 
 # Pre-download/compile wheel dependencies into a virtual environment.
 # Doing this in a multi-stage build allows ommitting compile dependencies from the final image.
