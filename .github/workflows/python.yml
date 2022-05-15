@@ -22,6 +22,5 @@ jobs:
         run: poetry install --no-root
         env:
           POETRY_VIRTUALENVS_CREATE: false
-    POETRY_VIRTUALENVS_CREATE: false
       - name: Test with Nox
         run: nox
