@@ -90,11 +90,11 @@ Automated code quality checks are performed using
 environments and run commands based on [`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style
 guide checking, type checking and documentation generation.
 
+> Note: `nox` is installed into the virtual environment automatically by the `poetry install`
+> command above. Run `poetry shell` to activate the virtual environment.
+
 ```bash
-# Run all sessions.
-#   To only run a single session, append its name: -s lint
-# Note: Nox is installed into the virtual environment automatically by `poetry install`
-# command above. Run `poetry shell` to activate the virtual environment.
+# Run all default sessions. To only run a single session, append its name: -s lint
 (fact) $ nox
 ```
 
