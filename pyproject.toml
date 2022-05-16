@@ -80,13 +80,13 @@ strict = true
 # Use the more relaxed max line length permitted in PEP 8.
 max-line-length = 99
 # This ignore is required by black.
-extend-ignore = "E203,"
+extend-ignore = ["E203"]
 # flake8-bugbear config.
 # This argument is not needed if not using Typer as a dependency.
-extend-immutable-calls = "Argument,"
+extend-immutable-calls = ["Argument"]
 # TODO: Remove this once flake8 > 4.0.1 is released as this has been fixed
 #   upstream: https://github.com/PyCQA/flake8/pull/1443
-extend-exclude = ".nox,"
+extend-exclude = [".nox"]
 
 [tool.black]
 line-length = 99
