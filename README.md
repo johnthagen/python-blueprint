@@ -3,15 +3,18 @@
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![Code style: black][black-badge]](https://github.com/psf/black)
 [![Imports: isort][isort-badge]](https://pycqa.github.io/isort/)
+[![Type checked with mypy][mypy-badge]](https://github.com/python/mypy)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [isort-badge]: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+[mypy-badge]: https://img.shields.io/badge/type%20checked-mypy-blue.svg
 
 Example Python project that demonstrates how to create a tested Python package using the latest
-Python testing and linting tooling. The project contains a `fact` package that provides a simple
-implementation of the [factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`)
-and a command line interface (`fact.cli`).
+Python testing, linting, and type checking tooling. The project contains a `fact` package that
+provides a simple implementation of the
+[factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`) and a command line
+interface (`fact.cli`).
 
 # Requirements
 
