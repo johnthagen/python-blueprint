@@ -2,7 +2,7 @@ import nox
 from nox_poetry import Session, session
 
 nox.options.reuse_existing_virtualenvs = True
-nox.options.sessions = ["fmt_check", "type_check", "lint", "test", "docs"]
+nox.options.sessions = ["fmt", "lint", "type_check", "test", "docs"]
 
 
 @session(python=["3.8", "3.9", "3.10"])
@@ -25,19 +25,6 @@ def test(s: Session) -> None:
 # For some sessions, set venv_backend="none" to simply execute scripts within the existing Poetry
 # environment. This requires that nox is run within `poetry shell` or using `poetry run nox ...`.
 @session(venv_backend="none")
-def type_check(s: Session) -> None:
-    # It is important to install the main project and test dependencies, as some packages contain
-    # inline type hints (PEP 561) that mypy will use.
-    s.run("mypy", "src", "tests")
-
-
-@session(venv_backend="none")
-def lint(s: Session) -> None:
-    # Run pyproject-flake8 entrypoint to support reading configuration from pyproject.toml.
-    s.run("pflake8")
-
-
-@session(venv_backend="none")
 def fmt(s: Session) -> None:
     s.run("isort", ".")
     s.run("black", ".")
@@ -47,6 +34,17 @@ def fmt(s: Session) -> None:
 def fmt_check(s: Session) -> None:
     s.run("isort", "--check", ".")
     s.run("black", "--check", ".")
+
+
+@session(venv_backend="none")
+def lint(s: Session) -> None:
+    # Run pyproject-flake8 entrypoint to support reading configuration from pyproject.toml.
+    s.run("pflake8")
+
+
+@session(venv_backend="none")
+def type_check(s: Session) -> None:
+    s.run("mypy", "src", "tests")
 
 
 # Environment variable needed for mkdocstrings-python to locate source files.
