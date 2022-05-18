@@ -12,26 +12,30 @@
 
 ## Installation
 
-First, create and activate a Python virtual environment:
+First, [install Poetry](https://python-poetry.org/docs/#installation):
 
 === "Linux/macOS"
 
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate
+    curl -sSL https://install.python-poetry.org | python3 -
     ```
 
 === "Windows"
 
     ```powershell
-    py -m venv venv
-    venv\Scripts\activate
+    (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
     ```
 
-Then install the `fact` package:
+Then install the `fact` package and its dependencies:
 
 ```bash
-pip install .
+poetry install
+```
+
+Activate the virtual environment created automatically by Poetry:
+
+```bash
+poetry shell
 ```
 
 ## Quick Start
