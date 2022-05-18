@@ -369,7 +369,11 @@ $ docker run --rm --interactive --tty fact 5
 
 # PyCharm Configuration
 
-To configure PyCharm 2018.3 and newer to align to the code style used in this project:
+> Looking for a vivid dark color scheme for PyCharm?
+> Try [One Dark theme](https://plugins.jetbrains.com/plugin/11938-one-dark-theme).
+
+To configure [PyCharm](https://www.jetbrains.com/pycharm/) and newer to align to the code style
+used in this project:
 
 - Settings | Search "Hard wrap at" (Note, this will be automatically set by
   [`.editorconfig`](./.editorconfig))
