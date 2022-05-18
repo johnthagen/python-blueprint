@@ -7,8 +7,9 @@
 
 !!! info
 
-    This user guide is purely an illustrative example that shows off several features of MkDocs
-    and included Markdown extensions.
+    This user guide is purely an illustrative example that shows off several features of 
+    [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) and included Markdown
+    extensions.
 
 ## Installation
 
