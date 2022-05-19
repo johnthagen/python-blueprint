@@ -36,8 +36,10 @@ all machines that use the project, both during development and in production.
 
 To install all dependencies into an isolated virtual environment:
 
+> Append `--remove-untracked` to uninstall dependencies that are no longer in use from the virtual
+> environment.
+
 ```bash
-# Append --remove-untracked to remove any dependencies no longer in use.
 $ poetry install
 ```
 
@@ -96,8 +98,9 @@ guide checking, type checking and documentation generation.
 > Note: `nox` is installed into the virtual environment automatically by the `poetry install`
 > command above. Run `poetry shell` to activate the virtual environment.
 
+To run all default sessions:
+
 ```bash
-# Run all default sessions. To only run a single session, append its name: -s lint
 (fact) $ nox
 ```
 
@@ -149,6 +152,12 @@ included:
 Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be
 configured automatically in editors such as PyCharm.
 
+To lint code, run:
+
+```bash
+(fact) $ nox -s lint
+```
+
 ## Automated Code Formatting
 
 Code is automatically formatted using [black](https://github.com/psf/black). Imports are
@@ -187,8 +196,11 @@ def factorial(n: int) -> int:
     ...
 ```
 
-Type checking is performed by mypy via `nox -s type_check`. mypy is configured in 
-[`pyproject.toml`](./pyproject.toml).
+mypy is configured in [`pyproject.toml`](./pyproject.toml). To type check code, run:
+
+```bash
+(fact) $ nox -s type_check
+```
 
 See also [awesome-python-typing](https://github.com/typeddjango/awesome-python-typing).
 
@@ -220,11 +232,22 @@ the power of Markdown. This makes it a great fit for user guides and other techn
 The example MkDocs project included in this project is configured to allow the built documentation
 to be hosted at any URL or viewed offline from the file system.
 
-To build the user guide, run `nox -s docs`. Open `docs/user_guide/site/index.html` using
-a web browser.
+To build the user guide, run,
+
+```bash
+(fact) $ nox -s docs
+```
+
+and open `docs/user_guide/site/index.html` using a web browser.
 
 To build and serve the user guide with automatic rebuilding as you change the contents,
-run `nox -s docs_serve` and open <http://127.0.0.1:8000> in a browser.
+run:
+
+```bash
+$ nox -s docs_serve
+``` 
+
+and open <http://127.0.0.1:8000> in a browser.
 
 Each time the `master` Git branch is updated, the 
 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) GitHub Action will
@@ -336,9 +359,11 @@ using [pip-licenses](https://github.com/raimon49/pip-licenses):
 ```bash
 (fact) $ nox -s licenses
 ...
- Name        Version  License
- colorama    0.4.3    BSD License
- exitstatus  1.3.0    MIT License
+ Name      Version  License     
+ click     8.1.3    BSD License 
+ colorama  0.4.4    BSD License 
+ fact      1.0.0    MIT License 
+ typer     0.4.1    MIT License 
 ```
 
 # Docker
@@ -363,7 +388,6 @@ $ docker build --tag fact .
 To run the image in a container:
 
 ```bash
-# Example calculating the factorial of 5.
 $ docker run --rm --interactive --tty fact 5
 ```
 
