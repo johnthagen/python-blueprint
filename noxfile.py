@@ -2,7 +2,7 @@ import nox
 from nox_poetry import Session, session
 
 nox.options.reuse_existing_virtualenvs = True
-nox.options.sessions = ["fmt", "lint", "type_check", "test", "docs"]
+nox.options.sessions = ["fmt_check", "lint", "type_check", "test", "docs"]
 
 
 @session(python=["3.8", "3.9", "3.10"])
