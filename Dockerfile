@@ -22,13 +22,9 @@ ENV PYTHONBUFFERED 1
 ENV PIP_NO_CACHE_DIR 1
 ENV WORKDIR /src
 
-# This must be the same path that is used in the final image as the virtual environment has
-# absoulte symlinks in it.
-ENV VIRTUAL_ENV /opt/venv
-
 WORKDIR ${WORKDIR}
 
-# Install any system depdendencies required to build wheels, such as C compilers or system packages
+# Install any system dependencies required to build wheels, such as C compilers or system packages
 # For example:
 #RUN apt-get update && apt-get install -y \
 #    gcc \
@@ -36,28 +32,29 @@ WORKDIR ${WORKDIR}
 
 # Install Poetry into the global environment to isolate it from the venv. This prevents Poetry
 # from uninstalling parts of itself.
-# TODO: Improve Poetry usage in multi-stage Dockerfiles once these issues are fixed in Poetry.
-#   Non-editable `poetry install`: https://github.com/python-poetry/poetry/issues/1382
-#   Specifying venv path: https://github.com/python-poetry/poetry/issues/1579
 RUN pip install "poetry==${POETRY_VERSION}"
 
-# Copy in project dependency specification.
-COPY pyproject.toml poetry.lock ./
-RUN poetry export --output requirements.txt
-
 # Pre-download/compile wheel dependencies into a virtual environment.
-# Doing this in a multi-stage build allows ommitting compile dependencies from the final image.
+# Doing this in a multi-stage build allows omitting compile dependencies from the final image.
+# This must be the same path that is used in the final image as the virtual environment has
+# absolute symlinks in it.
+ENV VIRTUAL_ENV /opt/venv
 RUN python -m venv ${VIRTUAL_ENV}
 ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
 
-RUN pip install --upgrade pip wheel && \
-    pip install -r requirements.txt
+# Copy in project dependency specification.
+COPY pyproject.toml poetry.lock ./
+
+# Don't install the package itself with Poetry because it will install it as an editable install.
+# TODO: Improve this when non-editable `poetry install` is supported in Poetry.
+#    https://github.com/python-poetry/poetry/issues/1382
+RUN poetry install --no-root --no-dev
 
 # Copy in source files.
 COPY README.md ./
 COPY src src
 
-# Don't install the package itself with Poetry because it will install it as an editable install.
+# Manually build/install the package.
 RUN poetry build && \
     pip install dist/*.whl
 
