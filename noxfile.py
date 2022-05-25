@@ -12,12 +12,9 @@ def test(s: Session) -> None:
         "python",
         "-m",
         "pytest",
-        "--cov",
-        "fact",
-        "--cov-report",
-        "html",
-        "--cov-report",
-        "term",
+        "--cov=fact",
+        "--cov-report=html",
+        "--cov-report=term",
         *s.posargs,
     )
 
