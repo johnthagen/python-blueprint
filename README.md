@@ -244,7 +244,7 @@ To build and serve the user guide with automatic rebuilding as you change the co
 run:
 
 ```bash
-$ nox -s docs_serve
+(fact) $ nox -s docs_serve
 ``` 
 
 and open <http://127.0.0.1:8000> in a browser.
