@@ -1,3 +1,5 @@
+from tempfile import NamedTemporaryFile
+
 import nox
 from nox_poetry import Session, session
 
@@ -63,7 +65,20 @@ def docs_github_pages(s: Session) -> None:
     s.run("mkdocs", "gh-deploy", "--force", env=doc_env)
 
 
+# Note: This reuse_venv does not yet have affect due to:
+#   https://github.com/wntrblm/nox/issues/488
 @session(reuse_venv=False)
 def licenses(s: Session) -> None:
-    s.install(".", "pip-licenses")
+    # Install dependencies without installing the package itself:
+    #   https://github.com/cjolowicz/nox-poetry/issues/680
+    with NamedTemporaryFile() as requirements_file:
+        s.run_always(
+            "poetry",
+            "export",
+            "--without-hashes",
+            "-o",
+            str(requirements_file.name),
+            external=True,
+        )
+        s.install("pip-licenses", "-r", requirements_file.name)
     s.run("pip-licenses", *s.posargs)

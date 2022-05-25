@@ -357,12 +357,11 @@ To automatically list the licenses for all dependencies in (and their transitive
 using [pip-licenses](https://github.com/raimon49/pip-licenses):
 
 ```bash
-(fact) $ nox -s licenses
+(fact) $ nox --no-reuse-existing-virtualenvs -s licenses
 ...
  Name      Version  License     
  click     8.1.3    BSD License 
  colorama  0.4.4    BSD License 
- fact      1.0.0    MIT License 
  typer     0.4.1    MIT License 
 ```
 
