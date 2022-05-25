@@ -24,7 +24,7 @@ ENV WORKDIR /src
 
 WORKDIR ${WORKDIR}
 
-# Install any system depdendencies required to build wheels, such as C compilers or system packages
+# Install any system dependencies required to build wheels, such as C compilers or system packages
 # For example:
 #RUN apt-get update && apt-get install -y \
 #    gcc \
@@ -35,9 +35,9 @@ WORKDIR ${WORKDIR}
 RUN pip install "poetry==${POETRY_VERSION}"
 
 # Pre-download/compile wheel dependencies into a virtual environment.
-# Doing this in a multi-stage build allows ommitting compile dependencies from the final image.
+# Doing this in a multi-stage build allows omitting compile dependencies from the final image.
 # This must be the same path that is used in the final image as the virtual environment has
-# absoulte symlinks in it.
+# absolute symlinks in it.
 ENV VIRTUAL_ENV /opt/venv
 RUN python -m venv ${VIRTUAL_ENV}
 ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
