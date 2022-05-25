@@ -43,10 +43,17 @@ To install all dependencies into an isolated virtual environment:
 $ poetry install
 ```
 
-To activate the virtual environment that is automatically created by Poetry:
+To [activate](https://python-poetry.org/docs/basic-usage#activating-the-virtual-environment) the
+virtual environment that is automatically created by Poetry:
 
 ```bash
 $ poetry shell
+```
+
+To deactivate the environment:
+
+```bash
+(fact) $ exit
 ```
 
 To upgrade all dependencies to their latest versions:
