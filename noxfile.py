@@ -76,7 +76,7 @@ def licenses(s: Session) -> None:
             "poetry",
             "export",
             "--without-hashes",
-            "-o",
+            "--output",
             str(requirements_file.name),
             external=True,
         )
