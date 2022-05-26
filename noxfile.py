@@ -17,6 +17,7 @@ def test(s: Session) -> None:
         "--cov=fact",
         "--cov-report=html",
         "--cov-report=term",
+        "tests",
         *s.posargs,
     )
 
