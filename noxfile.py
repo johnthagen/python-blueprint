@@ -77,8 +77,7 @@ def licenses(s: Session) -> None:
             "poetry",
             "export",
             "--without-hashes",
-            "--output",
-            requirements_file.name,
+            f"--output={requirements_file.name}",
             external=True,
         )
         s.install("pip-licenses", "-r", requirements_file.name)
