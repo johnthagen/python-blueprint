@@ -16,6 +16,7 @@ theme:
   favicon: static/math-integral-box.png
   features:
     - content.code.annotate
+    - content.tabs.link
     - navigation.tracking
     - search.highlight
     - search.share
