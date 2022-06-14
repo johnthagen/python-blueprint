@@ -457,3 +457,14 @@ To integrate automatic code formatters into PyCharm, reference the following ins
 > be, such as `.nox`. See 
 > <https://www.jetbrains.com/help/pycharm/project-tool-window.html#content_pane_context_menu> on 
 > how to Right-Click | Mark Directory as | Excluded.
+
+## Nox Support
+
+[PyCharm does not yet natively support Nox](https://youtrack.jetbrains.com/issue/PY-37302). The
+recommended way to launch Nox from PyCharm is to create a **Python** 
+[Run Configuration](https://www.jetbrains.com/help/pycharm/run-debug-configuration.html).
+
+- Beside **Script Path**, press the down arrow and select **Module**: `nox`
+- **Parameters**, enter a session: `-s test`
+- **Working Directory**: Enter the path to the current project
+- Check **Emulate terminal in output console** to enable colors to be rendered properly
