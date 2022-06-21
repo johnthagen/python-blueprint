@@ -27,17 +27,20 @@ classifiers = [
 # result in an old version being resolved/locked.
 python = "^3.8, <3.11"
 colorama = "^0.4.5"
-typer = "^0.4.0"
+typer = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
-nox-poetry = "^0.9.0"
+nox-poetry = "^1.0.0"
+# TODO: Remove when Poetry add support for updating to latest versions upstream.
+#   https://github.com/python-poetry/poetry/issues/461
+# poetryup = "^0.8.0"
 
 # Testing.
 pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
 
 # Type Checking.
-mypy = "0.961"
+mypy = "^0.961"
 # As of mypy 0.900, mypy no longer bundles the stubs for third-party libraries that reside
 # in the typeshed project. Add these "types-" packages here if you depend on them in
 # requirements.in (e.g. types-requests).
