@@ -26,18 +26,18 @@ classifiers = [
 # Without also constraining the upper bound here, Poetry will not select those versions and will
 # result in an old version being resolved/locked.
 python = "^3.8, <3.11"
-colorama = "*"
-typer = "*"
+colorama = "^0.4.5"
+typer = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
-nox-poetry = "*"
+nox-poetry = "^0.9.0"
 
 # Testing.
-pytest = "*"
-pytest-cov = "*"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
 
 # Type Checking.
-mypy = "*"
+mypy = "0.961"
 # As of mypy 0.900, mypy no longer bundles the stubs for third-party libraries that reside
 # in the typeshed project. Add these "types-" packages here if you depend on them in
 # requirements.in (e.g. types-requests).
@@ -45,25 +45,25 @@ mypy = "*"
 #      https://github.com/python/typeshed/tree/master/stubs
 
 # Linting.
-flake8 = "*"
-flake8-bugbear = "*"
-flake8-broken-line = "*"
-flake8-comprehensions = "*"
-pep8-naming = "*"
+flake8 = "^4.0.1"
+flake8-bugbear = "^22.4.25"
+flake8-broken-line = "^0.4.0"
+flake8-comprehensions = "^3.10.0"
+pep8-naming = "^0.13.0"
 # TODO: Remove this when flake8 adds native support for pyproject.toml.
-pyproject-flake8 = "*"
+pyproject-flake8 = "^0.0.1a4"
 
 # Formatting.
-black = "*"
-isort = "*"
+black = "^22.3.0"
+isort = "^5.10.1"
 
 # Documentation.
-mkdocs-material = "*"
-mkdocs-htmlproofer-plugin = "*"
-mkdocstrings = { version = "*", extras = ["python"] }
+mkdocs-material = "^8.3.6"
+mkdocs-htmlproofer-plugin = "^0.8.0"
+mkdocstrings = { version = "^0.19.0", extras = ["python"] }
 ## Autodoc.
-mkdocs-gen-files = "*"
-mkdocs-literate-nav = "*"
+mkdocs-gen-files = "^0.3.4"
+mkdocs-literate-nav = "^0.4.1"
 
 [tool.poetry.scripts]
 fact = "fact.cli:entry_point"
