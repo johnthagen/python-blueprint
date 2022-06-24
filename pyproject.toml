@@ -31,7 +31,7 @@ typer = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
 nox-poetry = "^1.0.0"
-# TODO: Remove when Poetry add support for updating to latest versions upstream.
+# TODO: Remove when Poetry adds support for updating to latest versions.
 #   https://github.com/python-poetry/poetry/issues/461
 # poetryup = "^0.8.0"
 
