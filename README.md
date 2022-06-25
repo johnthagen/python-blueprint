@@ -68,7 +68,7 @@ $ poetry update
 both `pyproject.toml` and `poetry.lock` to their latest versions (regardless of semantic version):
 
 ```bash
-(fact) $ nox -s upgrade_latest
+(fact) $ nox -s update_latest
 ```
 
 This is useful for applications as an alternative to using wildcard versions (`"*"`) for allowing
@@ -82,7 +82,7 @@ To upgrade only dev dependencies to their latest versions (which would be more a
 libraries):
 
 ```bash
-(fact) $ nox -s upgrade_latest -- --group dev
+(fact) $ nox -s update_latest -- --group dev
 ```
 
 ## Packaging
