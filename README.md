@@ -71,15 +71,15 @@ both `pyproject.toml` and `poetry.lock` to their latest versions (regardless of 
 (fact) $ nox -s update_latest
 ```
 
-This is useful for applications as an alternative to using wildcard versions (`"*"`) for allowing
-the developer avoid manually checking for new major release versions for all top level
+This is useful for _applications_ as an alternative to using wildcard versions (`"*"`) for allowing
+the developer to avoid manually checking for new major release versions for all top level
 dependencies. Putting tight version constraints in `pyproject.toml` can greatly reduce the time 
-for Poetry to resolve lockfile changes during update. _Libraries_ should generally avoid pinning to
-the latest versions in `project.toml` so they allow _users_ of their library the greatest
+for Poetry to resolve lockfile changes during updates. _Libraries_ should generally avoid pinning to
+the latest versions in `project.toml` so they allow users of their library the greatest
 flexibility in selecting the final dependencies for their applications.
 
-To upgrade only dev dependencies to their latest versions (which would be more appropriate for 
-libraries):
+To upgrade only dev dependencies to their latest versions (which is a more appropriate operation
+for libraries):
 
 ```bash
 (fact) $ nox -s update_latest -- --group dev
