@@ -30,10 +30,10 @@ colorama = "^0.4.5"
 typer = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
-nox-poetry = "^1.0.0"
+nox-poetry = "^1.0.1"
 # TODO: Remove when Poetry adds support for updating to latest versions.
 #   https://github.com/python-poetry/poetry/issues/461
-# poetryup = "^0.8.0"
+poetryup = "^0.8.0"
 
 # Testing.
 pytest = "^7.1.2"
