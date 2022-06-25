@@ -56,10 +56,33 @@ To deactivate the environment:
 (fact) $ exit
 ```
 
-To upgrade all dependencies to their latest versions:
+### Update Dependencies
+
+To upgrade all dependencies in `poetry.lock` to their latest semantic version compatible releases:
 
 ```bash
 $ poetry update
+```
+
+(Applications only) To upgrade all dependencies, other than those pinned to exact versions, in
+both `pyproject.toml` and `poetry.lock` to their latest versions (regardless of semantic version):
+
+```bash
+(fact) $ nox -s upgrade_latest
+```
+
+This is useful for applications as an alternative to using wildcard versions (`"*"`) for allowing
+the developer avoid manually checking for new major release versions for all top level
+dependencies. Putting tight version constraints in `pyproject.toml` can greatly reduce the time 
+for Poetry to resolve lockfile changes during update. _Libraries_ should generally avoid pinning to
+the latest versions in `project.toml` so they allow _users_ of their library the greatest
+flexibility in selecting the final dependencies for their applications.
+
+To upgrade only dev dependencies to their latest versions (which would be more appropriate for 
+libraries):
+
+```bash
+(fact) $ nox -s upgrade_latest -- --group dev
 ```
 
 ## Packaging
