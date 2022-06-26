@@ -65,7 +65,8 @@ $ poetry update
 ```
 
 (Applications only) To upgrade all dependencies, other than those pinned to exact versions, in
-both `pyproject.toml` and `poetry.lock` to their latest versions (regardless of semantic version):
+both `pyproject.toml` and `poetry.lock` to their latest versions (regardless of semantic version)
+using [`poetryup`](https://github.com/MousaZeidBaker/poetryup):
 
 ```bash
 (fact) $ nox -s update_latest
@@ -74,9 +75,9 @@ both `pyproject.toml` and `poetry.lock` to their latest versions (regardless of 
 This is useful for _applications_ as an alternative to using wildcard versions (`"*"`) for allowing
 the developer to avoid manually checking for new major release versions for all top level
 dependencies. Putting tight version constraints in `pyproject.toml` can greatly reduce the time 
-for Poetry to resolve lockfile changes during updates. _Libraries_ should generally avoid pinning to
-the latest versions in `project.toml` so they allow users of their library the greatest
-flexibility in selecting the final dependencies for their applications.
+for Poetry to resolve lockfile changes during updates. _Libraries_ should generally avoid pinning
+to the latest versions in `project.toml` to allow users of their library the greatest flexibility
+in selecting the final dependencies for their applications.
 
 To upgrade only dev dependencies to their latest versions (which is a more appropriate operation
 for libraries):
