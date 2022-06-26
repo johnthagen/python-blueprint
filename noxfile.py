@@ -3,6 +3,7 @@ from tempfile import NamedTemporaryFile
 import nox
 from nox_poetry import Session, session
 
+nox.options.error_on_external_run = True
 nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = ["fmt_check", "lint", "type_check", "test", "docs"]
 
