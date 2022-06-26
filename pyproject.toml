@@ -19,6 +19,9 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Typing :: Typed",
+    # Include this classifier to prevent accidently publishing private code to PyPI.
+    #   https://pypi.org/classifiers/
+    "Private :: Do Not Upload",
 ]
 
 [tool.poetry.dependencies]
