@@ -7,6 +7,11 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = ["fmt_check", "lint", "type_check", "test", "docs"]
 
 
+@session(venv_backend="none")
+def update_latest(s: Session) -> None:
+    s.run("poetryup", "--latest", "--skip-exact", *s.posargs)
+
+
 @session(python=["3.8", "3.9", "3.10"])
 def test(s: Session) -> None:
     s.install(".", "pytest", "pytest-cov")
