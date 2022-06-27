@@ -118,6 +118,9 @@ directly from the filesystem using `pip`.
 $ poetry publish
 ```
 
+> Note: To enable publishing, remove the `"Private :: Do Not Upload"`
+> [trove classifier](https://pypi.org/classifiers/).
+
 # Enforcing Code Quality
 
 Automated code quality checks are performed using 
