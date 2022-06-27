@@ -10,7 +10,7 @@
 [isort-badge]: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
 [mypy-badge]: https://img.shields.io/badge/type%20checked-mypy-blue.svg
 
-Example Python project that demonstrates how to create a tested Python package using the latest
+Example Python project that demonstrates how to create a Python package using the latest
 Python testing, linting, and type checking tooling. The project contains a `fact` package that
 provides a simple implementation of the
 [factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`) and a command line
