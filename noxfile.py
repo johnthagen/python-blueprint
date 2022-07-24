@@ -1,3 +1,4 @@
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import nox
@@ -71,15 +72,20 @@ def docs_github_pages(s: Session) -> None:
 #   https://github.com/wntrblm/nox/issues/488
 @session(reuse_venv=False)
 def licenses(s: Session) -> None:
+    # Generate a unique temporary file name. Poetry cannot write to the temp file directly on
+    # Windows, so only use the name and allow Poetry to re-create it.
+    with NamedTemporaryFile() as t:
+        requirements_file = Path(t.name)
+
     # Install dependencies without installing the package itself:
     #   https://github.com/cjolowicz/nox-poetry/issues/680
-    with NamedTemporaryFile() as requirements_file:
-        s.run_always(
-            "poetry",
-            "export",
-            "--without-hashes",
-            f"--output={requirements_file.name}",
-            external=True,
-        )
-        s.install("pip-licenses", "-r", requirements_file.name)
+    s.run_always(
+        "poetry",
+        "export",
+        "--without-hashes",
+        f"--output={requirements_file}",
+        external=True,
+    )
+    s.install("pip-licenses", "-r", str(requirements_file))
     s.run("pip-licenses", *s.posargs)
+    requirements_file.unlink()
