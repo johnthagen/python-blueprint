@@ -6,9 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Build Docker Image
-        id: docker_build
-        uses: docker/build-push-action@v2
+      - uses: actions/checkout@v3
+      - name: Build Container Image
+        uses: docker/build-push-action@v3
         with:
           push: false
