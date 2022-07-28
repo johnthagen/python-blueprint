@@ -3,7 +3,7 @@ name: python
 on: [push, pull_request]
 
 jobs:
-  nox:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,8 +17,26 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           # https://github.com/actions/setup-python#caching-packages-dependencies
-          cache: "poetry"
+          cache: poetry
       - name: Install all dependencies, including Nox
         run: poetry install
       - name: Test with Nox
-        run: poetry run nox
+        run: poetry run nox -s test-${{ matrix.python-version }}
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        nox-session: [ "fmt_check", "lint", "type_check", "docs" ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          cache: poetry
+      - name: Install all dependencies, including Nox
+        run: poetry install
+      - name: Test with Nox
+        run: poetry run nox -s ${{ matrix.nox-session }}
