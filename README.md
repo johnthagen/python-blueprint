@@ -411,6 +411,28 @@ $ docker run --rm --interactive --tty fact 5
 > RUN apk add --no-cache poetry
 > ```
 
+# Miscellaneous
+
+## Shebang Line
+
+The proper [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix) line for Python scripts is:
+
+```py
+#!/usr/bin/env python3
+```
+
+## Installing Newer Python on Ubuntu
+
+Ubuntu releases come with a default `python3` executable. This is frozen for the life of the OS
+and only receives security and bug fixes. To install a newer version of Python globally,
+consider the [deadsnakes PPA](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa).
+
+```shell
+sudo add-apt-repository ppa:deadsnakes
+sudo apt update
+sudo apt install python3.10
+```
+
 # PyCharm Configuration
 
 > Looking for a vivid dark color scheme for PyCharm?
