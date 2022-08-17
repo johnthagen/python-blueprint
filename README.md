@@ -367,7 +367,7 @@ To automatically list the licenses for all dependencies in (and their transitive
 using [pip-licenses](https://github.com/raimon49/pip-licenses):
 
 ```bash
-(fact) $ nox --no-reuse-existing-virtualenvs -s licenses
+(fact) $ nox -N -s licenses
 ...
  Name      Version  License     
  click     8.1.3    BSD License 
