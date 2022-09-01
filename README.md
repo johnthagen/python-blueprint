@@ -415,7 +415,7 @@ $ docker run --rm --interactive --tty fact 5
 
 ## Shebang Line
 
-The proper [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix) line for Python scripts is:
+The proper [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) line for Python scripts is:
 
 ```py
 #!/usr/bin/env python3
