@@ -91,9 +91,6 @@ extend-ignore = ["E203"]
 # flake8-bugbear config.
 # This argument is not needed if not using Typer as a dependency.
 extend-immutable-calls = ["Argument"]
-# TODO: Remove this once flake8 > 4.0.1 is released as this has been fixed
-#   upstream: https://github.com/PyCQA/flake8/pull/1443
-extend-exclude = [".nox"]
 
 [tool.black]
 line-length = 99
