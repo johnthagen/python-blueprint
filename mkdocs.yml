@@ -23,6 +23,7 @@ theme:
     - search.suggest
 markdown_extensions:
   - admonition
+  - footnotes
   - pymdownx.keys
   - pymdownx.highlight
   - pymdownx.superfences
