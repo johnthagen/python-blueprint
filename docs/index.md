@@ -48,8 +48,7 @@ To use `fact` within your project, import the `factorial` function and execute i
 ```python
 from fact.lib import factorial
 
-# (1)
-assert factorial(3) == 6
+assert factorial(3) == 6 # (1)!
 ```
 
 1. This assertion will be `True`
