@@ -39,7 +39,12 @@ jobs:
         with:
           python-version: "3.9"
           cache: poetry
+      # The test session is a special quality session in that it relies on the main dependencies
+      # that have inline type annotations.
+      - name: Conditionally add main dependencies for type_check session
+        if: "${{ matrix.nox-session }} == 'type_check'"
+        run: echo "extra_dep_group=main" >> $GITHUB_ENV
       - name: Install all dependencies, including Nox
-        run: poetry install
+        run: poetry install --only nox,${{ matrix.nox-session }},{{ env.extra_dep_group}}
       - name: Test with Nox
         run: poetry run nox -s ${{ matrix.nox-session }}
