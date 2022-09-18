@@ -30,10 +30,11 @@ jobs:
     strategy:
       matrix:
         job:
-          - { nox-session: fmt_check, poetry-groups: fmt }
-          - { nox-session: lint, poetry-groups: lint }
-          - { nox-session: type_check, poetry-groups: main,type_check }
-          - { nox-session: docs, poetry-groups: docs }
+          - { nox-session: fmt_check, poetry-groups: "fmt" }
+          - { nox-session: lint, poetry-groups: "lint" }
+          # type_check needs main dependencies for inline type annotations.
+          - { nox-session: type_check, poetry-groups: "main,type_check" }
+          - { nox-session: docs, poetry-groups: "docs" }
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
