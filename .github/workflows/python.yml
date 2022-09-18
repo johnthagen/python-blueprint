@@ -45,6 +45,6 @@ jobs:
         if: "${{ matrix.nox-session }} == 'type_check'"
         run: echo "extra_dep_group=main" >> $GITHUB_ENV
       - name: Install all dependencies, including Nox
-        run: poetry install --only nox,${{ matrix.nox-session }},{{ env.extra_dep_group}}
+        run: poetry install --only nox,${{ matrix.nox-session }},${{ env.extra_dep_group}}
       - name: Test with Nox
         run: poetry run nox -s ${{ matrix.nox-session }}
