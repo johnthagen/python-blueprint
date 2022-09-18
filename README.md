@@ -374,7 +374,7 @@ using [pip-licenses](https://github.com/raimon49/pip-licenses):
  typer     0.4.1    MIT License 
 ```
 
-# Docker
+# Container
 
 [Docker](https://www.docker.com/) is a tool that allows for software to be packaged into isolated
 containers. It is not necessary to use Docker in a Python project, but for the purposes of
@@ -387,7 +387,7 @@ Docker is configured in:
 - [`Dockerfile`](./Dockerfile)
 - [`.dockerignore`](./.dockerignore)
 
-To build the Docker image:
+To build the container image:
 
 ```bash
 $ docker build --tag fact .
