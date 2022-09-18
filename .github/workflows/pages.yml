@@ -20,8 +20,8 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-          cache: "poetry"
+          cache: poetry
       - name: Install all dependencies, including Nox
-        run: poetry install
+        run: poetry install --only docs
       - name: Publish Docs
         run: poetry run nox -s docs_github_pages

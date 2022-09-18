@@ -48,7 +48,7 @@ COPY pyproject.toml poetry.lock ./
 # Don't install the package itself with Poetry because it will install it as an editable install.
 # TODO: Improve this when non-editable `poetry install` is supported in Poetry.
 #    https://github.com/python-poetry/poetry/issues/1382
-RUN poetry install --no-root --no-dev
+RUN poetry install --only main --no-root
 
 # Copy in source files.
 COPY README.md ./
