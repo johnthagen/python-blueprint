@@ -44,7 +44,7 @@ jobs:
         with:
           python-version: "3.9"
           cache: poetry
-      - name: Install Nox and all dependencies
+      - name: Install Nox and group dependencies
         run: poetry install --only nox,${{ matrix.job.poetry-groups }}
       - name: Test with Nox
         run: poetry run nox -s ${{ matrix.job.nox-session }}
