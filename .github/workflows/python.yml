@@ -29,7 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        nox-session: [ "fmt_check", "lint", "type_check", "docs" ]
+        job:
+          - { nox-session: fmt_check, poetry-groups: fmt }
+          - { nox-session: lint, poetry-groups: lint }
+          - { nox-session: type_check, poetry-groups: main,type_check }
+          - { nox-session: docs, poetry-groups: docs }
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
@@ -40,10 +44,6 @@ jobs:
           python-version: "3.9"
           cache: poetry
       - name: Install Nox and all dependencies
-        # TODO: Find a clean way to only install the dependency group that is needed, but there are
-        #   several problem factors:
-        #     1. The type_check session needs 'main' dependencies but the others do not
-        #     2. The fmt_check session name doesn't match the cooresponding 'fmt Poetry group
-        run: poetry install --without test
+        run: poetry install --only nox,${{ matrix.job.poetry-groups }}
       - name: Test with Nox
-        run: poetry run nox -s ${{ matrix.nox-session }}
+        run: poetry run nox -s ${{ matrix.job.nox-session }}
