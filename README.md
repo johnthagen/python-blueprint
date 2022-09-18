@@ -436,7 +436,7 @@ sudo apt install python3.10
 
 [`pipdeptree`](https://github.com/tox-dev/pipdeptree) is a utility for displaying installed
 packages in the form of a dependency tree. For large projects, it is often difficult to
-determine dependency relationships soley from `poetry.lock`.
+determine dependency relationships soley from manually inspecting `poetry.lock`.
 
 # PyCharm Configuration
 
