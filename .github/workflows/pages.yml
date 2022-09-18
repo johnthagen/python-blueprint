@@ -7,13 +7,16 @@ on:
   push:
     branches: [master]
 
+env:
+  POETRY_VERSION: 1.2.1
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
-        run: pipx install poetry
+        run: pipx install poetry==${POETRY_VERSION}
       - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
