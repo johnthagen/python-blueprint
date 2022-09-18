@@ -22,7 +22,7 @@ jobs:
           # https://github.com/actions/setup-python#caching-packages-dependencies
           cache: poetry
       - name: Install Nox and needed test dependencies
-        run: poetry install --only nox,main,test
+        run: poetry install --only nox
       - name: Test with Nox
         run: poetry run nox -s test-${{ matrix.python-version }}
   quality:
