@@ -21,7 +21,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           # https://github.com/actions/setup-python#caching-packages-dependencies
           cache: poetry
-      - name: Install Nox and needed test dependencies
+      - name: Install Nox
         run: poetry install --only nox
       - name: Test with Nox
         run: poetry run nox -s test-${{ matrix.python-version }}
@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: "3.9"
           cache: poetry
-      - name: Install all dependencies, including Nox
+      - name: Install Nox and all dependencies
         # TODO: Find a clean way to only install the dependency group that is needed, but there are
         #   several problem factors:
         #     1. The type_check session needs 'main' dependencies but the others do not

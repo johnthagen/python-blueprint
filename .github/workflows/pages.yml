@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.9"
           cache: poetry
-      - name: Install all dependencies, including Nox
+      - name: Install Nox and doc dependencies
         run: poetry install --only nox,docs
       - name: Publish Docs
         run: poetry run nox -s docs_github_pages
