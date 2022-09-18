@@ -2,6 +2,9 @@ name: python
 
 on: [push, pull_request]
 
+env:
+  POETRY_VERSION: 1.2.1
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -11,32 +14,37 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
-        run: pipx install poetry
+        run: pipx install poetry==${POETRY_VERSION}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           # https://github.com/actions/setup-python#caching-packages-dependencies
           cache: poetry
-      - name: Install all dependencies, including Nox
-        run: poetry install
+      - name: Install Nox
+        run: poetry install --only nox
       - name: Test with Nox
         run: poetry run nox -s test-${{ matrix.python-version }}
   quality:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        nox-session: [ "fmt_check", "lint", "type_check", "docs" ]
+        job:
+          - { nox-session: fmt_check, poetry-groups: "fmt" }
+          - { nox-session: lint, poetry-groups: "lint" }
+          # type_check needs main dependencies for inline type annotations.
+          - { nox-session: type_check, poetry-groups: "main,type_check" }
+          - { nox-session: docs, poetry-groups: "docs" }
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
-        run: pipx install poetry
+        run: pipx install poetry==${POETRY_VERSION}
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
           cache: poetry
-      - name: Install all dependencies, including Nox
-        run: poetry install
+      - name: Install Nox and group dependencies
+        run: poetry install --only nox,${{ matrix.job.poetry-groups }}
       - name: Test with Nox
-        run: poetry run nox -s ${{ matrix.nox-session }}
+        run: poetry run nox -s ${{ matrix.job.nox-session }}

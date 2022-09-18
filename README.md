@@ -36,8 +36,7 @@ all machines that use the project, both during development and in production.
 
 To install all dependencies into an isolated virtual environment:
 
-> Append `--remove-untracked` to uninstall dependencies that are no longer in use from the virtual
-> environment.
+> Append `--sync` to uninstall dependencies that are no longer in use from the virtual environment.
 
 ```bash
 $ poetry install
@@ -375,7 +374,7 @@ using [pip-licenses](https://github.com/raimon49/pip-licenses):
  typer     0.4.1    MIT License 
 ```
 
-# Docker
+# Container
 
 [Docker](https://www.docker.com/) is a tool that allows for software to be packaged into isolated
 containers. It is not necessary to use Docker in a Python project, but for the purposes of
@@ -388,7 +387,7 @@ Docker is configured in:
 - [`Dockerfile`](./Dockerfile)
 - [`.dockerignore`](./.dockerignore)
 
-To build the Docker image:
+To build the container image:
 
 ```bash
 $ docker build --tag fact .
@@ -437,7 +436,7 @@ sudo apt install python3.10
 
 [`pipdeptree`](https://github.com/tox-dev/pipdeptree) is a utility for displaying installed
 packages in the form of a dependency tree. For large projects, it is often difficult to
-determine dependency relationships soley from `poetry.lock`.
+determine dependency relationships soley from manually inspecting `poetry.lock`.
 
 # PyCharm Configuration
 

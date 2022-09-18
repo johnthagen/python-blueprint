@@ -7,18 +7,21 @@ on:
   push:
     branches: [master]
 
+env:
+  POETRY_VERSION: 1.2.1
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
-        run: pipx install poetry
+        run: pipx install poetry==${POETRY_VERSION}
       - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-          cache: "poetry"
-      - name: Install all dependencies, including Nox
-        run: poetry install
+          cache: poetry
+      - name: Install Nox and doc dependencies
+        run: poetry install --only nox,docs
       - name: Publish Docs
         run: poetry run nox -s docs_github_pages

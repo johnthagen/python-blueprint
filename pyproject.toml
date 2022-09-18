@@ -32,14 +32,14 @@ python = "^3.8, <3.11"
 rich = "*"
 typer = { version = "*", extras = ["all"] }
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.nox.dependencies]
 nox-poetry = "*"
 
-# Testing.
+[tool.poetry.group.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
 
-# Type Checking.
+[tool.poetry.group.type_check.dependencies]
 mypy = "*"
 # As of mypy 0.900, mypy no longer bundles the stubs for third-party libraries that reside
 # in the typeshed project. Add these "types-" packages here if you depend on them in
@@ -47,7 +47,7 @@ mypy = "*"
 # See: http://mypy-lang.blogspot.com/2021/06/mypy-0900-released.html
 #      https://github.com/python/typeshed/tree/master/stubs
 
-# Linting.
+[tool.poetry.group.lint.dependencies]
 flake8 = "*"
 flake8-bugbear = "*"
 flake8-broken-line = "*"
@@ -56,11 +56,11 @@ pep8-naming = "*"
 # TODO: Remove this when flake8 adds native support for pyproject.toml.
 pyproject-flake8 = "*"
 
-# Formatting.
+[tool.poetry.group.fmt.dependencies]
 black = "*"
 isort = "*"
 
-# Documentation.
+[tool.poetry.group.docs.dependencies]
 mkdocs-material = "*"
 mkdocs-htmlproofer-plugin = "*"
 mkdocstrings = { version = "*", extras = ["python"] }
@@ -72,7 +72,7 @@ mkdocs-literate-nav = "*"
 fact = "fact.cli:app"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
