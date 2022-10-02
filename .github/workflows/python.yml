@@ -48,3 +48,16 @@ jobs:
         run: poetry install --only nox,${{ matrix.job.poetry-groups }}
       - name: Test with Nox
         run: poetry run nox -s ${{ matrix.job.nox-session }}
+  poetry-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry==${POETRY_VERSION}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Validate Poetry Configuration and Lockfile Freshness
+        # This command also includes `poetry check` validation.
+        run: poetry lock --check
