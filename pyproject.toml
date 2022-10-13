@@ -63,6 +63,8 @@ isort = "*"
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "*"
 mkdocs-htmlproofer-plugin = "*"
+# TODO: Unpin when Mac wheels are provided: https://bugs.launchpad.net/lxml/+bug/1980575
+lxml = "4.9.0"
 mkdocstrings = { version = "*", extras = ["python"] }
 ## Autodoc.
 mkdocs-gen-files = "*"

@@ -8,7 +8,8 @@ on:
     branches: [master]
 
 env:
-  POETRY_VERSION: 1.2.1
+  POETRY_VERSION: "1.2.2"
+  PYTHON_VERSION: "3.9"
 
 jobs:
   deploy:
@@ -19,7 +20,7 @@ jobs:
         run: pipx install poetry==${POETRY_VERSION}
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry
       - name: Install Nox and doc dependencies
         run: poetry install --only nox,docs
