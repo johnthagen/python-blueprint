@@ -45,7 +45,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          rendering:
+          options:
             show_if_no_docstring: true
             show_signature_annotations: true
       watch:
@@ -57,13 +57,12 @@ plugins:
         - docs/gen_ref_pages.py
   - literate-nav:
       nav_file: SUMMARY.md
-  # This plugin is used to validate URLs (including some anchors).
-  # Uncomment to build the docs with this validation enabled.
-  # This is commented out by default because this requires network I/O to validate URLs, so it is
-  # inherently not exactly reproducible. But this plugin is none-the-less helpful at detecting
-  # incorrect URLs.
-#  - htmlproofer:
-#      raise_error: True
+  # This plugin is used to validate URLs (including anchors).
+  - htmlproofer:
+      # This is not enabled by default because this requires network I/O to validate URLs, so it
+      # is inherently not exactly reproducible.
+      enabled: !ENV [ENABLED_HTMLPROOFER, False]
+      raise_error: True
 site_name: fact
 copyright: Copyright &copy; 2018-2022 John Hagen
 # GitHub Specific Configuration.
