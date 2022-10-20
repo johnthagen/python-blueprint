@@ -59,7 +59,7 @@ def docs(s: Session) -> None:
 
 
 @session(venv_backend="none")
-def docs_validate_urls(s: Session) -> None:
+def docs_check_urls(s: Session) -> None:
     # TODO: Replace dict merge with d1 | d2 when dropping support for Python 3.8.
     s.run("mkdocs", "build", env={**doc_env, **{"ENABLED_HTMLPROOFER": str(True)}})
 

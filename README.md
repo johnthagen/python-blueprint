@@ -252,7 +252,7 @@ and open `docs/user_guide/site/index.html` using a web browser.
 To build the user guide, validating external URLs and anchor links, run:
 
 ```bash
-(fact) $ nox -s docs_validate_urls
+(fact) $ nox -s docs_check_urls
 ```
 
 To build and serve the user guide with automatic rebuilding as you change the contents,
