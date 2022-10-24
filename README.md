@@ -249,7 +249,7 @@ To build the user guide, run,
 
 and open `docs/user_guide/site/index.html` using a web browser.
 
-To build the user guide, validating external URLs and anchor links, run:
+To build the user guide, additionally validating external URLs, run:
 
 ```bash
 (fact) $ nox -s docs_check_urls
