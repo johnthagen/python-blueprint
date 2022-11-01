@@ -48,8 +48,6 @@ plugins:
           options:
             show_if_no_docstring: true
             show_signature_annotations: true
-      watch:
-        - src
   # Autodoc configuration.
   # https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
   - gen-files:
@@ -63,6 +61,9 @@ plugins:
       # exactly reproducible. For larger projects, this can also slow local build times.
       validate_external_urls: !ENV [HTMLPROOFER_VALIDATE_EXTERNAL_URLS, False]
       raise_error: True
+watch:
+  # Watch src/ directory to reload on changes to docstrings for mkdocstrings plugin.
+  - src
 site_name: fact
 copyright: Copyright &copy; 2018-2022 John Hagen
 # GitHub Specific Configuration.
