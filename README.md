@@ -491,20 +491,21 @@ PyCharm:
  ![](docs/static/images/preferences.png)
 
 3. Fill in the following fields
-    - Name: `black`
-    - File Type: Python
-    - Scope: Project Files
-    - Program: `$PyInterpreterDirectory$/python`
-    - Arguments: `-m isort $FilePath$`
-    - Output paths to refresh: `$FilePath$`
-    - Working directory: `$ProjectFileDir$`
-    - Advanced Options
+    - **Name**: `black`
+    - **File Type**: Python
+    - **Scope**: Project Files
+    - **Program**: `$PyInterpreterDirectory$/python`
+    - **Arguments**: `-m black $FilePath$`
+    - **Output paths to refresh**: `$FilePath$`
+    - **Working directory**: `$ProjectFileDir$`
+    - **Advanced Options**
       - **Uncheck**: Auto-save edited files to trigger the watcher
       - **Uncheck**: Trigger the watcher on external changes
 
   ![](docs/static/images/file_watcher.png)
 
-4. Copy the watcher, and replace references to `black` in the Name and Arguments fields to `isort`.
+4. Copy the watcher, and replace references to `black` in the **Name** and **Arguments** fields to
+   `isort`.
 
 ![](docs/static/images/file_watcher_copy.png)
 
