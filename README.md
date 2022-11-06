@@ -196,8 +196,8 @@ as [mypy](http://mypy-lang.org/), [PyCharm](https://www.jetbrains.com/pycharm/),
 or [Pyright](https://github.com/microsoft/pyright) to check that functions are used with the
 correct types before runtime.
 
-For [PyCharm in particular](https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html),
-the IDE is able to provide much richer auto-completion, refactoring, and type checking while the
+Editors such as [PyCharm](https://www.jetbrains.com/help/pycharm/type-hinting-in-product.html) and
+VS Code are able to provide much richer auto-completion, refactoring, and type checking while the
 user types, resulting in increased productivity and correctness.
 
 ```python
@@ -479,14 +479,34 @@ project:
 
 ## Integrate Code Formatters
 
-To integrate automatic code formatters into PyCharm, reference the following instructions:
+To integrate
+[black](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea) and
+[isort](https://github.com/timothycrosley/isort/wiki/isort-Plugins) automatic code formatters into
+PyCharm:
 
-- [black integration](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea)
-  - Alternatively, the File Watcher method described in the `isort` instructions below can also
-    be used for `black`.
+1. Ensure that the [File Watchers Plugin](https://plugins.jetbrains.com/plugin/7177-file-watchers)
+   is installed.
+2. Open Preferences or Settings | Tools | File Watchers and select `+` | `<custom>`
+   
+ ![](docs/static/images/preferences.png)
 
-- [isort integration](https://github.com/timothycrosley/isort/wiki/isort-Plugins)
-    - The File Watchers method (option 1) is recommended. This will run `isort` on every save.
+3. Fill in the following fields
+    - Name: `black`
+    - File Type: Python
+    - Scope: Project Files
+    - Program: `$PyInterpreterDirectory$/python`
+    - Arguments: `-m isort $FilePath$`
+    - Output paths to refresh: `$FilePath$`
+    - Working directory: `$ProjectFileDir$`
+    - Advanced Options
+      - **Uncheck**: Auto-save edited files to trigger the watcher
+      - **Uncheck**: Trigger the watcher on external changes
+
+  ![](docs/static/images/file_watcher.png)
+
+4. Copy the watcher, and replace references to `black` in the Name and Arguments fields to `isort`.
+
+![](docs/static/images/file_watcher_copy.png)
 
 > **Tip**
 >
