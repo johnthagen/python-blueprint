@@ -18,6 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
     # Include this classifier to prevent accidently publishing private code to PyPI.
     #   https://pypi.org/classifiers/
@@ -28,7 +29,7 @@ classifiers = [
 # Some packages, such as scipy, constrain their upper bound of Python versions they support.
 # Without also constraining the upper bound here, Poetry will not select those versions and will
 # result in an old version being resolved/locked.
-python = "^3.8, <3.11"
+python = "^3.8, <3.12"
 rich = "*"
 typer = { version = "*", extras = ["all"] }
 
