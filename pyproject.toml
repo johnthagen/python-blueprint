@@ -77,7 +77,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
-show_error_codes = true
 ignore_missing_imports = true
 strict = true
 # If certain strict config options are too pedantic for a project,
