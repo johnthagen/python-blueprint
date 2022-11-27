@@ -82,7 +82,7 @@ strict = true
 # If certain strict config options are too pedantic for a project,
 # disable them selectively here by setting to false.
 
-# Note: This configuration is suppported by pyproject-flake8.
+# Note: This configuration is suppported by flake8-pyproject.
 [tool.flake8]
 # Use the more relaxed max line length permitted in PEP 8.
 max-line-length = 99

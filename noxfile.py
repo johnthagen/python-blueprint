@@ -40,7 +40,6 @@ def fmt_check(s: Session) -> None:
 
 @session(venv_backend="none")
 def lint(s: Session) -> None:
-    # Run pyproject-flake8 entrypoint to support reading configuration from pyproject.toml.
     s.run("flake8")
 
 

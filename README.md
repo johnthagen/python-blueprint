@@ -156,7 +156,7 @@ included:
 - `flake8-broken-line`: Forbid using backslashes (`\`) for line breaks.
 - `flake8-comprehensions`: Helps write better `list`/`set`/`dict` comprehensions.
 - `pep8-naming`: Ensure functions, classes, and variables are named with correct casing.
-- `pyproject-flake8`: Allow configuration of `flake8` through `pyproject.toml`.
+- `flake8-pyproject`: Allow configuration of `flake8` through `pyproject.toml`.
 
 Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be
 configured automatically in editors such as PyCharm.
