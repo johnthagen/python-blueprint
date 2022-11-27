@@ -55,7 +55,7 @@ flake8-broken-line = "*"
 flake8-comprehensions = "*"
 pep8-naming = "*"
 # TODO: Remove this when flake8 adds native support for pyproject.toml.
-pyproject-flake8 = "*"
+flake8-pyproject = "*"
 
 [tool.poetry.group.fmt.dependencies]
 black = "*"
