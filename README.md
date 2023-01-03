@@ -8,7 +8,7 @@
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [isort-badge]: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
-[mypy-badge]: https://img.shields.io/badge/type%20checked-mypy-blue.svg
+[mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 
 Example Python project that demonstrates how to create a Python package using the latest
 Python testing, linting, and type checking tooling. The project contains a `fact` package that
