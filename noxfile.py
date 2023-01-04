@@ -64,6 +64,12 @@ def docs_check_urls(s: Session) -> None:
 
 
 @session(venv_backend="none")
+def docs_offline(s: Session) -> None:
+    # TODO: Replace dict merge with d1 | d2 when dropping support for Python 3.8.
+    s.run("mkdocs", "build", env={**doc_env, **{"MKDOCS_MATERIAL_OFFLINE": str(True)}})
+
+
+@session(venv_backend="none")
 def docs_serve(s: Session) -> None:
     s.run("mkdocs", "serve", env=doc_env)
 

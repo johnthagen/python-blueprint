@@ -257,6 +257,12 @@ To build the user guide, additionally validating external URLs, run:
 (fact) $ nox -s docs_check_urls
 ```
 
+To build the user guide in a format suitable for viewing directly from the file system, run:
+
+```bash
+(fact) $ nox -s docs_offline
+```
+
 To build and serve the user guide with automatic rebuilding as you change the contents,
 run:
 

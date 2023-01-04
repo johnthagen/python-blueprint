@@ -16,7 +16,9 @@ theme:
   favicon: static/math-integral-box.png
   features:
     - content.code.annotate
+    - content.code.copy
     - content.tabs.link
+    - navigation.footer
     - navigation.tracking
     - search.highlight
     - search.share
@@ -38,10 +40,10 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/johnthagen/python-blueprint
-# This is needed to allow links to work when opened from the file system.
-use_directory_urls: false
 plugins:
   - search
+  - offline:
+      enabled: !ENV [MKDOCS_MATERIAL_OFFLINE, false]
   - mkdocstrings:
       handlers:
         python:
@@ -59,7 +61,7 @@ plugins:
   - htmlproofer:
       # This is not enabled by default because this requires network I/O, so it is inherently not
       # exactly reproducible. For larger projects, this can also slow local build times.
-      validate_external_urls: !ENV [HTMLPROOFER_VALIDATE_EXTERNAL_URLS, False]
+      validate_external_urls: !ENV [HTMLPROOFER_VALIDATE_EXTERNAL_URLS, false]
       raise_error: True
 watch:
   # Watch src/ directory to reload on changes to docstrings for mkdocstrings plugin.
