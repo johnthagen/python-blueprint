@@ -116,7 +116,7 @@ addopts = [
     "--strict-config",
     "--strict-markers",
 ]
-xfail_strict=true
+xfail_strict = true
 filterwarnings = [
     # When running tests, treat warnings as errors (e.g. -Werror).
     # See: https://docs.pytest.org/en/latest/reference/reference.html#confval-filterwarnings
