@@ -4,7 +4,7 @@
 [![Packaged with Poetry][poetry-badge]](https://python-poetry.org/)
 [![Code style: black][black-badge]](https://github.com/psf/black)
 [![Imports: isort][isort-badge]](https://pycqa.github.io/isort/)
-[![Type checked with mypy][mypy-badge]](https://github.com/python/mypy)
+[![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
