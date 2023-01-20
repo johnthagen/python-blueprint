@@ -73,8 +73,8 @@ Packaging is configured by:
 - [`pyproject.toml`](./pyproject.toml)
 
 To package the project as both a 
-[source distribution](https://docs.python.org/3/distutils/sourcedist.html) and
-a [wheel](https://wheel.readthedocs.io/en/stable/):
+[source distribution](https://packaging.python.org/en/latest/flow/#the-source-distribution-sdist)
+and a [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/):
 
 ```bash
 $ poetry build
