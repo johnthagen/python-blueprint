@@ -448,9 +448,28 @@ sudo apt install python3.10
 
 ## Package Dependency Tree
 
-[`pipdeptree`](https://github.com/tox-dev/pipdeptree) is a utility for displaying installed
-packages in the form of a dependency tree. For large projects, it is often difficult to
-determine dependency relationships soley from manually inspecting `poetry.lock`.
+[`poetry show`](https://python-poetry.org/docs/cli#show) is a Poetry command for listing installed
+packages. The `--tree` option displays them in the form of a dependency tree. For large projects,
+it is often difficult to determine dependency relationships soley from manually inspecting
+`poetry.lock`.
+
+```shell
+$ poetry show --tree --only main
+
+rich 12.6.0 Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal
+├── commonmark >=0.9.0,<0.10.0
+├── pygments >=2.6.0,<3.0.0
+└── typing-extensions >=4.0.0,<5.0
+typer 0.7.0 Typer, build great CLIs. Easy to code. Based on Python type hints.
+├── click >=7.1.1,<9.0.0
+│   └── colorama * 
+├── colorama >=0.4.3,<0.5.0
+├── rich >=10.11.0,<13.0.0
+│   ├── commonmark >=0.9.0,<0.10.0 
+│   ├── pygments >=2.6.0,<3.0.0 
+│   └── typing-extensions >=4.0.0,<5.0 
+└── shellingham >=1.3.0,<2.0.0
+```
 
 # PyCharm Configuration
 
