@@ -28,7 +28,8 @@ This package uses [Poetry](https://python-poetry.org/) to manage dependencies an
 isolated [Python virtual environments](https://docs.python.org/3/library/venv.html).
 
 To proceed, 
-[install Poetry globally onto your system](https://python-poetry.org/docs/#installation).
+[install Poetry globally](https://python-poetry.org/docs/#installing-with-the-official-installer)
+onto your system.
 
 ## Dependencies
 
