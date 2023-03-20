@@ -3,7 +3,7 @@ name: python
 on: [push, pull_request]
 
 env:
-  POETRY_VERSION: "1.3.2"
+  POETRY_VERSION: "1.4.1"
   PYTHON_VERSION: "3.10"
 
 jobs:
@@ -59,6 +59,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Validate Poetry Configuration and Lockfile Freshness
-        # This command also includes `poetry check` validation.
+      - name: Validate Poetry Configuration
+        run: poetry check
+      - name: Validate Lockfile Freshness
         run: poetry lock --check
