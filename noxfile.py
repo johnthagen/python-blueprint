@@ -40,7 +40,7 @@ def fmt_check(s: Session) -> None:
 
 @session(venv_backend="none")
 def lint(s: Session) -> None:
-    s.run("flake8")
+    s.run("flake8", "docs", "src", "tests", "noxfile.py")
 
 
 @session(venv_backend="none")
