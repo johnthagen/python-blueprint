@@ -1,6 +1,6 @@
 # `fact` User Guide
 
-!!! info
+??? info "`python-blueprint` Project"
 
     For more information on how this was built and deployed, as well as other Python best
     practices, see [`python-blueprint`](https://github.com/johnthagen/python-blueprint).

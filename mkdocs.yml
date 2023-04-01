@@ -30,6 +30,7 @@ theme:
 markdown_extensions:
   - admonition
   - footnotes
+  - pymdownx.details
   - pymdownx.keys
   - pymdownx.highlight
   - pymdownx.superfences
