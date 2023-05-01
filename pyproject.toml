@@ -91,7 +91,13 @@ extend-select = [
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
 ]
+extend-ignore = ["RUF005"]
 src = ["src"]
+
+[tool.ruff.isort]
+force-sort-within-sections = true
+# For non-src directory projects, explicitly set top level package names:
+# known-first-party = ["my-app"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
