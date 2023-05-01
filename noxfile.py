@@ -28,19 +28,24 @@ def test(s: Session) -> None:
 # environment. This requires that nox is run within `poetry shell` or using `poetry run nox ...`.
 @session(venv_backend="none")
 def fmt(s: Session) -> None:
-    s.run("isort", ".")
+    s.run("ruff", "check", ".", "--select", "I", "--fix")
     s.run("black", ".")
 
 
 @session(venv_backend="none")
 def fmt_check(s: Session) -> None:
-    s.run("isort", "--check", ".")
+    s.run("ruff", "check", ".", "--select", "I")
     s.run("black", "--check", ".")
 
 
 @session(venv_backend="none")
 def lint(s: Session) -> None:
-    s.run("flake8")
+    s.run("ruff", "check", ".")
+
+
+@session(venv_backend="none")
+def lint_fix(s: Session) -> None:
+    s.run("ruff", "check", ".", "--fix")
 
 
 @session(venv_backend="none")

@@ -2,13 +2,13 @@
 
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![Packaged with Poetry][poetry-badge]](https://python-poetry.org/)
-[![Code style: black][black-badge]](https://github.com/psf/black)
-[![Imports: isort][isort-badge]](https://pycqa.github.io/isort/)
+[![Code style: Black][black-badge]](https://github.com/psf/black)
+[![Ruff][ruff-badge]](https://github.com/charliermarsh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
-[isort-badge]: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 [poetry-badge]: https://img.shields.io/badge/packaging-poetry-cyan.svg
 
@@ -151,15 +151,8 @@ To pass arguments to `pytest` through `nox`:
 ## Code Style Checking
 
 [PEP 8](https://peps.python.org/pep-0008/) is the universally accepted style guide for
-Python code. PEP 8 code compliance is verified using [Flake8](http://flake8.pycqa.org/). Flake8 is
-configured in the `[tool.flake8]` section of `pyproject.toml`. Extra Flake8 plugins are also
-included:
-
-- `flake8-bugbear`: Find likely bugs and design problems in your program.
-- `flake8-broken-line`: Forbid using backslashes (`\`) for line breaks.
-- `flake8-comprehensions`: Helps write better `list`/`set`/`dict` comprehensions.
-- `pep8-naming`: Ensure functions, classes, and variables are named with correct casing.
-- `flake8-pyproject`: Allow configuration of `flake8` through `pyproject.toml`.
+Python code. PEP 8 code compliance is verified using [Ruff](https://github.com/charliermarsh/ruff).
+Ruff is configured in the `[tool.ruff]` section of `pyproject.toml`.
 
 Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be
 configured automatically in editors such as PyCharm.
@@ -170,10 +163,16 @@ To lint code, run:
 (fact) $ nox -s lint
 ```
 
+To automatically fix fixable lint errors, run:
+
+```bash
+(fact) $ nox -s lint_fix
+```
+
 ## Automated Code Formatting
 
 Code is automatically formatted using [black](https://github.com/psf/black). Imports are
-automatically sorted and grouped using [isort](https://github.com/PyCQA/isort/).
+automatically sorted and grouped using [Ruff](https://github.com/charliermarsh/ruff).
 
 These tools are configured by:
 
@@ -508,9 +507,9 @@ project:
 ## Integrate Code Formatters
 
 To integrate
-[black](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea) and
-[isort](https://github.com/timothycrosley/isort/wiki/isort-Plugins) automatic code formatters into
-PyCharm:
+[Black](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea) and
+[Ruff](https://beta.ruff.rs/docs/editor-integrations/#pycharm-external-tool) automatic code
+formatters into PyCharm:
 
 1. Ensure that the [File Watchers Plugin](https://plugins.jetbrains.com/plugin/7177-file-watchers)
    is installed.
@@ -533,7 +532,7 @@ PyCharm:
   ![](docs/static/images/file_watcher.png)
 
 4. Copy the watcher, and replace references to `black` in the **Name** and **Arguments** fields to
-   `isort`.
+   `ruff check --select I --fix`.
 
 ![](docs/static/images/file_watcher_copy.png)
 
