@@ -2,15 +2,13 @@
 
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![Packaged with Poetry][poetry-badge]](https://python-poetry.org/)
-[![Code style: black][black-badge]](https://github.com/psf/black)
+[![Code style: Black][black-badge]](https://github.com/psf/black)
 [![Ruff][ruff-badge]](https://github.com/charliermarsh/ruff)
-[![Imports: isort][isort-badge]](https://pycqa.github.io/isort/)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json
-[isort-badge]: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 [poetry-badge]: https://img.shields.io/badge/packaging-poetry-cyan.svg
 
@@ -175,7 +173,7 @@ To lint code, run:
 ## Automated Code Formatting
 
 Code is automatically formatted using [black](https://github.com/psf/black). Imports are
-automatically sorted and grouped using [isort](https://github.com/PyCQA/isort/).
+automatically sorted and grouped using [Ruff](https://github.com/charliermarsh/ruff).
 
 These tools are configured by:
 
@@ -510,9 +508,9 @@ project:
 ## Integrate Code Formatters
 
 To integrate
-[black](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea) and
-[isort](https://github.com/timothycrosley/isort/wiki/isort-Plugins) automatic code formatters into
-PyCharm:
+[Black](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea) and
+[Ruff](https://beta.ruff.rs/docs/editor-integrations/#pycharm-external-tool) automatic code
+formatters into PyCharm:
 
 1. Ensure that the [File Watchers Plugin](https://plugins.jetbrains.com/plugin/7177-file-watchers)
    is installed.
@@ -535,7 +533,7 @@ PyCharm:
   ![](docs/static/images/file_watcher.png)
 
 4. Copy the watcher, and replace references to `black` in the **Name** and **Arguments** fields to
-   `isort`.
+   `ruff check --select I --fix`.
 
 ![](docs/static/images/file_watcher_copy.png)
 

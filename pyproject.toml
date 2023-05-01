@@ -55,7 +55,6 @@ ruff = "*"
 
 [tool.poetry.group.fmt.dependencies]
 black = "*"
-isort = "*"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "*"
@@ -82,15 +81,17 @@ strict = true
 line-length = 99
 target-version = "py38"
 extend-select = [
-    "RUF", # ruff checks
+    "I", # isort
     "N", # pep8-naming
     "UP", # pyupgrade
+    "RUF", # ruff
     "B", # flake8-bugbear
     "C4", # flake8-comprehensions
     "PTH", # flake8-use-pathlib
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
 ]
+src = ["src"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -100,20 +101,10 @@ extend-immutable-calls = ["typer.Argument"]
 
 [tool.black]
 line-length = 99
-target-version = ["py38", "py39", "py310"]
+target-version = ["py38", "py39", "py310", "py311"]
 # black will automatically exclude all files listed in .gitignore
 # If you need to exclude additional folders, consider using extend-exclude to avoid disabling the
 # default .gitignore behaviour.
-
-[tool.isort]
-profile = "black"
-line_length = 99
-force_sort_within_sections = true
-# Inform isort of paths to import names that should be considered part of the "First Party" group.
-src_paths = ["src/fact"]
-skip_gitignore = true
-# If you need to skip/exclude folders, consider using skip_glob as that will allow the
-# isort defaults for skip to remain without the need to duplicate them.
 
 [tool.pytest.ini_options]
 addopts = [
