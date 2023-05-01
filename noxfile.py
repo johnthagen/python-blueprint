@@ -40,7 +40,7 @@ def fmt_check(s: Session) -> None:
 
 @session(venv_backend="none")
 def lint(s: Session) -> None:
-    s.run("flake8")
+    s.run("ruff", "check", ".")
 
 
 @session(venv_backend="none")
