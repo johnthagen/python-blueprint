@@ -151,15 +151,8 @@ To pass arguments to `pytest` through `nox`:
 ## Code Style Checking
 
 [PEP 8](https://peps.python.org/pep-0008/) is the universally accepted style guide for
-Python code. PEP 8 code compliance is verified using [Flake8](http://flake8.pycqa.org/). Flake8 is
-configured in the `[tool.flake8]` section of `pyproject.toml`. Extra Flake8 plugins are also
-included:
-
-- `flake8-bugbear`: Find likely bugs and design problems in your program.
-- `flake8-broken-line`: Forbid using backslashes (`\`) for line breaks.
-- `flake8-comprehensions`: Helps write better `list`/`set`/`dict` comprehensions.
-- `pep8-naming`: Ensure functions, classes, and variables are named with correct casing.
-- `flake8-pyproject`: Allow configuration of `flake8` through `pyproject.toml`.
+Python code. PEP 8 code compliance is verified using [Ruff](https://github.com/charliermarsh/ruff).
+Ruff is configured in the `[tool.ruff]` section of `pyproject.toml`.
 
 Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be
 configured automatically in editors such as PyCharm.
@@ -168,6 +161,12 @@ To lint code, run:
 
 ```bash
 (fact) $ nox -s lint
+```
+
+To automatically fix fixable lint errors, run:
+
+```bash
+(fact) $ nox -s lint_fix
 ```
 
 ## Automated Code Formatting
