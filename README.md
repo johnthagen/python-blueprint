@@ -3,11 +3,13 @@
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![Packaged with Poetry][poetry-badge]](https://python-poetry.org/)
 [![Code style: black][black-badge]](https://github.com/psf/black)
+[![Ruff][ruff-badge]](https://github.com/charliermarsh/ruff)
 [![Imports: isort][isort-badge]](https://pycqa.github.io/isort/)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
+[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json
 [isort-badge]: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 [poetry-badge]: https://img.shields.io/badge/packaging-poetry-cyan.svg
