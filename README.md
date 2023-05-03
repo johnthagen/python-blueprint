@@ -506,6 +506,9 @@ project:
 
 ## Integrate Code Formatters
 
+> Also consider installing the
+> [Ruff PyCharm Plugin](https://plugins.jetbrains.com/plugin/20574-ruff).
+
 To integrate
 [Black](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea) and
 [Ruff](https://beta.ruff.rs/docs/editor-integrations/#pycharm-external-tool) automatic code
@@ -535,6 +538,8 @@ formatters into PyCharm:
    `ruff check --select I --fix`.
 
 ![](docs/static/images/file_watcher_copy.png)
+
+Now, on `Ctrl+S`, the current source file will be automatically formatted on save.
 
 > **Tip**
 >
