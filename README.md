@@ -272,7 +272,7 @@ run:
 
 and open <http://127.0.0.1:8000> in a browser.
 
-Each time the `master` Git branch is updated, the 
+Each time the `main` Git branch is updated, the 
 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) GitHub Action will
 automatically build the user guide and publish it to [GitHub Pages](https://pages.github.com/).
 This is configured in the `docs_github_pages` Nox session. This hosted user guide

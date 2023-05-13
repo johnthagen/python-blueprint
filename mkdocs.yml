@@ -75,7 +75,7 @@ copyright: Copyright &copy; 2018-2023 John Hagen
 # GitHub Specific Configuration.
 repo_name: python-blueprint
 repo_url: https://github.com/johnthagen/python-blueprint
-edit_uri: edit/master/docs/user_guide/docs/
+edit_uri: edit/main/docs/user_guide/docs/
 nav:
   - index.md
   - Code Reference: reference/

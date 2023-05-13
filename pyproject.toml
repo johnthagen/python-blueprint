@@ -48,7 +48,7 @@ mypy = "*"
 # in the typeshed project. Add these "types-" packages here if you depend on them in
 # requirements.in (e.g. types-requests).
 # See: http://mypy-lang.blogspot.com/2021/06/mypy-0900-released.html
-#      https://github.com/python/typeshed/tree/master/stubs
+#      https://github.com/python/typeshed/tree/main/stubs
 
 [tool.poetry.group.lint.dependencies]
 ruff = "*"
