@@ -8,6 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build Container Image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           push: false
