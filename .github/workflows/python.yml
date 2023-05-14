@@ -8,7 +8,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: [ "3.8", "3.9", "3.10", "3.11" ]
@@ -27,7 +27,7 @@ jobs:
       - name: Test with Nox
         run: poetry run nox -s test-${{ matrix.python-version }}
   quality:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         job:
@@ -50,7 +50,7 @@ jobs:
       - name: Test with Nox
         run: poetry run nox -s ${{ matrix.job.nox-session }}
   poetry-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
