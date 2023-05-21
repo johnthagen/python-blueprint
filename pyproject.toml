@@ -96,6 +96,7 @@ src = ["src"]
 
 [tool.ruff.isort]
 force-sort-within-sections = true
+split-on-trailing-comma = false
 # For non-src directory projects, explicitly set top level package names:
 # known-first-party = ["my-app"]
 
