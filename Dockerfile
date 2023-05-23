@@ -11,7 +11,7 @@
 FROM python:3.10-slim-bullseye AS python_builder
 
 # Pin Poetry to a specific version to make Docker builds reproducible.
-ENV POETRY_VERSION 1.4.2
+ENV POETRY_VERSION 1.5.0
 
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE 1
