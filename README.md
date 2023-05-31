@@ -2,15 +2,17 @@
 
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![Packaged with Poetry][poetry-badge]](https://python-poetry.org/)
+[![Nox][nox-badge]](https://github.com/wntrblm/nox)
 [![Code style: Black][black-badge]](https://github.com/psf/black)
 [![Ruff][ruff-badge]](https://github.com/charliermarsh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
+[poetry-badge]: https://img.shields.io/badge/packaging-poetry-cyan.svg
+[nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
-[poetry-badge]: https://img.shields.io/badge/packaging-poetry-cyan.svg
 
 Example Python project that demonstrates how to create a Python package using the latest
 Python testing, linting, and type checking tooling. The project contains a `fact` package that
