@@ -81,6 +81,7 @@ strict = true
 line-length = 99
 target-version = "py38"
 extend-select = [
+    "W", # pycodestyle
     "I", # isort
     "N", # pep8-naming
     "UP", # pyupgrade
