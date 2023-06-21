@@ -11,7 +11,7 @@
 [poetry-badge]: https://img.shields.io/badge/packaging-poetry-cyan.svg
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
-[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json
+[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 
 Example Python project that demonstrates how to create a Python package using the latest
