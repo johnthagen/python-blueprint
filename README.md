@@ -4,14 +4,14 @@
 [![Packaged with Poetry][poetry-badge]](https://python-poetry.org/)
 [![Nox][nox-badge]](https://github.com/wntrblm/nox)
 [![Code style: Black][black-badge]](https://github.com/psf/black)
-[![Ruff][ruff-badge]](https://github.com/charliermarsh/ruff)
+[![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [poetry-badge]: https://img.shields.io/badge/packaging-poetry-cyan.svg
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
-[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json
+[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 
 Example Python project that demonstrates how to create a Python package using the latest
@@ -153,7 +153,7 @@ To pass arguments to `pytest` through `nox`:
 ## Code Style Checking
 
 [PEP 8](https://peps.python.org/pep-0008/) is the universally accepted style guide for
-Python code. PEP 8 code compliance is verified using [Ruff](https://github.com/charliermarsh/ruff).
+Python code. PEP 8 code compliance is verified using [Ruff](https://github.com/astral-sh/ruff).
 Ruff is configured in the `[tool.ruff]` section of `pyproject.toml`.
 
 Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be
@@ -174,7 +174,7 @@ To automatically fix fixable lint errors, run:
 ## Automated Code Formatting
 
 Code is automatically formatted using [black](https://github.com/psf/black). Imports are
-automatically sorted and grouped using [Ruff](https://github.com/charliermarsh/ruff).
+automatically sorted and grouped using [Ruff](https://github.com/astral-sh/ruff).
 
 These tools are configured by:
 
