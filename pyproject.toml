@@ -36,9 +36,7 @@ typer = { version = "*", extras = ["all"] }
 [tool.poetry.group.nox.dependencies]
 nox-poetry = "*"
 
-# TODO: Rename this to the "test" group when nox-poetry gains support for Poetry dependency
-#   groups. https://github.com/cjolowicz/nox-poetry/issues/663
-[tool.poetry.group.dev.dependencies]
+[tool.poetry.group.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
 
