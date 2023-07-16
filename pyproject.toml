@@ -58,7 +58,7 @@ black = "*"
 mkdocs-material = "*"
 mkdocs-htmlproofer-plugin = "*"
 mkdocstrings = { version = "*", extras = ["python"] }
-## Autodoc.
+# Autodoc.
 mkdocs-gen-files = "*"
 mkdocs-literate-nav = "*"
 
