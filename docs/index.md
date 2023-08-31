@@ -1,3 +1,8 @@
+---
+icon: material/math-integral
+status: new
+---
+
 # `fact` User Guide
 
 ??? info "`python-blueprint` Project"
