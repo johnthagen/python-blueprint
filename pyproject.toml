@@ -39,6 +39,7 @@ nox-poetry = "*"
 [tool.poetry.group.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
+pytest-randomly = "*"
 
 [tool.poetry.group.type_check.dependencies]
 mypy = "*"
