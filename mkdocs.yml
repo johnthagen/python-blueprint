@@ -19,8 +19,8 @@ theme:
     - content.code.copy
     - content.tabs.link
     - navigation.expand
-    - navigation.instant
     - navigation.footer
+    - navigation.instant
     - navigation.top
     - navigation.tracking
     - search.highlight
