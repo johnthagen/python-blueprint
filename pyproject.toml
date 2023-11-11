@@ -36,6 +36,8 @@ typer = { version = "*", extras = ["all"] }
 
 [tool.poetry.group.nox.dependencies]
 nox-poetry = "*"
+# TODO: Remove this after resolving Poetry dependency resolution issue.
+virtualenv = ">=20.24.6"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
