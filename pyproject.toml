@@ -133,3 +133,11 @@ filterwarnings = [
 
 [tool.coverage.run]
 branch = true
+
+# To globally exclude additional code blocks from code coverage reporting, see:
+# https://coverage.readthedocs.io/en/latest/excluding.html#advanced-exclusion
+#[tool.coverage.report]
+#exclude_also = [
+#    "if TYPE_CHECKING:",
+#    "raise NotImplementedError",
+#]
