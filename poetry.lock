@@ -371,13 +371,13 @@ dev = ["flake8", "markdown", "twine", "wheel"]
 
 [[package]]
 name = "griffe"
-version = "0.36.9"
+version = "0.37.0"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "griffe-0.36.9-py3-none-any.whl", hash = "sha256:7874febe7cd81e8e47eb7b8130ff9d38c8f3656233c01d2d217d2e898a0925f5"},
-    {file = "griffe-0.36.9.tar.gz", hash = "sha256:b4e510bf0ed1fc91c58453c68018a2247c561adec8f5dadc40275afc01f51eac"},
+    {file = "griffe-0.37.0-py3-none-any.whl", hash = "sha256:46a405e620f6de6f0692756862c2fd94cff2f1a9a075079c9b6b02c2a4c8abb5"},
+    {file = "griffe-0.37.0.tar.gz", hash = "sha256:a4e6741e6c8dbd3436b234cfd93e42fc039c1e1a622fee9f455ec2cdfb117c25"},
 ]
 
 [package.dependencies]
@@ -724,17 +724,17 @@ python-legacy = ["mkdocstrings-python-legacy (>=0.2.1)"]
 
 [[package]]
 name = "mkdocstrings-python"
-version = "1.7.3"
+version = "1.7.4"
 description = "A Python handler for mkdocstrings."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mkdocstrings_python-1.7.3-py3-none-any.whl", hash = "sha256:2439d6ad3e34f0bb4c643b845fb3c06ae9233499a1736f9fa273424b75cc5894"},
-    {file = "mkdocstrings_python-1.7.3.tar.gz", hash = "sha256:c20128fa96c24dbc6437b10dfedaf33b0415d4503e51ce9ce5e84b271278268e"},
+    {file = "mkdocstrings_python-1.7.4-py3-none-any.whl", hash = "sha256:70eacbe5f2d5071f2e525ba0b35bc447d398437dfbcd90c63fe6e977551cfe26"},
+    {file = "mkdocstrings_python-1.7.4.tar.gz", hash = "sha256:c2fc34efd70000ec31aee247910006e8dd9d1b9f3957bf46880c3f6e51a8f0d5"},
 ]
 
 [package.dependencies]
-griffe = ">=0.35"
+griffe = ">=0.37"
 mkdocstrings = ">=0.20"
 
 [[package]]
@@ -1431,4 +1431,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8, <3.13"
-content-hash = "29b540f0d8efe00b5240ab8e556116abc73b5e2bdd5b9dced4aa419617a6bf0b"
+content-hash = "c875eed731a1e38ed8e49edcfdd63a46a9722c0d7a5031efc25d575dcd3faaa3"
