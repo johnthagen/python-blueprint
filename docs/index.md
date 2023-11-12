@@ -20,19 +20,47 @@ status: new
 
 ## Installation
 
-First, [install Poetry](https://python-poetry.org/docs/#installation):
+First, [install pipx](https://pypa.github.io/pipx/):
 
-=== "Linux/macOS"
+=== "Linux"
 
     ```bash
-    curl -sSL https://install.python-poetry.org | python3 -
+    python3 -m pip install --user pipx
+    python3 -m pipx ensurepath
     ```
 
 === "Windows"
 
+    > If you installed Python using Microsoft Store, replace `py` with `python3` in the next line.
+
     ```powershell
-    (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+    py -m pip install --user pipx
     ```
+
+    If you receive
+
+    ```
+    WARNING: The script pipx.exe is installed in `<USER folder>\AppData\Roaming\Python\Python3x\Scripts` which is not on PATH
+    ```
+
+    Go into the mentioned folder and run
+
+    ```
+    pipx ensurepath
+    ```
+
+=== "macOS"
+
+    ```bash
+    brew install pipx
+    pipx ensurepath
+    ```
+
+Next, [install Poetry](https://python-poetry.org/docs/#installation):
+
+```bash
+pipx install poetry
+```
 
 Then install the `fact` package and its dependencies:
 

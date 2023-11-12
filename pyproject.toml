@@ -36,6 +36,9 @@ typer = { version = "*", extras = ["all"] }
 
 [tool.poetry.group.nox.dependencies]
 nox-poetry = "*"
+# TODO: Remove this after virtualenv supports platformdirs 4.
+#   https://github.com/pypa/virtualenv/issues/2666
+platformdirs = "<4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
