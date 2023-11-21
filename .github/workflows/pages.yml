@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 env:
-  POETRY_VERSION: "1.7.0"
+  POETRY_VERSION: "1.7.1"
   PYTHON_VERSION: "3.10"
 
 jobs:
