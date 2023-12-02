@@ -445,7 +445,7 @@ consider the [deadsnakes PPA](https://launchpad.net/~deadsnakes/+archive/ubuntu/
 ```shell
 sudo add-apt-repository ppa:deadsnakes
 sudo apt update
-sudo apt install python3.10
+sudo apt install python3.12
 ```
 
 ## Package Dependency Tree
