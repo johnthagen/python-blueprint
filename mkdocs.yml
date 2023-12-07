@@ -18,6 +18,7 @@ theme:
     - content.code.annotate
     - content.code.copy
     - content.tabs.link
+    - content.tooltips
     - navigation.expand
     - navigation.footer
     - navigation.instant
@@ -28,6 +29,7 @@ theme:
     - search.suggest
     - toc.follow
 markdown_extensions:
+  - abbr
   - admonition
   - footnotes
   - pymdownx.details
@@ -37,6 +39,9 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
   - md_in_html
 extra_css:
   - static/stylesheets/extra.css
