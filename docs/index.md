@@ -76,7 +76,9 @@ poetry shell
 
 ## Quick Start
 
-To use `fact` within your project, import the `factorial` function and execute it like:
+To use `fact` within your project, import the `factorial` function and execute the API like:
+
+*[API]: Application Programming Interface
 
 ```python
 from fact.lib import factorial
