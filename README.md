@@ -181,12 +181,6 @@ To automatically format code, run:
 (fact) $ nox -s fmt
 ```
 
-To verify code has been formatted, such as in a CI job:
-
-```bash
-(fact) $ nox -s fmt_check
-```
-
 ## Type Checking
 
 [Type annotations](https://docs.python.org/3/library/typing.html) allows developers to include

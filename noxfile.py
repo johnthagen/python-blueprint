@@ -1,12 +1,14 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import List
 
 import nox
+from nox import parametrize
 from nox_poetry import Session, session
 
 nox.options.error_on_external_run = True
 nox.options.reuse_existing_virtualenvs = True
-nox.options.sessions = ["fmt_check", "lint", "type_check", "test", "docs"]
+nox.options.sessions = ["lint", "type_check", "test", "docs"]
 
 
 @session(python=["3.8", "3.9", "3.10", "3.11", "3.12"])
@@ -33,14 +35,15 @@ def fmt(s: Session) -> None:
 
 
 @session(venv_backend="none")
-def fmt_check(s: Session) -> None:
-    s.run("ruff", "check", ".", "--select", "I")
-    s.run("ruff", "format", "--check", ".")
-
-
-@session(venv_backend="none")
-def lint(s: Session) -> None:
-    s.run("ruff", "check", ".")
+@parametrize(
+    "commands",
+    [
+        ["ruff", "check", "."],
+        ["ruff", "format", "--check", "."],
+    ],
+)
+def lint(s: Session, commands: List[str]) -> None:
+    s.run(*commands)
 
 
 @session(venv_backend="none")
