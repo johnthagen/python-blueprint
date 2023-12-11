@@ -53,9 +53,6 @@ mypy = "*"
 [tool.poetry.group.lint.dependencies]
 ruff = "*"
 
-[tool.poetry.group.fmt.dependencies]
-black = "*"
-
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "*"
 mkdocs-htmlproofer-plugin = "*"
@@ -93,6 +90,9 @@ extend-select = [
 ]
 extend-ignore = ["RUF005"]
 src = ["src"]
+# Ruff will automatically exclude all files listed in .gitignore as well as common temporary Python
+# tool directories.
+# To exclude additional folders, use extend-exclude.
 
 [tool.ruff.isort]
 force-sort-within-sections = true
@@ -105,13 +105,6 @@ ban-relative-imports = "all"
 
 [tool.ruff.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]
-
-[tool.black]
-line-length = 99
-target-version = ["py38", "py39", "py310", "py311"]
-# black will automatically exclude all files listed in .gitignore
-# If you need to exclude additional folders, consider using extend-exclude to avoid disabling the
-# default .gitignore behaviour.
 
 [tool.pytest.ini_options]
 addopts = [

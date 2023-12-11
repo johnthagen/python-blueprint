@@ -29,13 +29,13 @@ def test(s: Session) -> None:
 @session(venv_backend="none")
 def fmt(s: Session) -> None:
     s.run("ruff", "check", ".", "--select", "I", "--fix")
-    s.run("black", ".")
+    s.run("ruff", "format", ".")
 
 
 @session(venv_backend="none")
 def fmt_check(s: Session) -> None:
     s.run("ruff", "check", ".", "--select", "I")
-    s.run("black", "--check", ".")
+    s.run("ruff", "format", "--check", ".")
 
 
 @session(venv_backend="none")

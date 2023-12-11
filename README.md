@@ -3,14 +3,12 @@
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
 [![Poetry][poetry-badge]](https://python-poetry.org/)
 [![Nox][nox-badge]](https://github.com/wntrblm/nox)
-[![Code style: Black][black-badge]](https://github.com/psf/black)
 [![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
 [poetry-badge]: https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
-[black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 
@@ -152,12 +150,14 @@ To pass arguments to `pytest` through `nox`:
 
 ## Code Style Checking
 
-[PEP 8](https://peps.python.org/pep-0008/) is the universally accepted style guide for
-Python code. PEP 8 code compliance is verified using [Ruff](https://github.com/astral-sh/ruff).
-Ruff is configured in the `[tool.ruff]` section of `pyproject.toml`.
+[PEP 8](https://peps.python.org/pep-0008/) is the universally accepted style guide for Python
+code. PEP 8 code compliance is verified using [Ruff][Ruff]. Ruff is configured in the
+`[tool.ruff]` section of [`pyproject.toml`](./pyproject.toml).
 
-Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be
-configured automatically in editors such as PyCharm.
+[Ruff]: https://github.com/astral-sh/ruff
+
+Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be configured
+automatically in editors such as PyCharm.
 
 To lint code, run:
 
@@ -173,12 +173,7 @@ To automatically fix fixable lint errors, run:
 
 ## Automated Code Formatting
 
-Code is automatically formatted using [black](https://github.com/psf/black). Imports are
-automatically sorted and grouped using [Ruff](https://github.com/astral-sh/ruff).
-
-These tools are configured by:
-
-- [`pyproject.toml`](./pyproject.toml)
+[Ruff][Ruff] is used to automatically format code and group and sort imports.
 
 To automatically format code, run:
 
@@ -506,15 +501,21 @@ project:
   - Editor | Code Style | Python | Wrapping and Braces | "From" Import Statements
     - ☑ Force parentheses if multiline
 
-## Integrate Code Formatters
+## Ruff Integration
 
-> Also consider installing the
-> [Ruff PyCharm Plugin](https://plugins.jetbrains.com/plugin/20574-ruff).
+Integrate [Ruff](https://docs.astral.sh/ruff/integrations/#pycharm-external-tool) linting and 
+formatting into PyCharm.
 
-To integrate
-[Black](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea) and
-[Ruff](https://beta.ruff.rs/docs/editor-integrations/#pycharm-external-tool) automatic code
-formatters into PyCharm:
+### Linting and Formatting
+
+1. Install the [Ruff PyCharm Plugin](https://plugins.jetbrains.com/plugin/20574-ruff)
+2. Open Preferences or Settings | Tools | Ruff and enable
+    - Run Ruff when the python file is saved
+    - Use ruff format
+
+Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatted on save.
+
+### Import Sorting
 
 1. Ensure that the [File Watchers Plugin](https://plugins.jetbrains.com/plugin/7177-file-watchers)
    is installed.
@@ -523,11 +524,11 @@ formatters into PyCharm:
  ![](docs/static/images/preferences.png)
 
 3. Fill in the following fields
-    - **Name**: `black`
+    - **Name**: `ruff check --select I --fix`
     - **File Type**: Python
     - **Scope**: Project Files
     - **Program**: `$PyInterpreterDirectory$/python`
-    - **Arguments**: `-m black $FilePath$`
+    - **Arguments**: `-m ruff check --select I --fix $FilePath$`
     - **Output paths to refresh**: `$FilePath$`
     - **Working directory**: `$ProjectFileDir$`
     - **Advanced Options**
@@ -535,13 +536,6 @@ formatters into PyCharm:
       - **Uncheck**: Trigger the watcher on external changes
 
   ![](docs/static/images/file_watcher.png)
-
-4. Copy the watcher, and replace references to `black` in the **Name** and **Arguments** fields to
-   `ruff check --select I --fix`.
-
-![](docs/static/images/file_watcher_copy.png)
-
-Now, on `Ctrl+S`, the current source file will be automatically formatted on save.
 
 > **Tip**
 >

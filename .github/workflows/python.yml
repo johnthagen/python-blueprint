@@ -31,7 +31,7 @@ jobs:
     strategy:
       matrix:
         job:
-          - { nox-session: fmt_check, poetry-groups: "fmt,lint" }
+          - { nox-session: fmt_check, poetry-groups: "lint" }
           - { nox-session: lint, poetry-groups: "lint" }
           # type_check needs main and test dependencies for inline type annotations.
           - { nox-session: type_check, poetry-groups: "type_check,main,test" }
