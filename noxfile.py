@@ -1,6 +1,5 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import List
 
 import nox
 from nox import parametrize
@@ -36,14 +35,14 @@ def fmt(s: Session) -> None:
 
 @session(venv_backend="none")
 @parametrize(
-    "commands",
+    "command",
     [
         ["ruff", "check", "."],
         ["ruff", "format", "--check", "."],
     ],
 )
-def lint(s: Session, commands: List[str]) -> None:
-    s.run(*commands)
+def lint(s: Session, command) -> None:
+    s.run(*command)
 
 
 @session(venv_backend="none")
