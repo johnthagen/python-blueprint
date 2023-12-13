@@ -503,9 +503,9 @@ formatting into PyCharm.
 ### Linting and Formatting
 
 1. Install the [Ruff PyCharm Plugin](https://plugins.jetbrains.com/plugin/20574-ruff)
-2. Open Preferences or Settings | Tools | Ruff and enable
-    - Run Ruff when the python file is saved
-    - Use ruff format
+2. Open Preferences or Settings | Tools | Ruff
+    - **Check**: Run Ruff when the python file is saved
+    - **Check**: Use ruff format
 
 Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatted on save.
 
