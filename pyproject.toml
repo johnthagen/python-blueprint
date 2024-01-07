@@ -88,7 +88,7 @@ extend-select = [
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
 ]
-extend-ignore = ["RUF005"]
+extend-ignore = ["RUF005", "RUF012"]
 src = ["src"]
 # Ruff will automatically exclude all files listed in .gitignore as well as common temporary Python
 # tool directories.
