@@ -77,6 +77,12 @@ strict = true
 [tool.ruff]
 line-length = 99
 target-version = "py38"
+src = ["src"]
+# Ruff will automatically exclude all files listed in .gitignore as well as common temporary Python
+# tool directories.
+# To exclude additional folders, use extend-exclude.
+
+[tool.ruff.lint]
 extend-select = [
     "I", # isort
     "N", # pep8-naming
@@ -89,21 +95,17 @@ extend-select = [
     "TID", # flake8-tidy-imports
 ]
 extend-ignore = ["RUF005", "RUF012"]
-src = ["src"]
-# Ruff will automatically exclude all files listed in .gitignore as well as common temporary Python
-# tool directories.
-# To exclude additional folders, use extend-exclude.
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 force-sort-within-sections = true
 split-on-trailing-comma = false
 # For non-src directory projects, explicitly set top level package names:
 # known-first-party = ["my-app"]
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.ruff.flake8-bugbear]
+[tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]
 
 [tool.pytest.ini_options]
