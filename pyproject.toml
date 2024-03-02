@@ -25,6 +25,9 @@ classifiers = [
     #   https://pypi.org/classifiers/
     "Private :: Do Not Upload",
 ]
+# For non-package/wheel application projects (e.g., FastAPI or Django app), you can omit the
+# metadata above and replace it with:
+# package-mode = false
 
 [tool.poetry.dependencies]
 # Some packages, such as scipy, constrain their upper bound of Python versions they support.
