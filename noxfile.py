@@ -87,8 +87,6 @@ def docs_github_pages(s: Session) -> None:
     s.run("mkdocs", "gh-deploy", "--force", env=doc_env)
 
 
-# Note: This reuse_venv does not yet have affect due to:
-#   https://github.com/wntrblm/nox/issues/488
 @session(reuse_venv=False)
 def licenses(s: Session) -> None:
     # Generate a unique temporary file name. Poetry cannot write to the temp file directly on
