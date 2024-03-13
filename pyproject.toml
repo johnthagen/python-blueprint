@@ -86,7 +86,9 @@ src = ["src"]
 # To exclude additional folders, use extend-exclude.
 
 [tool.ruff.lint]
-extend-select = [
+select = [
+    "F", # pyflakes
+    "E", # pycodestyle
     "I", # isort
     "N", # pep8-naming
     "UP", # pyupgrade
