@@ -13,7 +13,6 @@ app = Typer(add_completion=False)
 @app.command()
 def main(n: Annotated[int, Argument(min=0, help="The input n of fact(n)")]) -> None:
     """Compute factorial of a given input."""
-
     Console().print(f"fact({n}) = {factorial(n)}")
 
 
