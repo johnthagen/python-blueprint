@@ -34,7 +34,7 @@ classifiers = [
 # result in an old version being resolved/locked.
 python = "^3.8, <3.13"
 rich = "*"
-typer = { version = "*", extras = ["all"] }
+typer-slim = { version = "*", extras = ["standard"] }
 
 [tool.poetry.group.nox.dependencies]
 nox-poetry = "*"

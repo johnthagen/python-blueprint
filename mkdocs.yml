@@ -1,5 +1,10 @@
 # Set strict to true to turn warnings into errors to catch warnings within CI.
 strict: true
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
 theme:
   name: material
   # By default, fonts are pulled from Google on the Internet. To support offline usage, this is
