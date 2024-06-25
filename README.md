@@ -40,7 +40,6 @@ all machines that use the project, both during development and in production.
 To install all dependencies into an isolated virtual environment:
 
 > [!TIP]
-> 
 > Append `--sync` to uninstall dependencies that are no longer in use from the virtual environment.
 
 ```bash
@@ -85,8 +84,9 @@ $ poetry build
 
 This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.whl`.
 
-Read more about the [advantages of wheels](https://pythonwheels.com/) to understand why generating
-wheel distributions are important.
+> [!TIP]
+> Read more about the [advantages of wheels](https://pythonwheels.com/) to understand why
+> generating wheel distributions are important.
 
 ## Publish Distributions to PyPI
 
@@ -98,7 +98,8 @@ directly from the filesystem using `pip`.
 $ poetry publish
 ```
 
-> Note: To enable publishing, remove the `"Private :: Do Not Upload"`
+> [!NOTE]
+> To enable publishing, remove the `"Private :: Do Not Upload"`
 > [trove classifier](https://pypi.org/classifiers/).
 
 # Enforcing Code Quality
@@ -109,8 +110,9 @@ Automated code quality checks are performed using
 environments and run commands based on [`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style
 guide checking, type checking and documentation generation.
 
-> Note: `nox` is installed into the virtual environment automatically by the `poetry install`
-> command above. Run `poetry shell` to activate the virtual environment.
+> [!NOTE]
+> `nox` is installed into the virtual environment automatically by the `poetry install` command
+> above. Run `poetry shell` to activate the virtual environment.
 
 To run all default sessions:
 
@@ -406,7 +408,8 @@ To run the image in a container:
 $ docker run --rm --interactive --tty fact 5
 ```
 
-> Note: If you need to install Poetry on Alpine Linux, see the pre-built 
+> [!NOTE]
+> If you need to install Poetry on Alpine Linux, see the pre-built 
 > [`poetry` package](https://pkgs.alpinelinux.org/packages?name=poetry&branch=edge) for that
 > platform rather than running `pip install poetry`. This avoids needing to build Poetry
 > dependencies from source.
@@ -466,6 +469,7 @@ typer 0.7.0 Typer, build great CLIs. Easy to code. Based on Python type hints.
 
 # PyCharm Configuration
 
+> [!TIP]
 > Looking for a vivid dark color scheme for PyCharm?
 > Try [One Dark theme](https://plugins.jetbrains.com/plugin/11938-one-dark-theme).
 
@@ -533,8 +537,7 @@ Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatt
 
   ![](docs/static/images/file_watcher.png)
 
-> **Tip**
->
+> [!TIP]
 > These tools work best if you properly mark directories as excluded from the project that should 
 > be, such as `.nox`. See 
 > <https://www.jetbrains.com/help/pycharm/project-tool-window.html#content_pane_context_menu> on 
