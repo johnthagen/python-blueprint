@@ -39,6 +39,8 @@ all machines that use the project, both during development and in production.
 
 To install all dependencies into an isolated virtual environment:
 
+> [!TIP]
+> 
 > Append `--sync` to uninstall dependencies that are no longer in use from the virtual environment.
 
 ```bash
