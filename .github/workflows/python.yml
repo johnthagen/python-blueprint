@@ -8,16 +8,16 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install poetry
         run: pipx install poetry==${POETRY_VERSION}
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           # https://github.com/actions/setup-python#caching-packages-dependencies
@@ -27,7 +27,7 @@ jobs:
       - name: Test with Nox
         run: poetry run nox -s test-${{ matrix.python-version }}
   quality:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         job:
@@ -36,11 +36,11 @@ jobs:
           - { nox-session: type_check, poetry-groups: "type_check,main,test" }
           - { nox-session: docs, poetry-groups: "docs" }
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install poetry
         run: pipx install poetry==${POETRY_VERSION}
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry
@@ -49,13 +49,13 @@ jobs:
       - name: Test with Nox
         run: poetry run nox -s ${{ matrix.job.nox-session }}
   poetry-check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install poetry
         run: pipx install poetry==${POETRY_VERSION}
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Validate Poetry Configuration and Lockfile Freshness
