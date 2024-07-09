@@ -73,6 +73,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.mypy]
 ignore_missing_imports = true
 strict = true
+# TODO: Remove this when explicit-override is enabled by default in strict mode
+#   https://github.com/python/mypy/issues/17511
+enable_error_code = ["explicit-override"]
 # If certain strict config options are too pedantic for a project,
 # disable them selectively here by setting to false.
 
