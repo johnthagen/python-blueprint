@@ -11,16 +11,16 @@
 FROM python:3.10-slim-bookworm AS python_builder
 
 # Pin Poetry to a specific version to make Docker builds reproducible.
-ENV POETRY_VERSION 1.8.3
+ENV POETRY_VERSION=1.8.3
 
 # Set ENV variables that make Python more friendly to running inside a container.
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONBUFFERED=1
 
 # By default, pip caches copies of downloaded packages from PyPI. These are not useful within
 # a Docker image, so disable this to reduce the size of images.
-ENV PIP_NO_CACHE_DIR 1
-ENV WORKDIR /src
+ENV PIP_NO_CACHE_DIR=1
+ENV WORKDIR=/src
 
 WORKDIR ${WORKDIR}
 
@@ -38,9 +38,9 @@ RUN pip install "poetry==${POETRY_VERSION}"
 # Doing this in a multi-stage build allows omitting compile dependencies from the final image.
 # This must be the same path that is used in the final image as the virtual environment has
 # absolute symlinks in it.
-ENV VIRTUAL_ENV /opt/venv
+ENV VIRTUAL_ENV=/opt/venv
 RUN python -m venv ${VIRTUAL_ENV}
-ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 # Copy in project dependency specification.
 COPY pyproject.toml poetry.lock ./
@@ -62,13 +62,13 @@ RUN poetry build && \
 # The image used in the final image MUST match exactly to the python_builder image.
 FROM python:3.10-slim-bookworm
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONBUFFERED 1
-ENV PIP_NO_CACHE_DIR 1
-ENV VIRTUAL_ENV /opt/venv
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+ENV VIRTUAL_ENV=/opt/venv
 
-ENV HOME /home/user
-ENV APP_HOME ${HOME}/app
+ENV HOME=/home/user
+ENV APP_HOME=${HOME}/app
 
 # Create the home directory for the new user.
 RUN mkdir -p ${HOME}
@@ -88,7 +88,7 @@ WORKDIR ${APP_HOME}
 
 # Copy and activate pre-built virtual environment.
 COPY --from=python_builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 # For Python applications that are not installable libraries, you may need to copy in source
 # files here in the final image rather than in the python_builder image.
