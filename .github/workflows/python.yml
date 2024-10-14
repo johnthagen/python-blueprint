@@ -4,14 +4,14 @@ on: [push, pull_request]
 
 env:
   POETRY_VERSION: "1.8.4"
-  PYTHON_VERSION: "3.10"
+  PYTHON_VERSION: "3.11"
 
 jobs:
   test:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
     steps:
       - uses: actions/checkout@v4
       - name: Install poetry

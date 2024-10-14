@@ -11,7 +11,7 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = ["lint", "type_check", "test", "docs"]
 
 
-@session(python=["3.8", "3.9", "3.10", "3.11", "3.12"])
+@session(python=["3.9", "3.10", "3.11", "3.12", "3.13"])
 def test(s: Session) -> None:
     s.install(".", "pytest", "pytest-cov", "pytest-randomly")
     s.run(
@@ -67,14 +67,12 @@ def docs(s: Session) -> None:
 
 @session(venv_backend="none")
 def docs_check_urls(s: Session) -> None:
-    # TODO: Replace dict merge with d1 | d2 when dropping support for Python 3.8.
-    s.run("mkdocs", "build", env={**doc_env, **{"HTMLPROOFER_VALIDATE_EXTERNAL_URLS": str(True)}})
+    s.run("mkdocs", "build", env=doc_env | {"HTMLPROOFER_VALIDATE_EXTERNAL_URLS": str(True)})
 
 
 @session(venv_backend="none")
 def docs_offline(s: Session) -> None:
-    # TODO: Replace dict merge with d1 | d2 when dropping support for Python 3.8.
-    s.run("mkdocs", "build", env={**doc_env, **{"MKDOCS_MATERIAL_OFFLINE": str(True)}})
+    s.run("mkdocs", "build", env=doc_env | {"MKDOCS_MATERIAL_OFFLINE": str(True)})
 
 
 @session(venv_backend="none")
