@@ -18,10 +18,6 @@ provides a simple implementation of the
 [factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`) and a command line
 interface (`fact.cli`).
 
-# Requirements
-
-Python 3.9+.
-
 # Package Management
 
 This package uses [Poetry](https://python-poetry.org/) to manage dependencies and
