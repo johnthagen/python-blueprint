@@ -28,9 +28,27 @@ def test(s: Session) -> None:
 # For some sessions, set venv_backend="none" to simply execute scripts within the existing Poetry
 # environment. This requires that nox is run within `poetry shell` or using `poetry run nox ...`.
 @session(venv_backend="none")
-def fmt(s: Session) -> None:
-    s.run("ruff", "check", ".", "--select", "I", "--fix")
-    s.run("ruff", "format", ".")
+@parametrize(
+    "command",
+    [
+        # During formatting, additionally sort imports and remove unused imports.
+        [
+            "ruff",
+            "check",
+            ".",
+            "--select",
+            "I",
+            "--select",
+            "F401",
+            "--extend-fixable",
+            "F401",
+            "--fix",
+        ],
+        ["ruff", "format", "."],
+    ],
+)
+def fmt(s: Session, command: list[str]) -> None:
+    s.run(*command)
 
 
 @session(venv_backend="none")
@@ -47,7 +65,7 @@ def lint(s: Session, command: list[str]) -> None:
 
 @session(venv_backend="none")
 def lint_fix(s: Session) -> None:
-    s.run("ruff", "check", ".", "--fix")
+    s.run("ruff", "check", ".", "--extend-fixable", "F401", "--fix")
 
 
 @session(venv_backend="none")
