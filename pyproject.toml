@@ -105,7 +105,15 @@ select = [
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
 ]
-extend-ignore = ["RUF005", "RUF012"]
+extend-ignore = [
+    "RUF005",
+    "RUF012",
+]
+unfixable = [
+    # Disable removing unused imports by default and only enable within nox so editors don't delete
+    # unnused imports while the user is in the middle of editing a file on save.
+    "F401",
+]
 
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
