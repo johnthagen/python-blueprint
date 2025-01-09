@@ -4,7 +4,7 @@ from fact.lib import InvalidFactorialError, factorial
 
 
 @pytest.mark.parametrize(
-    "n, expected",
+    ("n", "expected"),
     [
         (1, 1),
         (2, 2),
