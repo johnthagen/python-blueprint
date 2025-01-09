@@ -35,11 +35,8 @@ all machines that use the project, both during development and in production.
 
 To install all dependencies into an isolated virtual environment:
 
-> [!TIP]
-> Append `--sync` to uninstall dependencies that are no longer in use from the virtual environment.
-
 ```bash
-$ poetry install
+$ poetry sync
 ```
 
 To [activate](https://python-poetry.org/docs/basic-usage#activating-the-virtual-environment) the
@@ -107,7 +104,7 @@ environments and run commands based on [`noxfile.py`](./noxfile.py) for unit tes
 guide checking, type checking and documentation generation.
 
 > [!NOTE]
-> `nox` is installed into the virtual environment automatically by the `poetry install` command
+> `nox` is installed into the virtual environment automatically by the `poetry sync` command
 > above. Run `poetry shell` to activate the virtual environment.
 
 To run all default sessions:

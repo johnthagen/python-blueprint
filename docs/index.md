@@ -65,7 +65,7 @@ pipx install poetry
 Then install the `fact` package and its dependencies:
 
 ```bash
-poetry install
+poetry sync
 ```
 
 Activate the virtual environment created automatically by Poetry:
