@@ -110,8 +110,8 @@ extend-ignore = [
     "RUF012",
 ]
 unfixable = [
-    # Disable unused import fixing by default and only enable in `nox -s fmt` so editors don't
-    # delete unnused imports while in the middle of editing a file on save.
+    # Disable removing unused imports by default and only enable within nox so editors don't delete
+    # unnused imports while the user is in the middle of editing a file on save.
     "F401",
 ]
 
