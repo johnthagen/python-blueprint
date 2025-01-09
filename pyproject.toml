@@ -105,8 +105,7 @@ select = [
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
 ]
-# TODO: Remove ISC001 ignore when formatter updated: https://github.com/astral-sh/ruff/issues/8272
-extend-ignore = ["RUF005", "RUF012", "ISC001"]
+extend-ignore = ["RUF005", "RUF012"]
 
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
