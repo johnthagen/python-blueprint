@@ -3,7 +3,7 @@ name: python
 on: [push, pull_request]
 
 env:
-  POETRY_VERSION: "2.0.0"
+  POETRY_VERSION: "2.0.1"
   PYTHON_VERSION: "3.11"
 
 jobs:

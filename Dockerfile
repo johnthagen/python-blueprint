@@ -11,7 +11,7 @@
 FROM python:3.11-slim-bookworm AS python_builder
 
 # Pin Poetry to a specific version to make Docker builds reproducible.
-ENV POETRY_VERSION=2.0.0
+ENV POETRY_VERSION=2.0.1
 
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE=1
