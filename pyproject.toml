@@ -91,8 +91,6 @@ enable_error_code = ["explicit-override"]
 
 [tool.ruff]
 line-length = 99
-# TODO: Remove this when migrating to [project] requires-python field.
-target-version = "py39"
 src = ["src"]
 # Ruff will automatically exclude all files listed in .gitignore as well as common temporary Python
 # tool directories.
