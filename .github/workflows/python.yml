@@ -59,4 +59,4 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Validate Poetry Configuration and Lockfile Freshness
-        run: poetry check --lock
+        run: poetry check --lock --strict
