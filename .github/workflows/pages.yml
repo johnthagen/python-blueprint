@@ -23,6 +23,6 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry
       - name: Install Nox and doc dependencies
-        run: poetry install --only nox,docs
+        run: poetry sync --only nox,docs
       - name: Publish Docs
         run: poetry run nox -s docs_github_pages
