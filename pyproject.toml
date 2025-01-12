@@ -77,7 +77,7 @@ mkdocs-gen-files = "*"
 mkdocs-literate-nav = "*"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
