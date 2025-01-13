@@ -11,7 +11,7 @@
 FROM python:3.11-slim-bookworm AS python_builder
 
 # Pin Poetry to a specific version to make Docker builds reproducible.
-ENV POETRY_VERSION=1.8.4
+ENV POETRY_VERSION=2.0.1
 
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -46,9 +46,7 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 COPY pyproject.toml poetry.lock ./
 
 # Don't install the package itself with Poetry because it will install it as an editable install.
-# TODO: Improve this when non-editable `poetry install` is supported in Poetry.
-#    https://github.com/python-poetry/poetry/issues/1382
-RUN poetry install --only main --no-root
+RUN poetry sync --only main --no-root
 
 # Copy in source files.
 COPY README.md ./
