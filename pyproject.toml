@@ -42,8 +42,9 @@ fact = "fact.cli:app"
 
 [tool.poetry]
 requires-poetry = ">=2.0.1"
-# For non-package/wheel application projects (e.g., FastAPI or Django app), you can omit the
-# package metadata above and replace it with:
+# For non-package/wheel application projects (e.g., FastAPI or Django app), you can omit all but
+# the name, version, requires-python, and dependencies fields within the [project] section above
+# and replace it with:
 # package-mode = false
 
 [tool.poetry.requires-plugins]
