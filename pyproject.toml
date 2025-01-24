@@ -19,7 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
-    # Include this classifier to prevent accidently publishing private code to PyPI.
+    # Include this classifier to prevent accidentally publishing private code to PyPI.
     #   https://pypi.org/classifiers/
     "Private :: Do Not Upload",
 ]
@@ -120,7 +120,7 @@ extend-ignore = [
 ]
 unfixable = [
     # Disable removing unused imports by default and only enable within nox so editors don't delete
-    # unnused imports while the user is in the middle of editing a file on save.
+    # unused imports while the user is in the middle of editing a file on save.
     "F401",
 ]
 
@@ -146,7 +146,7 @@ filterwarnings = [
     # When running tests, treat warnings as errors (e.g. -Werror).
     # See: https://docs.pytest.org/en/latest/reference/reference.html#confval-filterwarnings
     "error",
-    # Add additional warning supressions as needed here. For example, if a third-party library
+    # Add additional warning suppressions as needed here. For example, if a third-party library
     # is throwing a deprecation warning that needs to be fixed upstream:
     # "ignore::DeprecationWarning:typer",
 ]
