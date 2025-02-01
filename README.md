@@ -35,27 +35,22 @@ all machines that use the project, both during development and in production.
 
 To install all dependencies into an isolated virtual environment:
 
-```bash
-$ poetry sync
+```shell
+poetry sync
 ```
 
-To [activate](https://python-poetry.org/docs/basic-usage#activating-the-virtual-environment) the
-virtual environment that is automatically created by Poetry:
+To
+[print the activate](https://python-poetry.org/docs/managing-environments/#activating-the-environment)
+command of the virtual environment that is automatically created by Poetry:
 
-```bash
-$ poetry shell
-```
-
-To deactivate the environment:
-
-```bash
-(fact) $ exit
+```shell
+poetry env activate
 ```
 
 To upgrade all dependencies to their latest versions:
 
-```bash
-$ poetry update
+```shell
+poetry update
 ```
 
 ## Packaging
@@ -71,8 +66,8 @@ To package the project as both a
 [source distribution](https://packaging.python.org/en/latest/flow/#the-source-distribution-sdist)
 and a [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/):
 
-```bash
-$ poetry build
+```shell
+poetry build
 ```
 
 This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.whl`.
@@ -87,8 +82,8 @@ Source and wheel redistributable packages can
 be [published to PyPI](https://python-poetry.org/docs/cli#publish) or installed
 directly from the filesystem using `pip`.
 
-```bash
-$ poetry publish
+```shell
+poetry publish
 ```
 
 > [!NOTE]
@@ -105,12 +100,12 @@ guide checking, type checking and documentation generation.
 
 > [!NOTE]
 > `nox` is installed into the virtual environment automatically by the `poetry sync` command
-> above. Run `poetry shell` to activate the virtual environment.
+> above.
 
 To run all default sessions:
 
-```bash
-(fact) $ nox
+```shell
+poetry run nox
 ```
 
 ## Unit Testing
@@ -141,8 +136,8 @@ pytest and code coverage are configured in [`pyproject.toml`](./pyproject.toml).
 
 To pass arguments to `pytest` through `nox`:
 
-```bash
-(fact) $ nox -s test -- -k invalid_factorial
+```shell
+poetry run nox -s test -- -k invalid_factorial
 ```
 
 ## Code Style Checking
@@ -158,14 +153,14 @@ automatically in editors such as PyCharm.
 
 To lint code, run:
 
-```bash
-(fact) $ nox -s lint
+```shell
+poetry run nox -s lint
 ```
 
 To automatically fix fixable lint errors, run:
 
-```bash
-(fact) $ nox -s lint_fix
+```shell
+poetry run nox -s lint_fix
 ```
 
 ## Automated Code Formatting
@@ -174,8 +169,8 @@ To automatically fix fixable lint errors, run:
 
 To automatically format code, run:
 
-```bash
-(fact) $ nox -s fmt
+```shell
+poetry run nox -s fmt
 ```
 
 ## Type Checking
@@ -197,8 +192,8 @@ def factorial(n: int) -> int:
 
 mypy is configured in [`pyproject.toml`](./pyproject.toml). To type check code, run:
 
-```bash
-(fact) $ nox -s type_check
+```shell
+poetry run nox -s type_check
 ```
 
 See also [awesome-python-typing](https://github.com/typeddjango/awesome-python-typing).
@@ -233,29 +228,29 @@ to be hosted at any URL or viewed offline from the file system.
 
 To build the user guide, run,
 
-```bash
-(fact) $ nox -s docs
+```shell
+poetry run nox -s docs
 ```
 
 and open `docs/user_guide/site/index.html` using a web browser.
 
 To build the user guide, additionally validating external URLs, run:
 
-```bash
-(fact) $ nox -s docs_check_urls
+```shell
+poetry run nox -s docs_check_urls
 ```
 
 To build the user guide in a format suitable for viewing directly from the file system, run:
 
-```bash
-(fact) $ nox -s docs_offline
+```shell
+poetry run nox -s docs_offline
 ```
 
 To build and serve the user guide with automatic rebuilding as you change the contents,
 run:
 
-```bash
-(fact) $ nox -s docs_serve
+```shell
+poetry run nox -s docs_serve
 ``` 
 
 and open <http://127.0.0.1:8000> in a browser.
@@ -367,8 +362,8 @@ You may also want to list the licenses of all the packages that your Python proj
 To automatically list the licenses for all dependencies in (and their transitive dependencies)
 using [pip-licenses](https://github.com/raimon49/pip-licenses):
 
-```bash
-(fact) $ nox -s licenses
+```shell
+poetry run nox -s licenses
 ...
  Name      Version  License     
  click     8.1.3    BSD License 
@@ -391,14 +386,14 @@ Docker is configured in:
 
 To build the container image:
 
-```bash
-$ docker build --tag fact .
+```shell
+docker build --tag fact .
 ```
 
 To run the image in a container:
 
-```bash
-$ docker run --rm --interactive --tty fact 5
+```shell
+docker run --rm --interactive --tty fact 5
 ```
 
 > [!NOTE]
@@ -445,19 +440,21 @@ it is often difficult to determine dependency relationships soley from manually 
 ```shell
 $ poetry show --tree --only main
 
-rich 12.6.0 Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal
-├── commonmark >=0.9.0,<0.10.0
-├── pygments >=2.6.0,<3.0.0
+rich 13.9.2 Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal
+├── markdown-it-py >=2.2.0
+│   └── mdurl >=0.1,<1.0
+├── pygments >=2.13.0,<3.0.0
 └── typing-extensions >=4.0.0,<5.0
-typer 0.7.0 Typer, build great CLIs. Easy to code. Based on Python type hints.
-├── click >=7.1.1,<9.0.0
-│   └── colorama * 
-├── colorama >=0.4.3,<0.5.0
-├── rich >=10.11.0,<13.0.0
-│   ├── commonmark >=0.9.0,<0.10.0 
-│   ├── pygments >=2.6.0,<3.0.0 
-│   └── typing-extensions >=4.0.0,<5.0 
-└── shellingham >=1.3.0,<2.0.0
+typer-slim 0.12.5 Typer, build great CLIs. Easy to code. Based on Python type hints.
+├── click >=8.0.0
+│   └── colorama *
+├── rich >=10.11.0
+│   ├── markdown-it-py >=2.2.0
+│   │   └── mdurl >=0.1,<1.0
+│   ├── pygments >=2.13.0,<3.0.0
+│   └── typing-extensions >=4.0.0,<5.0
+├── shellingham >=1.3.0
+└── typing-extensions >=3.7.4.3
 ```
 
 # PyCharm Configuration
