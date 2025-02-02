@@ -23,10 +23,7 @@ classifiers = [
     #   https://pypi.org/classifiers/
     "Private :: Do Not Upload",
 ]
-# Some packages, such as scipy, constrain their upper bound of Python versions they support.
-# Without also constraining the upper bound here, Poetry will not select those versions and will
-# result in an old version being resolved/locked.
-requires-python = ">=3.9, <3.14"
+requires-python = ">=3.9"
 dependencies = [
     "rich",
     "typer-slim[standard]"
@@ -46,6 +43,13 @@ requires-poetry = ">=2.0.1"
 # the name, version, requires-python, and dependencies fields within the [project] section above
 # and replace it with:
 # package-mode = false
+
+[tool.poetry.dependencies]
+# Some packages, such as scipy, constrain their upper bound of Python versions they support.
+# Without also constraining the upper bound during resolution, Poetry will not select those
+# versions and will result in an old version being resolved/locked.
+# https://python-poetry.org/docs/pyproject/#requires-python
+python = ">=3.9,<3.14"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.8"
