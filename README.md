@@ -396,18 +396,6 @@ To run the image in a container:
 docker run --rm --interactive --tty fact 5
 ```
 
-> [!NOTE]
-> If you need to install Poetry on Alpine Linux, see the pre-built 
-> [`poetry` package](https://pkgs.alpinelinux.org/packages?name=poetry&branch=edge) for that
-> platform rather than running `pip install poetry`. This avoids needing to build Poetry
-> dependencies from source.
-> 
-> ```Dockerfile
-> FROM alpine:latest
->
-> RUN apk add --no-cache poetry
-> ```
-
 # Miscellaneous
 
 ## Shebang Line
