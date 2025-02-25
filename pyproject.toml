@@ -76,6 +76,8 @@ ruff = "*"
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "*"
 mkdocs-htmlproofer-plugin = "*"
+
+# Python API documentation.
 mkdocstrings = { version = "*", extras = ["python"] }
 # Autodoc.
 mkdocs-gen-files = "*"
