@@ -5,7 +5,7 @@
 !src
 !LICENSE.txt
 !pyproject.toml
-!poetry.lock
+!uv.lock
 !README.md
 
 # Filter unwanted files from included folders.
