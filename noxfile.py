@@ -2,17 +2,23 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import nox
-from nox import param, parametrize
-from nox_poetry import Session, session
+from nox import Session, param, parametrize, session
 
 nox.options.error_on_external_run = True
-nox.options.reuse_existing_virtualenvs = True
+nox.options.default_venv_backend = "uv"
 nox.options.sessions = ["lint", "type_check", "test", "docs"]
 
 
 @session(python=["3.9", "3.10", "3.11", "3.12", "3.13"])
 def test(s: Session) -> None:
-    s.install(".", "pytest", "pytest-cov", "pytest-randomly")
+    s.run_install(
+        "uv",
+        "sync",
+        "--locked",
+        "--no-default-groups",
+        "--group=test",
+        env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
+    )
     s.run(
         "python",
         "-m",
@@ -25,9 +31,8 @@ def test(s: Session) -> None:
     )
 
 
-# For some sessions, set venv_backend="none" to simply execute scripts within the existing Poetry
-# environment. This requires that nox is run within the `poetry env activate` virtual environment
-# or using `poetry run nox ...`.
+# For some sessions, set venv_backend="none" to simply execute scripts within the existing
+# uv-generated virtual environment, rather than have nox create a new one for each session.
 @session(venv_backend="none")
 @parametrize(
     "command",
@@ -106,20 +111,20 @@ def docs_github_pages(s: Session) -> None:
     s.run("mkdocs", "gh-deploy", "--force", env=doc_env)
 
 
-@session(reuse_venv=False)
+@session
 def licenses(s: Session) -> None:
-    # Generate a unique temporary file name. Poetry cannot write to the temp file directly on
-    # Windows, so only use the name and allow Poetry to re-create it.
+    # Generate a unique temporary file name. uv cannot write to the temp file directly on
+    # Windows, so only use the name and allow uv to re-create it.
     with NamedTemporaryFile() as t:
         requirements_file = Path(t.name)
 
-    # Install dependencies without installing the package itself:
-    #   https://github.com/cjolowicz/nox-poetry/issues/680
     s.run_always(
-        "poetry",
+        "uv",
         "export",
-        "--without-hashes",
-        f"--output={requirements_file}",
+        "--no-emit-project",
+        "--no-default-groups",
+        "--no-hashes",
+        f"--output-file={requirements_file}",
         external=True,
     )
     s.install("pip-licenses", "-r", str(requirements_file))

@@ -37,55 +37,40 @@ Repository = "https://github.com/johnthagen/python-blueprint"
 [project.scripts]
 fact = "fact.cli:app"
 
-[tool.poetry]
-requires-poetry = ">=2.0.1"
-# For non-package/wheel application projects (e.g., FastAPI or Django app), you can omit all but
-# the name, version, requires-python, and dependencies fields within the [project] section above
-# and replace it with:
-# package-mode = false
+[dependency-groups]
+nox = [
+    "nox",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-randomly",
+]
+type_check = [
+    "mypy",
+    # Add "types-" stub packages as needed: https://github.com/python/typeshed/tree/main/stubs
+]
+lint = [
+    "ruff",
+]
+docs = [
+    "mkdocs-material",
+    "mkdocs-htmlproofer-plugin",
 
-[tool.poetry.dependencies]
-# Some packages, such as scipy, constrain their upper bound of Python versions they support.
-# Without also constraining the upper bound during resolution, Poetry will not select those
-# versions and will result in an old version being resolved/locked.
-# https://python-poetry.org/docs/pyproject/#requires-python
-python = ">=3.9,<3.14"
-
-[tool.poetry.requires-plugins]
-poetry-plugin-export = ">=1.8"
-
-[tool.poetry.group.nox.dependencies]
-nox-poetry = "*"
-
-[tool.poetry.group.test.dependencies]
-pytest = "*"
-pytest-cov = "*"
-pytest-randomly = "*"
-
-[tool.poetry.group.type_check.dependencies]
-mypy = "*"
-# As of mypy 0.900, mypy no longer bundles the stubs for third-party libraries that reside
-# in the typeshed project. Add these "types-" packages here if you depend on them in
-# requirements.in (e.g. types-requests).
-# See: http://mypy-lang.blogspot.com/2021/06/mypy-0900-released.html
-#      https://github.com/python/typeshed/tree/main/stubs
-
-[tool.poetry.group.lint.dependencies]
-ruff = "*"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs-material = "*"
-mkdocs-htmlproofer-plugin = "*"
-
-# Python API documentation.
-mkdocstrings = { version = "*", extras = ["python"] }
-# Autodoc.
-mkdocs-gen-files = "*"
-mkdocs-literate-nav = "*"
+    # Python API documentation (not neccessary for applications).
+    "mkdocstrings[python]",
+    # Autodoc.
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
+]
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+# TODO: Replace this with uv_build when it is it released for GA.
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+default-groups = "all"
 
 [tool.mypy]
 ignore_missing_imports = true

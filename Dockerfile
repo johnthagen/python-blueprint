@@ -7,18 +7,18 @@
 #   - Most Python packages that require C code are tested against GLIBC, so there could be
 #     subtle errors when using MUSL.
 #   - These Python packages usually only provide binary wheels for GLIBC, so the packages
-#     will need to be recompiled fully within the Docker images, increasing build times.
+#     will need to be recompiled fully within the container images, increasing build times.
 FROM python:3.11-slim-bookworm AS python_builder
 
-# Pin Poetry to a specific version to make Docker builds reproducible.
-ENV POETRY_VERSION=2.1.1
+# Pin uv to a specific version to make container builds reproducible.
+ENV UV_VERSION=0.6.9
 
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONBUFFERED=1
 
 # By default, pip caches copies of downloaded packages from PyPI. These are not useful within
-# a Docker image, so disable this to reduce the size of images.
+# a contain image, so disable this to reduce the size of images.
 ENV PIP_NO_CACHE_DIR=1
 ENV WORKDIR=/src
 
@@ -30,9 +30,8 @@ WORKDIR ${WORKDIR}
 #    gcc \
 #    && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry into the global environment to isolate it from the venv. This prevents Poetry
-# from uninstalling parts of itself.
-RUN pip install "poetry==${POETRY_VERSION}"
+# Install uv into the global environment to isolate it from the venv it creates.
+RUN pip install "uv==${UV_VERSION}"
 
 # Pre-download/compile wheel dependencies into a virtual environment.
 # Doing this in a multi-stage build allows omitting compile dependencies from the final image.
@@ -43,17 +42,17 @@ RUN python -m venv ${VIRTUAL_ENV}
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 # Copy in project dependency specification.
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml uv.lock ./
 
-# Don't install the package itself with Poetry because it will install it as an editable install.
-RUN poetry sync --only main --no-root
+# Don't install the package itself with uv because it will install it as an editable install.
+RUN uv sync --locked --no-default-groups --no-install-project
 
 # Copy in source files.
 COPY README.md ./
 COPY src src
 
 # Manually build/install the package.
-RUN poetry build && \
+RUN uv build && \
     pip install dist/*.whl
 
 ## Final Image
@@ -73,7 +72,7 @@ RUN mkdir -p ${HOME}
 
 # Create the user so the program doesn't run as root. This increases security of the container.
 RUN groupadd -r user && \
-    useradd -r -g user -d ${HOME} -s /sbin/nologin -c "Docker image user" user
+    useradd -r -g user -d ${HOME} -s /sbin/nologin -c "Container image user" user
 
 # Setup application install directory.
 RUN mkdir ${APP_HOME}
