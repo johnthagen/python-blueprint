@@ -360,7 +360,7 @@ To automatically list the licenses for all dependencies in (and their transitive
 using [pip-licenses](https://github.com/raimon49/pip-licenses):
 
 ```shell
-uv run nox -s licenses
+$ uv run nox -s licenses
 ...
  Name               Version  License                            
  Pygments           2.19.1   BSD License                        
