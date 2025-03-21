@@ -122,6 +122,7 @@ def licenses(s: Session) -> None:
     s.run_always(
         "uv",
         "export",
+        "--no-emit-project",
         "--no-default-groups",
         "--no-hashes",
         f"--output-file={requirements_file}",
