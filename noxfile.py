@@ -14,6 +14,7 @@ def test(s: Session) -> None:
     s.run_install(
         "uv",
         "sync",
+        "--frozen",
         "--no-default-groups",
         "--group=test",
         env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
