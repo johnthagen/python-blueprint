@@ -1,13 +1,13 @@
 # python-blueprint
 
 [![GitHub Actions][github-actions-badge]](https://github.com/johnthagen/python-blueprint/actions)
-[![Poetry][poetry-badge]](https://python-poetry.org/)
+[![uv][uv-badge]](https://github.com/astral-sh/uv)
 [![Nox][nox-badge]](https://github.com/wntrblm/nox)
 [![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
-[poetry-badge]: https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json
+[uv-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
@@ -20,37 +20,35 @@ interface (`fact.cli`).
 
 # Package Management
 
-This package uses [Poetry](https://python-poetry.org/) to manage dependencies and
+This package uses [uv](https://docs.astral.sh/uv/) to manage dependencies and
 isolated [Python virtual environments](https://docs.python.org/3/library/venv.html).
 
 To proceed,
-[install Poetry globally](https://python-poetry.org/docs/#installation)
+[install uv globally](https://docs.astral.sh/uv/getting-started/installation/)
 onto your system.
+
+To install a specific version of Python:
+
+```shell
+uv python install 3.13
+```
 
 ## Dependencies
 
 Dependencies are defined in [`pyproject.toml`](./pyproject.toml) and specific versions are locked
-into [`poetry.lock`](./poetry.lock). This allows for exact reproducible environments across
+into [`uv.lock`](./uv.lock). This allows for exact reproducible environments across
 all machines that use the project, both during development and in production.
 
 To install all dependencies into an isolated virtual environment:
 
 ```shell
-poetry sync
-```
-
-To
-[print the activate](https://python-poetry.org/docs/managing-environments/#activating-the-environment)
-command of the virtual environment that is automatically created by Poetry:
-
-```shell
-poetry env activate
+uv sync
 ```
 
 To upgrade all dependencies to their latest versions:
 
 ```shell
-poetry update
+uv lock --upgrade
 ```
 
 ## Packaging
@@ -67,7 +65,7 @@ To package the project as both a
 and a [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/):
 
 ```shell
-poetry build
+uv build
 ```
 
 This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.whl`.
@@ -79,11 +77,11 @@ This will generate `dist/fact-1.0.0.tar.gz` and `dist/fact-1.0.0-py3-none-any.wh
 ## Publish Distributions to PyPI
 
 Source and wheel redistributable packages can
-be [published to PyPI](https://python-poetry.org/docs/cli#publish) or installed
+be [published to PyPI](https://docs.astral.sh/uv/guides/package/) or installed
 directly from the filesystem using `pip`.
 
 ```shell
-poetry publish
+uv publish
 ```
 
 > [!NOTE]
@@ -92,20 +90,19 @@ poetry publish
 
 # Enforcing Code Quality
 
-Automated code quality checks are performed using 
-[Nox](https://nox.thea.codes/en/stable/) and
-[`nox-poetry`](https://nox-poetry.readthedocs.io/en/stable/). Nox will automatically create virtual
-environments and run commands based on [`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style
-guide checking, type checking and documentation generation.
+Automated code quality checks are performed using [Nox](https://nox.thea.codes/en/stable/). Nox
+will automatically create virtual environments and run commands based on
+[`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style guide checking, type checking and
+documentation generation.
 
 > [!NOTE]
-> `nox` is installed into the virtual environment automatically by the `poetry sync` command
+> `nox` is installed into the virtual environment automatically by the `uv sync` command
 > above.
 
 To run all default sessions:
 
 ```shell
-poetry run nox
+uv run nox
 ```
 
 ## Unit Testing
@@ -137,7 +134,7 @@ pytest and code coverage are configured in [`pyproject.toml`](./pyproject.toml).
 To pass arguments to `pytest` through `nox`:
 
 ```shell
-poetry run nox -s test -- -k invalid_factorial
+uv run nox -s test -- -k invalid_factorial
 ```
 
 ## Code Style Checking
@@ -154,13 +151,13 @@ automatically in editors such as PyCharm.
 To lint code, run:
 
 ```shell
-poetry run nox -s lint
+uv run nox -s lint
 ```
 
 To automatically fix fixable lint errors, run:
 
 ```shell
-poetry run nox -s lint_fix
+uv run nox -s lint_fix
 ```
 
 ## Automated Code Formatting
@@ -170,7 +167,7 @@ poetry run nox -s lint_fix
 To automatically format code, run:
 
 ```shell
-poetry run nox -s fmt
+uv run nox -s fmt
 ```
 
 ## Type Checking
@@ -193,7 +190,7 @@ def factorial(n: int) -> int:
 mypy is configured in [`pyproject.toml`](./pyproject.toml). To type check code, run:
 
 ```shell
-poetry run nox -s type_check
+uv run nox -s type_check
 ```
 
 See also [awesome-python-typing](https://github.com/typeddjango/awesome-python-typing).
@@ -229,7 +226,7 @@ to be hosted at any URL or viewed offline from the file system.
 To build the user guide, run,
 
 ```shell
-poetry run nox -s docs
+uv run nox -s docs
 ```
 
 and open `docs/user_guide/site/index.html` using a web browser.
@@ -237,20 +234,20 @@ and open `docs/user_guide/site/index.html` using a web browser.
 To build the user guide, additionally validating external URLs, run:
 
 ```shell
-poetry run nox -s docs_check_urls
+uv run nox -s docs_check_urls
 ```
 
 To build the user guide in a format suitable for viewing directly from the file system, run:
 
 ```shell
-poetry run nox -s docs_offline
+uv run nox -s docs_offline
 ```
 
 To build and serve the user guide with automatic rebuilding as you change the contents,
 run:
 
 ```shell
-poetry run nox -s docs_serve
+uv run nox -s docs_serve
 ``` 
 
 and open <http://127.0.0.1:8000> in a browser.
@@ -363,12 +360,12 @@ To automatically list the licenses for all dependencies in (and their transitive
 using [pip-licenses](https://github.com/raimon49/pip-licenses):
 
 ```shell
-poetry run nox -s licenses
+uv run nox -s licenses
 ...
- Name      Version  License     
- click     8.1.3    BSD License 
- colorama  0.4.4    BSD License 
- typer     0.4.1    MIT License 
+ Name               Version  License                            
+ Pygments           2.19.1   BSD License                        
+ click              8.1.8    BSD License                        
+ markdown-it-py     3.0.0    MIT License 
 ```
 
 # Container
@@ -406,43 +403,25 @@ The proper [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) line for Pyth
 #!/usr/bin/env python3
 ```
 
-## Installing Newer Python on Ubuntu
-
-Ubuntu releases come with a default `python3` executable. This is frozen for the life of the OS
-and only receives security and bug fixes. To install a newer version of Python globally,
-consider the [deadsnakes PPA](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa).
-
-```shell
-sudo add-apt-repository ppa:deadsnakes
-sudo apt update
-sudo apt install python3.12
-```
-
 ## Package Dependency Tree
 
-[`poetry show`](https://python-poetry.org/docs/cli#show) is a Poetry command for listing installed
-packages. The `--tree` option displays them in the form of a dependency tree. For large projects,
-it is often difficult to determine dependency relationships soley from manually inspecting
-`poetry.lock`.
+`uv tree` is a command for listing installed packages in the form of a dependency tree. For large
+projects, it is often difficult to determine dependency relationships soley from manually
+inspecting `uv.lock`.
 
 ```shell
-$ poetry show --tree --only main
+$ uv tree --no-default-groups
 
-rich 13.9.2 Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal
-├── markdown-it-py >=2.2.0
-│   └── mdurl >=0.1,<1.0
-├── pygments >=2.13.0,<3.0.0
-└── typing-extensions >=4.0.0,<5.0
-typer-slim 0.12.5 Typer, build great CLIs. Easy to code. Based on Python type hints.
-├── click >=8.0.0
-│   └── colorama *
-├── rich >=10.11.0
-│   ├── markdown-it-py >=2.2.0
-│   │   └── mdurl >=0.1,<1.0
-│   ├── pygments >=2.13.0,<3.0.0
-│   └── typing-extensions >=4.0.0,<5.0
-├── shellingham >=1.3.0
-└── typing-extensions >=3.7.4.3
+fact v1.0.0
+├── rich v13.9.4
+│   ├── markdown-it-py v3.0.0
+│   │   └── mdurl v0.1.2
+│   └── pygments v2.19.1
+└── typer-slim[standard] v0.15.2
+    ├── click v8.1.8
+    ├── typing-extensions v4.12.2
+    ├── rich v13.9.4 (extra: standard) (*)
+    └── shellingham v1.5.4 (extra: standard)
 ```
 
 # PyCharm Configuration
