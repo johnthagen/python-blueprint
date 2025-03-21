@@ -26,7 +26,8 @@ def test(s: Session) -> None:
 
 
 # For some sessions, set venv_backend="none" to simply execute scripts within the existing Poetry
-# environment. This requires that nox is run within `poetry shell` or using `poetry run nox ...`.
+# environment. This requires that nox is run within the `poetry env activate` virtual environment
+# or using `poetry run nox ...`.
 @session(venv_backend="none")
 @parametrize(
     "command",
