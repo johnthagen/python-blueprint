@@ -68,15 +68,16 @@ Then install the `fact` package and its dependencies:
 poetry sync
 ```
 
-Activate the virtual environment created automatically by Poetry:
-
-```bash
-poetry shell
-```
-
 ## Quick Start
 
-To use `fact` within your project, import the `factorial` function and execute the API like:
+To run the included CLI:
+
+```bash
+poetry run fact 3
+```
+
+To use `fact` as a library within your project, import the `factorial` function and execute the
+API like:
 
 *[API]: Application Programming Interface
 
