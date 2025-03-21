@@ -45,7 +45,7 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 COPY pyproject.toml uv.lock ./
 
 # Don't install the package itself with uv because it will install it as an editable install.
-RUN uv sync --frozen --no-default-groups --no-install-project
+RUN uv sync --locked --no-default-groups --no-install-project
 
 # Copy in source files.
 COPY README.md ./

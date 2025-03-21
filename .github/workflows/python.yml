@@ -3,7 +3,7 @@ name: python
 on: [push, pull_request]
 
 env:
-  POETRY_VERSION: "2.1.1"
+  UV_VERSION: "0.6.9"
   PYTHON_VERSION: "3.11"
 
 jobs:
@@ -14,49 +14,50 @@ jobs:
         python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry==${POETRY_VERSION}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        # Caching is enabled by default for GitHub-hosted runners:
+        #   https://github.com/astral-sh/setup-uv?tab=readme-ov-file#enable-caching
+        with:
+          version: ${{ env.UV_VERSION }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          # https://github.com/actions/setup-python#caching-packages-dependencies
-          cache: poetry
       - name: Install Nox
-        run: poetry sync --only nox
+        run: uv sync --locked --only-group nox
       - name: Test with Nox
-        run: poetry run nox -s test-${{ matrix.python-version }}
+        run: uv run nox -s test-${{ matrix.python-version }}
   quality:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        job:
-          - { nox-session: lint, poetry-groups: "lint" }
-          # type_check needs main and test dependencies for inline type annotations.
-          - { nox-session: type_check, poetry-groups: "type_check,main,test" }
-          - { nox-session: docs, poetry-groups: "docs" }
+        nox-session: ["lint", "type_check", "docs"]
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry==${POETRY_VERSION}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: poetry
-      - name: Install Nox and group dependencies
-        run: poetry sync --only nox,${{ matrix.job.poetry-groups }}
+      - name: Install dependencies
+        run: uv sync --locked
       - name: Test with Nox
-        run: poetry run nox -s ${{ matrix.job.nox-session }}
-  poetry-check:
+        run: uv run nox -s ${{ matrix.nox-session }}
+  lock-check:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry==${POETRY_VERSION}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Validate Poetry Configuration and Lockfile Freshness
-        run: poetry check --lock --strict
+      - name: Validate Lockfile Up-to-date
+        run: uv lock --check

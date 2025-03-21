@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 env:
-  POETRY_VERSION: "2.1.1"
+  UV_VERSION: "2.1.1"
   PYTHON_VERSION: "3.11"
 
 jobs:
@@ -16,13 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry==${POETRY_VERSION}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: poetry
-      - name: Install Nox and doc dependencies
-        run: poetry sync --only nox,docs
+      - name: Install dependencies
+        run: uv sync --locked
       - name: Publish Docs
-        run: poetry run nox -s docs_github_pages
+        run: uv run nox -s docs_github_pages

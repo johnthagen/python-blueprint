@@ -14,7 +14,7 @@ def test(s: Session) -> None:
     s.run_install(
         "uv",
         "sync",
-        "--frozen",
+        "--locked",
         "--no-default-groups",
         "--group=test",
         env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
@@ -31,9 +31,8 @@ def test(s: Session) -> None:
     )
 
 
-# For some sessions, set venv_backend="none" to simply execute scripts within the existing Poetry
-# environment. This requires that nox is run within the `poetry env activate` virtual environment
-# or using `poetry run nox ...`.
+# For some sessions, set venv_backend="none" to simply execute scripts within the existing
+# uv-generated virtual environment, rather than have nox create a new one for each session.
 @session(venv_backend="none")
 @parametrize(
     "command",
@@ -114,8 +113,8 @@ def docs_github_pages(s: Session) -> None:
 
 @session
 def licenses(s: Session) -> None:
-    # Generate a unique temporary file name. Poetry cannot write to the temp file directly on
-    # Windows, so only use the name and allow Poetry to re-create it.
+    # Generate a unique temporary file name. uv cannot write to the temp file directly on
+    # Windows, so only use the name and allow uv to re-create it.
     with NamedTemporaryFile() as t:
         requirements_file = Path(t.name)
 
