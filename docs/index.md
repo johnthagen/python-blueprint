@@ -20,52 +20,24 @@ status: new
 
 ## Installation
 
-First, [install pipx](https://pypa.github.io/pipx/):
+First, [install `uv`](https://docs.astral.sh/uv/getting-started/installation):
 
-=== "Linux"
+=== "macOS and Linux"
 
     ```bash
-    python3 -m pip install --user pipx
-    python3 -m pipx ensurepath
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
 
 === "Windows"
 
-    > If you installed Python using Microsoft Store, replace `py` with `python3` in the next line.
-
     ```powershell
-    py -m pip install --user pipx
+    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
     ```
-
-    If you receive
-
-    ```
-    WARNING: The script pipx.exe is installed in `<USER folder>\AppData\Roaming\Python\Python3x\Scripts` which is not on PATH
-    ```
-
-    Go into the mentioned folder and run
-
-    ```
-    pipx ensurepath
-    ```
-
-=== "macOS"
-
-    ```bash
-    brew install pipx
-    pipx ensurepath
-    ```
-
-Next, [install Poetry](https://python-poetry.org/docs/#installation):
-
-```bash
-pipx install poetry
-```
 
 Then install the `fact` package and its dependencies:
 
 ```bash
-poetry sync
+uv sync
 ```
 
 ## Quick Start
@@ -73,7 +45,7 @@ poetry sync
 To run the included CLI:
 
 ```bash
-poetry run fact 3
+uv run fact 3
 ```
 
 To use `fact` as a library within your project, import the `factorial` function and execute the
