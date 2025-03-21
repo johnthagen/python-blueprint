@@ -2,7 +2,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import nox
-from nox import parametrize
+from nox import param, parametrize
 from nox_poetry import Session, session
 
 nox.options.error_on_external_run = True
@@ -31,20 +31,23 @@ def test(s: Session) -> None:
 @parametrize(
     "command",
     [
-        # During formatting, additionally sort imports and remove unused imports.
-        [
-            "ruff",
-            "check",
-            ".",
-            "--select",
-            "I",
-            "--select",
-            "F401",
-            "--extend-fixable",
-            "F401",
-            "--fix",
-        ],
-        ["ruff", "format", "."],
+        param(
+            [
+                "ruff",
+                "check",
+                ".",
+                "--select",
+                "I",
+                # Also remove unused imports.
+                "--select",
+                "F401",
+                "--extend-fixable",
+                "F401",
+                "--fix",
+            ],
+            id="sort_imports",
+        ),
+        param(["ruff", "format", "."], id="format"),
     ],
 )
 def fmt(s: Session, command: list[str]) -> None:
@@ -55,8 +58,8 @@ def fmt(s: Session, command: list[str]) -> None:
 @parametrize(
     "command",
     [
-        ["ruff", "check", "."],
-        ["ruff", "format", "--check", "."],
+        param(["ruff", "check", "."], id="lint_check"),
+        param(["ruff", "format", "--check", "."], id="format_check"),
     ],
 )
 def lint(s: Session, command: list[str]) -> None:
