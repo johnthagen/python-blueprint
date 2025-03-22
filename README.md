@@ -470,29 +470,8 @@ formatting into PyCharm.
     - **Check**: Run Ruff when the python file is saved
     - **Check**: Use ruff format
 
-Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatted on save.
-
-### Import Sorting
-
-1. Ensure that the [File Watchers Plugin](https://plugins.jetbrains.com/plugin/7177-file-watchers)
-   is installed.
-2. Open Preferences or Settings | Tools | File Watchers and select `+` | `<custom>`
-   
- ![](docs/static/images/preferences.png)
-
-3. Fill in the following fields
-    - **Name**: `ruff check --select I --fix`
-    - **File Type**: Python
-    - **Scope**: Project Files
-    - **Program**: `$PyInterpreterDirectory$/python`
-    - **Arguments**: `-m ruff check --select I --fix $FilePath$`
-    - **Output paths to refresh**: `$FilePath$`
-    - **Working directory**: `$ProjectFileDir$`
-    - **Advanced Options**
-      - **Uncheck**: Auto-save edited files to trigger the watcher
-      - **Uncheck**: Trigger the watcher on external changes
-
-  ![](docs/static/images/file_watcher.png)
+Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatted and imports
+sorted on save.
 
 > [!TIP]
 > These tools work best if you properly mark directories as excluded from the project that should 
