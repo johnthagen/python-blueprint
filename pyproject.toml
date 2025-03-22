@@ -66,6 +66,7 @@ docs = [
 
 [build-system]
 # TODO: Replace this with uv_build when it is it released for GA.
+#   https://github.com/astral-sh/uv/issues/3957
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
