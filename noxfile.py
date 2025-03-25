@@ -17,6 +17,7 @@ def test(s: Session) -> None:
         "--locked",
         "--no-default-groups",
         "--group=test",
+        f"--python={s.virtualenv.location}",
         env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
     )
     s.run(
