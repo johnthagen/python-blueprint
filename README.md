@@ -6,7 +6,7 @@
 [![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
-[github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/python/badge.svg
+[github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/ci/badge.svg
 [uv-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
@@ -210,7 +210,7 @@ installed package to indicate that inline type annotations should be checked.
 Continuous integration is provided by [GitHub Actions](https://github.com/features/actions). This
 runs all tests, lints, and type checking for every commit and pull request to the repository.
 
-GitHub Actions is configured in [`.github/workflows/python.yml`](./.github/workflows/python.yml).
+GitHub Actions is configured in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml).
 
 # Documentation
 
