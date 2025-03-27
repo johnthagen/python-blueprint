@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 env:
   UV_VERSION: "0.6.9"
-  PYTHON_VERSION: "3.11"
 
 jobs:
   test:
@@ -42,7 +41,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version-file: ".python-version"
       - name: Install dependencies
         run: uv sync --locked
       - name: Test with Nox
@@ -58,6 +57,6 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version-file: ".python-version"
       - name: Validate Lockfile Up-to-date
         run: uv lock --check
