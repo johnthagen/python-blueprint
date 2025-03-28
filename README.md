@@ -6,7 +6,7 @@
 [![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
 
-[github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/ci/badge.svg
+[github-actions-badge]: https://github.com/johnthagen/python-blueprint/workflows/CI/badge.svg
 [uv-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
