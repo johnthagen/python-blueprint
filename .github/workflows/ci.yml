@@ -46,17 +46,3 @@ jobs:
         run: uv sync --locked
       - name: Test with Nox
         run: uv run nox -s ${{ matrix.nox-session }}
-  lock-check:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          version: ${{ env.UV_VERSION }}
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: ".python-version"
-      - name: Validate Lockfile Up-to-date
-        run: uv lock --check
