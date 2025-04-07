@@ -11,7 +11,7 @@
 FROM python:3.11-slim-bookworm AS python_builder
 
 # Pin uv to a specific version to make container builds reproducible.
-ENV UV_VERSION=0.6.9
+ENV UV_VERSION=0.6.12
 
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE=1
