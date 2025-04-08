@@ -1,6 +1,3 @@
-from pathlib import Path
-from tempfile import NamedTemporaryFile
-
 import nox
 from nox import Session, param, parametrize, session
 
