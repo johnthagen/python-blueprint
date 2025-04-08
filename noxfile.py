@@ -114,20 +114,22 @@ def docs_github_pages(s: Session) -> None:
 
 @session
 def licenses(s: Session) -> None:
-    # Generate a unique temporary file name. uv cannot write to the temp file directly on
-    # Windows, so only use the name and allow uv to re-create it.
-    with NamedTemporaryFile() as t:
-        requirements_file = Path(t.name)
-
-    s.run_always(
+    # Install only main dependencies for license report.
+    s.run_install(
         "uv",
-        "export",
-        "--no-emit-project",
+        "sync",
+        "--locked",
         "--no-default-groups",
-        "--no-hashes",
-        f"--output-file={requirements_file}",
-        external=True,
+        "--no-install-project",
+        f"--python={s.virtualenv.location}",
+        env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
     )
-    s.install("pip-licenses", "-r", str(requirements_file))
+    s.run_install(
+        "uv",
+        "pip",
+        "install",
+        "pip-licenses",
+        f"--python={s.virtualenv.location}",
+        env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
+    )
     s.run("pip-licenses", *s.posargs)
-    requirements_file.unlink()
