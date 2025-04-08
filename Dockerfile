@@ -8,7 +8,7 @@
 #     subtle errors when using MUSL.
 #   - These Python packages usually only provide binary wheels for GLIBC, so the packages
 #     will need to be recompiled fully within the container images, increasing build times.
-FROM python:3.11-slim-bookworm AS python_builder
+FROM python:3.12-slim-bookworm AS python_builder
 
 # Pin uv to a specific version to make container builds reproducible.
 ENV UV_VERSION=0.6.12
@@ -57,7 +57,7 @@ RUN uv build && \
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
-FROM python:3.11-slim-bookworm
+FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONBUFFERED=1
