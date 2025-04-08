@@ -403,6 +403,25 @@ The proper [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) line for Pyth
 #!/usr/bin/env python3
 ```
 
+If your script has external dependencies hosted on PyPI, add
+[PEP 723 Inline script metadata](https://peps.python.org/pep-0723/) and a `uv run` shebang line
+to allow easy execution on macOS and Linux.
+
+```py
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#     "httpx>=0.28.1",
+# ]
+# ///
+
+import httpx
+print(httpx.get("https://example.com").text)
+```
+
+On Windows, remove the `-S` from the shebang and execute the script using the `py` launcher.
+
 ## Package Dependency Tree
 
 `uv tree` is a command for listing installed packages in the form of a dependency tree. For large
