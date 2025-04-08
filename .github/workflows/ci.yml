@@ -46,3 +46,10 @@ jobs:
         run: uv sync --locked
       - name: Test with Nox
         run: uv run nox -s ${{ matrix.nox-session }}
+  container:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Build Container Image
+        uses: docker/build-push-action@v6
+        with:
+          push: false
