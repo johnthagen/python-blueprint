@@ -479,7 +479,7 @@ project:
 
 ## Ruff Integration
 
-Integrate [Ruff](https://docs.astral.sh/ruff/integrations/#pycharm-external-tool) linting and 
+Integrate [Ruff](https://docs.astral.sh/ruff/editors/setup/#pycharm) linting and 
 formatting into PyCharm.
 
 ### Linting and Formatting
