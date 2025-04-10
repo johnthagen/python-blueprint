@@ -39,7 +39,6 @@ RUN pip install "uv==${UV_VERSION}"
 # This must be the same path that is used in the final image as the virtual environment has
 # absolute symlinks in it.
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
-ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
 
 # Copy in project dependency specification.
 COPY pyproject.toml uv.lock ./
