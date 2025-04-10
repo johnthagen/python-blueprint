@@ -12,6 +12,7 @@ FROM python:3.12-slim-bookworm AS python_builder
 
 # Pin uv to a specific version to make container builds reproducible.
 ENV UV_VERSION=0.6.12
+ENV UV_PYTHON_DOWNLOADS=never
 
 # Set ENV variables that make Python more friendly to running inside a container.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -37,23 +38,21 @@ RUN pip install "uv==${UV_VERSION}"
 # Doing this in a multi-stage build allows omitting compile dependencies from the final image.
 # This must be the same path that is used in the final image as the virtual environment has
 # absolute symlinks in it.
-ENV VIRTUAL_ENV=/opt/venv
-RUN python -m venv ${VIRTUAL_ENV}
-ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
 
 # Copy in project dependency specification.
 COPY pyproject.toml uv.lock ./
 
-# Don't install the package itself with uv because it will install it as an editable install.
+# Install only project dependencies, as this is cached until pyproject.toml uv.lock are updated.
 RUN uv sync --locked --no-default-groups --no-install-project
 
-# Copy in source files.
+# Copy in source files. README is required for the package to build.
 COPY README.md ./
 COPY src src
 
-# Manually build/install the package.
-RUN uv build && \
-    pip install dist/*.whl
+# Install the rest of the application into the virtual environment.
+RUN uv sync --locked --no-default-groups --no-editable
 
 ## Final Image
 # The image used in the final image MUST match exactly to the python_builder image.
@@ -61,8 +60,7 @@ FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONBUFFERED=1
-ENV PIP_NO_CACHE_DIR=1
-ENV VIRTUAL_ENV=/opt/venv
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 
 ENV HOME=/home/user
 ENV APP_HOME=${HOME}/app
@@ -84,8 +82,8 @@ RUN mkdir ${APP_HOME}
 WORKDIR ${APP_HOME}
 
 # Copy and activate pre-built virtual environment.
-COPY --from=python_builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+COPY --from=python_builder ${UV_PROJECT_ENVIRONMENT} ${UV_PROJECT_ENVIRONMENT}
+ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
 
 # For Python applications that are not installable libraries, you may need to copy in source
 # files here in the final image rather than in the python_builder image.
