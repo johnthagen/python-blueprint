@@ -46,11 +46,14 @@ COPY pyproject.toml uv.lock ./
 # Install only project dependencies, as this is cached until pyproject.toml uv.lock are updated.
 RUN uv sync --locked --no-default-groups --no-install-project
 
-# Copy in source files. README is required for the package to build.
+# Copy in source files.
+# README.md is required for the package to build. It can be ommited for non-package applications.
 COPY README.md ./
 COPY src src
 
 # Install the rest of the application into the virtual environment.
+# Omit this step if your project is a non-package application and copy the source in the second
+# stage instead.
 RUN uv sync --locked --no-default-groups --no-editable
 
 ## Final Image
@@ -84,8 +87,8 @@ WORKDIR ${APP_HOME}
 COPY --from=python_builder ${UV_PROJECT_ENVIRONMENT} ${UV_PROJECT_ENVIRONMENT}
 ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
 
-# For Python applications that are not installable libraries, you may need to copy in source
-# files here in the final image rather than in the python_builder image.
+# For non-package applications, COPY source files here rather than in the --no-editable step
+# in the python_builder stage.
 
 # Give access to the entire home folder to the new user so that files and folders can be written
 # there. Some packages such as matplotlib, want to write to the home folder.
