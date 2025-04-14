@@ -27,7 +27,7 @@ To proceed,
 [install uv globally](https://docs.astral.sh/uv/getting-started/installation/)
 onto your system.
 
-To install a specific version of Python:
+To [install a specific version of Python](https://docs.astral.sh/uv/guides/install-python/):
 
 ```shell
 uv python install 3.13
