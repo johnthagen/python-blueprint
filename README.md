@@ -33,6 +33,12 @@ To [install a specific version of Python](https://docs.astral.sh/uv/guides/insta
 uv python install 3.13
 ```
 
+To upgrade a specific version of Python to the latest patch release:
+
+```shell
+uv python install --reinstall 3.13
+```
+
 ## Dependencies
 
 Dependencies are defined in [`pyproject.toml`](./pyproject.toml) and specific versions are locked
