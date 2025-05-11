@@ -1,9 +1,8 @@
-import nox
-from nox import Session, param, parametrize, session
+from nox import Session, options, param, parametrize, session
 
-nox.options.error_on_external_run = True
-nox.options.default_venv_backend = "uv"
-nox.options.sessions = ["lint", "type_check", "test", "docs"]
+options.error_on_external_run = True
+options.default_venv_backend = "uv"
+options.sessions = ["lint", "type_check", "test", "docs"]
 
 
 @session(python=["3.9", "3.10", "3.11", "3.12", "3.13"])
