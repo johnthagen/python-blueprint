@@ -108,14 +108,7 @@ def licenses(s: Session) -> None:
         "--locked",
         "--no-default-groups",
         "--no-install-project",
-        f"--python={s.virtualenv.location}",
-        env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
-    )
-    s.run_install(
-        "uv",
-        "pip",
-        "install",
-        "pip-licenses",
+        "--group=licenses",
         f"--python={s.virtualenv.location}",
         env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
     )

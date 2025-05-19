@@ -63,6 +63,9 @@ docs = [
     "mkdocs-gen-files",
     "mkdocs-literate-nav",
 ]
+licenses = [
+    "pip-licenses-cli",
+]
 
 [build-system]
 # TODO: Replace this with uv_build when it is it released for GA.
