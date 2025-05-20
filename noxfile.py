@@ -16,7 +16,15 @@ def test(s: Session) -> None:
         f"--python={s.virtualenv.location}",
         env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
     )
-    s.run("pytest", "--cov=fact", "--cov-report=html", "--cov-report=term", "tests", *s.posargs)
+    s.run(
+        "pytest",
+        "--cov=fact",
+        "--cov-report=html",
+        "--cov-report=term",
+        "--cov-fail-under=100",
+        "tests",
+        *s.posargs,
+    )
 
 
 # For some sessions, set venv_backend="none" to simply execute scripts within the existing
