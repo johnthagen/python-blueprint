@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 
 def test_main() -> None:
@@ -6,7 +7,7 @@ def test_main() -> None:
 
     # Run the CLI command
     result = subprocess.run(
-        ["python", "-m", "fact.cli", "5"],
+        [sys.executable, "-m", "fact.cli", "5"],
         capture_output=True,
         text=True,
     )
