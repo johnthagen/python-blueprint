@@ -39,7 +39,7 @@ fact = "fact.cli:app"
 
 [dependency-groups]
 nox = [
-    "nox",
+    "nox-uv",
 ]
 test = [
     "pytest",

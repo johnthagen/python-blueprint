@@ -1,21 +1,16 @@
-from nox import Session, options, param, parametrize, session
+from nox import Session, options, param, parametrize
+from nox_uv import session
 
 options.error_on_external_run = True
 options.default_venv_backend = "uv"
 options.sessions = ["lint", "type_check", "test", "docs"]
 
 
-@session(python=["3.9", "3.10", "3.11", "3.12", "3.13"])
+@session(
+    python=["3.9", "3.10", "3.11", "3.12", "3.13"],
+    uv_groups=["test"],
+)
 def test(s: Session) -> None:
-    s.run_install(
-        "uv",
-        "sync",
-        "--locked",
-        "--no-default-groups",
-        "--group=test",
-        f"--python={s.virtualenv.location}",
-        env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
-    )
     s.run(
         "pytest",
         "--cov=fact",
@@ -27,8 +22,9 @@ def test(s: Session) -> None:
     )
 
 
-# For some sessions, set venv_backend="none" to simply execute scripts within the existing
-# uv-generated virtual environment, rather than have nox create a new one for each session.
+# For some sessions, set venv_backend="none" to simply execute scripts within the existing outer
+# uv-generated virtual environment, rather than have nox create a new one for each session. This
+# makes commonly repeated sessions execute faster.
 @session(venv_backend="none")
 @parametrize(
     "command",
@@ -107,17 +103,7 @@ def docs_github_pages(s: Session) -> None:
     s.run("mkdocs", "gh-deploy", "--force", env=doc_env)
 
 
-@session
+# Install only main dependencies for the license report.
+@session(uv_groups=["licenses"])
 def licenses(s: Session) -> None:
-    # Install only main dependencies for license report.
-    s.run_install(
-        "uv",
-        "sync",
-        "--locked",
-        "--no-default-groups",
-        "--no-install-project",
-        "--group=licenses",
-        f"--python={s.virtualenv.location}",
-        env={"UV_PROJECT_ENVIRONMENT": s.virtualenv.location},
-    )
     s.run("pip-licenses", *s.posargs)

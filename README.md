@@ -96,10 +96,10 @@ uv publish
 
 # Enforcing Code Quality
 
-Automated code quality checks are performed using [Nox](https://nox.thea.codes/en/stable/). Nox
-will automatically create virtual environments and run commands based on
-[`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style guide checking, type checking and
-documentation generation.
+Automated code quality checks are performed using [Nox](https://nox.thea.codes/en/stable/) and
+[`nox-uv`](https://github.com/dantebben/nox-uv). Nox will automatically create virtual environments
+and run commands based on [`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style guide checking, type
+checking and documentation generation.
 
 > [!NOTE]
 > `nox` is installed into the virtual environment automatically by the `uv sync` command
