@@ -22,8 +22,9 @@ def test(s: Session) -> None:
     )
 
 
-# For some sessions, set venv_backend="none" to simply execute scripts within the existing
-# uv-generated virtual environment, rather than have nox create a new one for each session.
+# For some sessions, set venv_backend="none" to simply execute scripts within the existing outer
+# uv-generated virtual environment, rather than have nox create a new one for each session. This
+# makes commonly repeated sessions execute faster.
 @session(venv_backend="none")
 @parametrize(
     "command",
