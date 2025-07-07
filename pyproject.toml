@@ -127,10 +127,6 @@ split-on-trailing-comma = false
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.ruff.lint.flake8-bugbear]
-# This is only needed if Typer is a dependency of the project.
-extend-immutable-calls = ["typer.Argument"]
-
 [tool.pytest.ini_options]
 addopts = [
     "--strict-config",
