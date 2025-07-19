@@ -80,7 +80,7 @@ default-groups = "all"
 [tool.mypy]
 ignore_missing_imports = true
 strict = true
-enable_error_code = ["deprecated", "explicit-override"]
+enable_error_code = ["deprecated", "exhaustive-match", "explicit-override"]
 # If certain strict config options are too pedantic for a project,
 # disable them selectively here by setting to false.
 
