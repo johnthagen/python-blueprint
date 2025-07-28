@@ -71,6 +71,11 @@ licenses = [
 requires = ["uv_build>=0.8.0,<0.9.0"]
 build-backend = "uv_build"
 
+# For non-src directory projects, explicitly set top level model name:
+#[tool.uv.build-backend]
+#module-name = "my-app"
+#module-root = ""
+
 [tool.uv]
 default-groups = "all"
 # Non-package applications can uncomment the following line and delete [build-system] section to
