@@ -1,0 +1,40 @@
+{
+    "name": "openconsultinguk-dev",
+    "image": "mcr.microsoft.com/devcontainers/python:3.12",
+    "features": {
+        "ghcr.io/nils-geistmann/devcontainers-features/zsh:0.0.7": {
+            "configureZshAsDefaultShell": true,
+            "defaultUser": true,
+            "plugins": "git zsh-autosuggestions zsh-syntax-highlighting",
+            "theme": "agnoster"
+        },
+        "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {},
+        "ghcr.io/georglauterbach/dev-container-features/cache-vscode-extensions:0" : {},
+        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2.0.0": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/va-h/devcontainers-features/uv:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-azuretools.vscode-docker",
+                "tamasfe.even-better-toml",
+                "ms-python.mypy-type-checker",
+                "charliermarsh.ruff",
+                "ms-python.isort",
+                "docker.docker",
+                "github.vscode-github-actions",
+                "eamodio.gitlens"
+            ]
+        },
+        "settings": {
+                "editor.tabSize": 4
+        }
+    },
+    "containerEnv": {
+        "SHELL": "/usr/bin/zsh"
+    },
+    "postCreateCommand": "uv sync --python 3.12 && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+} 
