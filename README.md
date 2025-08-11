@@ -25,6 +25,9 @@ Relative to the original [repo](https://github.com/johnthagen/python-blueprint)
 We have added
 * Pre-commit hooks to enable a number formatting/linting/checking before
 each commit.
+* Add a checker for enforcing "Conventional Commits" in our history.
+* Cursor rules for Python and enforcing Conventional Commits
+insprired by [awsome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules)
 
 # Package Management
 
