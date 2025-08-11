@@ -52,6 +52,7 @@ type_check = [
 ]
 lint = [
     "ruff",
+    "pre-commit",
 ]
 docs = [
     "mkdocs-material",
@@ -88,6 +89,8 @@ strict = true
 enable_error_code = ["deprecated", "exhaustive-match", "explicit-override"]
 # If certain strict config options are too pedantic for a project,
 # disable them selectively here by setting to false.
+
+# mypy CLI flags are set in pre-commit to avoid noisy decorator warnings in CLI entrypoint.
 
 [tool.ruff]
 line-length = 99

@@ -1,0 +1,40 @@
+# See https://pre-commit.com for usage and config
+# Run: pre-commit install
+# Run all hooks on all files: pre-commit run --all-files
+
+repos:
+  # Common sanity checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: debug-statements
+      - id: check-yaml
+        exclude: ^mkdocs\.yml$
+      - id: check-toml
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: detect-private-key
+
+  # Ruff: formatter and linter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.7
+    hooks:
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+      - id: ruff-format
+
+  # Mypy: static type checker (configured in pyproject.toml)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.17.0
+    hooks:
+      - id: mypy
+        args:
+          - "--config-file=pyproject.toml"
+          - "src"
+          - "--exclude=^src/fact/cli\\.py$"
+        pass_filenames: false
