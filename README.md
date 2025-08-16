@@ -66,7 +66,7 @@ Packaging is configured by:
 
 - [`pyproject.toml`](./pyproject.toml)
 
-To package the project as both a 
+To package the project as both a
 [source distribution](https://packaging.python.org/en/latest/flow/#the-source-distribution-sdist)
 and a [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/):
 
@@ -98,8 +98,8 @@ uv publish
 
 Automated code quality checks are performed using [Nox](https://nox.thea.codes/en/stable/) and
 [`nox-uv`](https://github.com/dantebben/nox-uv). Nox will automatically create virtual environments
-and run commands based on [`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style guide checking, type
-checking and documentation generation.
+and run commands based on [`noxfile.py`](./noxfile.py) for unit testing, PEP 8 style guide
+checking, type checking and documentation generation.
 
 > [!NOTE]
 > `nox` is installed into the virtual environment automatically by the `uv sync` command
@@ -254,11 +254,11 @@ run:
 
 ```shell
 uv run nox -s docs_serve
-``` 
+```
 
 and open <http://127.0.0.1:8000> in a browser.
 
-Each time the `main` Git branch is updated, the 
+Each time the `main` Git branch is updated, the
 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) GitHub Action will
 automatically build the user guide and publish it to [GitHub Pages](https://pages.github.com/).
 This is configured in the `docs_github_pages` Nox session. This hosted user guide
@@ -313,7 +313,7 @@ distribution has been packaged and installed, thereby catching any errors in pac
 installation scripts, which are common. Having the Python packages in the project root subverts
 this isolation for two reasons:
 
-1. Calling `python` in the project root (for example, `python -m pytest tests/`) 
+1. Calling `python` in the project root (for example, `python -m pytest tests/`)
    [causes Python to add the current working directory](https://docs.pytest.org/en/latest/pythonpath.html#invoking-pytest-versus-python-m-pytest)
    (the project root) to `sys.path`, which Python uses to find modules. Because the source
    package `fact` is in the project root, it shadows the `fact` package installed in the Nox
@@ -332,7 +332,7 @@ prevent this, there are three possible solutions:
    to `tests`.
 3. Move the source packages to a dedicated `src` folder.
 
-The dedicated `src` directory is the 
+The dedicated `src` directory is the
 [recommended solution](https://docs.pytest.org/en/latest/pythonpath.html#test-modules-conftest-py-files-inside-packages)
 by `pytest` when using Nox and the solution this blueprint promotes because it is the least brittle
 even though it deviates from the traditional Python project structure. It results is a directory
@@ -368,10 +368,10 @@ using [pip-licenses](https://github.com/raimon49/pip-licenses):
 ```shell
 $ uv run nox -s licenses
 ...
- Name               Version  License                            
- Pygments           2.19.1   BSD License                        
- click              8.1.8    BSD License                        
- markdown-it-py     3.0.0    MIT License 
+ Name               Version  License
+ Pygments           2.19.1   BSD License
+ click              8.1.8    BSD License
+ markdown-it-py     3.0.0    MIT License
 ```
 
 # Container
@@ -423,6 +423,7 @@ to allow easy execution on macOS and Linux.
 # ///
 
 import httpx
+
 print(httpx.get("https://example.com").text)
 ```
 
@@ -460,32 +461,32 @@ project:
 
 - Settings | Search "Hard wrap at" (Note, this will be automatically set by
   [`.editorconfig`](./.editorconfig))
-  - Editor | Code Style | General | Hard wrap at: 99
+    - Editor | Code Style | General | Hard wrap at: 99
 
 - Settings | Search "Optimize Imports"
-  - Editor | Code Style | Python | Imports
-      - ☑ Sort import statements
-        - ☑ Sort imported names in "from" imports
-        - ☐ Sort plain and "from" imports separately within a group
-        - ☐ Sort case-insensitively
-      - Structure of "from" imports
-        - ◎ Leave as is
-        - ◉ Join imports with the same source
-        - ◎ Always split imports
+    - Editor | Code Style | Python | Imports
+        - ☑ Sort import statements
+            - ☑ Sort imported names in "from" imports
+            - ☐ Sort plain and "from" imports separately within a group
+            - ☐ Sort case-insensitively
+        - Structure of "from" imports
+            - ◎ Leave as is
+            - ◉ Join imports with the same source
+            - ◎ Always split imports
 
 - Settings | Search "Docstrings"
-  - Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
+    - Tools | Python Integrated Tools | Docstrings | Docstring Format: Google
 
 - Settings | Search "pytest"
-  - Tools | Python Integrated Tools | Testing | Default test runner: pytest
+    - Tools | Python Integrated Tools | Testing | Default test runner: pytest
 
 - Settings | Search "Force parentheses"
-  - Editor | Code Style | Python | Wrapping and Braces | "From" Import Statements
-    - ☑ Force parentheses if multiline
+    - Editor | Code Style | Python | Wrapping and Braces | "From" Import Statements
+        - ☑ Force parentheses if multiline
 
 ## Ruff Integration
 
-Integrate [Ruff](https://docs.astral.sh/ruff/editors/setup/#pycharm) linting and 
+Integrate [Ruff](https://docs.astral.sh/ruff/editors/setup/#pycharm) linting and
 formatting into PyCharm.
 
 ### Linting and Formatting
@@ -500,15 +501,15 @@ Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatt
 sorted on save.
 
 > [!TIP]
-> These tools work best if you properly mark directories as excluded from the project that should 
-> be, such as `.nox`. See 
-> <https://www.jetbrains.com/help/pycharm/project-tool-window.html#content_pane_context_menu> on 
+> These tools work best if you properly mark directories as excluded from the project that should
+> be, such as `.nox`. See
+> <https://www.jetbrains.com/help/pycharm/project-tool-window.html#content_pane_context_menu> on
 > how to Right-Click | Mark Directory as | Excluded.
 
 ## Nox Support
 
 [PyCharm does not yet natively support Nox](https://youtrack.jetbrains.com/issue/PY-37302). The
-recommended way to launch Nox from PyCharm is to create a **Python** 
+recommended way to launch Nox from PyCharm is to create a **Python**
 [Run Configuration](https://www.jetbrains.com/help/pycharm/run-debug-configuration.html).
 
 - Beside **Script Path**, press `▼` and select **Module name**: `nox`

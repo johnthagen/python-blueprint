@@ -12,7 +12,7 @@ status: new
 
 !!! info
 
-    This user guide is purely an illustrative example that shows off several features of 
+    This user guide is purely an illustrative example that shows off several features of
     [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) and included Markdown
     extensions[^1].
 
@@ -56,7 +56,7 @@ API like:
 ```python
 from fact.lib import factorial
 
-assert factorial(3) == 6 # (1)!
+assert factorial(3) == 6  # (1)!
 ```
 
 1. This assertion will be `True`
@@ -74,6 +74,6 @@ assert factorial(3) == 6 # (1)!
 |   1   |   1    |
 |   2   |   2    |
 |   3   |   6    |
-|   4   |   24   | 
+|   4   |   24   |
 
 </div>
