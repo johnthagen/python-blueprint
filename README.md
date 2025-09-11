@@ -363,7 +363,7 @@ This project uses a common permissive license, the MIT license.
 
 You may also want to list the licenses of all the packages that your Python project depends on.
 To automatically list the licenses for all dependencies in (and their transitive dependencies)
-using [pip-licenses](https://github.com/raimon49/pip-licenses):
+using [pip-licenses-cli](https://github.com/stefan6419846/pip-licenses-cli):
 
 ```shell
 $ uv run nox -s licenses
