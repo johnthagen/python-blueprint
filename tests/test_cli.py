@@ -1,17 +1,12 @@
-import subprocess
-import sys
+from typer.testing import CliRunner
+
+from fact.cli import app
 
 
 def test_main() -> None:
     """Test the main function of the CLI."""
 
-    # Run the CLI command
-    result = subprocess.run(
-        [sys.executable, "-m", "fact.cli", "5"],
-        capture_output=True,
-        text=True,
-    )
-
-    # Check the output
-    assert result.returncode == 0
-    assert "fact(5) = 120" in result.stdout
+    runner = CliRunner()
+    result = runner.invoke(app, ["5"])
+    assert result.exit_code == 0
+    assert "fact(5) = 120" in result.output

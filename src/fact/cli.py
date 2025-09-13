@@ -18,5 +18,5 @@ def main(n: Annotated[int, Argument(min=0, help="The input n of fact(n)")]) -> N
 
 
 # Allow the script to be run standalone (useful during development).
-if __name__ == "__main__":  # pragma: no branch
+if __name__ == "__main__":  # pragma: no cover
     app()
