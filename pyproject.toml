@@ -24,7 +24,7 @@ classifiers = [
     #   https://pypi.org/classifiers/
     "Private :: Do Not Upload",
 ]
-requires-python = ">=3.9"
+requires-python = "==3.12.*"
 dependencies = [
     "rich",
     "typer-slim[standard]"
