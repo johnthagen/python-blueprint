@@ -1,1 +1,1 @@
-__version__ = "0.0.0" # Placeholder for hatch builder
+__version__ = "0.0.0"  # Placeholder for hatch builder
