@@ -1,9 +1,15 @@
 name: CI & Publish
 
-# Workflow overview:
-# - Run QA (linting, type checking, tests) on PRs and pushes to main
-# - Publish dev packages to OC PyPI for PRs
-# - Publish release packages to OC PyPI on main branch pushes
+# ----------------------------------------
+# GitHub Repository Variables that must be set:
+#   - OC_USERNAME: username for private PyPI
+#   - OC_PASSWORD: password for private PyPI (stored as secret)
+#   - OC_PUBLISH_URL: private PyPI index URL (without credentials)
+#
+# Notes:
+#   - Major and Minor versions are determined by __about__.py / hatch version.
+#   - Patch versions are automatically bumped for dev and release builds.
+# ----------------------------------------
 
 on:
   push:
@@ -58,7 +64,6 @@ jobs:
       - name: Run tests
         run: uv run nox -s test-${{ env.PYTHON_VERSION }}
 
-
   # -----------------------
   # Publish job
   # -----------------------
@@ -68,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # needed for version bumps
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -81,33 +86,53 @@ jobs:
       - name: Install Hatch
         run: pip install hatch==${{ env.HATCH_VERSION }}
 
-      - name: Build package (dev or release)
+      - name: Get package name from pyproject.toml
+        id: pkgname
         run: |
+          pkg=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['name'])")
+          echo "package_name=$pkg" >> $GITHUB_OUTPUT
+
+      - name: Determine next version
+        id: versioning
+        run: |
+          pkg_name="${{ steps.pkgname.outputs.package_name }}"
+
+          # Get major.minor from hatch version (__about__.py)
+          major_minor=$(hatch version | awk -F. '{print $1"."$2}')
+
           if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            # Dev version: bump patch, append PR commit hash
-            current_version=$(hatch version)
-            IFS='.' read -ra parts <<< "$current_version"
-            next_patch=$((parts[2] + 1))
-            next_version="${parts[0]}.${parts[1]}.$next_patch"
-
-            # Use PR head commit, not merge commit
-            short_hash="${{ github.event.pull_request.head.sha }}"
-            short_hash="${short_hash:0:7}"
-
-            dev_version="${next_version}.dev${GITHUB_RUN_NUMBER}+g${short_hash}"
-            echo "Dev build: $dev_version"
-            hatch version "$dev_version"
-          else
-            # Release version: bump latest from private index
+            # Dev version: check latest dev from private PyPI
             uv pip install --upgrade pip
-            latest=$(pip index versions checker --index-url "${OC_PYPI}" | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | grep -v dev | sort -V | tail -n1 || echo "0.0.1")
+            latest_dev=$(pip index versions $pkg_name --index-url "${OC_PYPI}" \
+                          | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+\.dev[0-9]+" \
+                          | sort -V \
+                          | tail -n1 || echo "${major_minor}.0.dev0")
+            IFS='.' read -ra parts <<< "$latest_dev"
+            patch=${parts[2]}
+            next_patch=$((patch + 1))
+            short_hash="${{ github.event.pull_request.head.sha:0:7 }}"
+            dev_version="${major_minor}.${next_patch}.dev${GITHUB_RUN_NUMBER}+g${short_hash}"
+            echo "Next dev version: $dev_version (latest dev was $latest_dev)"
+            echo "version=$dev_version" >> $GITHUB_OUTPUT
+          else
+            # Release version: bump patch from latest private PyPI
+            latest=$(pip index versions $pkg_name --index-url "${OC_PYPI}" \
+                     | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
+                     | grep -v dev \
+                     | sort -V \
+                     | tail -n1 || echo "${major_minor}.0")
             IFS='.' read -ra parts <<< "$latest"
-            next_patch=$((parts[2] + 1))
+            next_patch=$((parts[2]+1))
             next_version="${parts[0]}.${parts[1]}.$next_patch"
-            echo "Release build: $next_version (latest was $latest)"
-            hatch version "$next_version"
+            echo "Next release version: $next_version (latest was $latest)"
+            echo "version=$next_version" >> $GITHUB_OUTPUT
           fi
-          hatch build
+
+      - name: Bump version
+        run: hatch version ${{ steps.versioning.outputs.version }}
+
+      - name: Build package
+        run: hatch build
 
       - name: Publish to OC PyPI
         run: hatch publish -r "https://${{ vars.OC_PUBLISH_URL }}" -u "${{ vars.OC_USERNAME }}" -a "${{ secrets.OC_PASSWORD }}" dist/*.whl
