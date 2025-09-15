@@ -1,1 +1,1 @@
-__version__ = "0.0.1"  # Placeholder 
+__version__ = "0.0.1"  # Placeholder
