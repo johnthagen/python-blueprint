@@ -14,9 +14,7 @@ name: CI & Publish
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: ["**"]
-    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request: {}
 
 env:
   UV_VERSION: "0.8.3"
@@ -30,17 +28,17 @@ defaults:
 
 jobs:
   # -----------------------
-  # QA: Lint, Type Check, Tests
+  # QA
   # -----------------------
   quality:
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        nox-session: ["lint", "type_check"]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Install Python & UV
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -56,20 +54,24 @@ jobs:
           restore-keys: uv-
 
       - name: Install dependencies
-        run: uv sync 
+        run: uv sync
 
-      - name: Run ${{ matrix.nox-session }}
-        run: uv run nox -s ${{ matrix.nox-session }}
+      - name: Run lint
+        run: uv run nox -s lint
+
+      - name: Run type check
+        run: uv run nox -s type_check
 
       - name: Run tests
         run: uv run nox -s test-${{ env.PYTHON_VERSION }}
 
   # -----------------------
-  # Publish job
+  # Release publish (main branch only)
   # -----------------------
   publish:
     needs: quality
     runs-on: self-hosted
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -83,6 +85,9 @@ jobs:
         with:
           version: ${{ env.UV_VERSION }}
 
+      - name: Install dependencies
+        run: uv sync
+
       - name: Install Hatch
         run: pip install hatch==${{ env.HATCH_VERSION }}
 
@@ -92,41 +97,22 @@ jobs:
           pkg=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['name'])")
           echo "package_name=$pkg" >> $GITHUB_OUTPUT
 
-      - name: Determine next version
+      - name: Determine next release version
         id: versioning
         run: |
           pkg_name="${{ steps.pkgname.outputs.package_name }}"
-
-          # Get major.minor from hatch version (__about__.py)
           major_minor=$(hatch version | awk -F. '{print $1"."$2}')
-
-          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            # Dev version: check latest dev from private PyPI
-            uv pip install --upgrade pip
-            latest_dev=$(pip index versions $pkg_name --index-url "${OC_PYPI}" \
-                          | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+\.dev[0-9]+" \
-                          | sort -V \
-                          | tail -n1 || echo "${major_minor}.0.dev0")
-            IFS='.' read -ra parts <<< "$latest_dev"
-            patch=${parts[2]}
-            next_patch=$((patch + 1))
-            short_hash="${{ github.event.pull_request.head.sha:0:7 }}"
-            dev_version="${major_minor}.${next_patch}.dev${GITHUB_RUN_NUMBER}+g${short_hash}"
-            echo "Next dev version: $dev_version (latest dev was $latest_dev)"
-            echo "version=$dev_version" >> $GITHUB_OUTPUT
-          else
-            # Release version: bump patch from latest private PyPI
-            latest=$(pip index versions $pkg_name --index-url "${OC_PYPI}" \
-                     | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
-                     | grep -v dev \
-                     | sort -V \
-                     | tail -n1 || echo "${major_minor}.0")
-            IFS='.' read -ra parts <<< "$latest"
-            next_patch=$((parts[2]+1))
-            next_version="${parts[0]}.${parts[1]}.$next_patch"
-            echo "Next release version: $next_version (latest was $latest)"
-            echo "version=$next_version" >> $GITHUB_OUTPUT
-          fi
+          uv pip install --upgrade pip
+          latest=$(pip index versions $pkg_name --index-url "${OC_PYPI}" \
+                   | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
+                   | grep -v dev \
+                   | sort -V \
+                   | tail -n1 || echo "${major_minor}.0")
+          IFS='.' read -ra parts <<< "$latest"
+          next_patch=$((parts[2]+1))
+          next_version="${parts[0]}.${parts[1]}.$next_patch"
+          echo "Next release version: $next_version (latest was $latest)"
+          echo "version=$next_version" >> $GITHUB_OUTPUT
 
       - name: Bump version
         run: hatch version ${{ steps.versioning.outputs.version }}
@@ -135,4 +121,65 @@ jobs:
         run: hatch build
 
       - name: Publish to OC PyPI
+        run: hatch publish -r "https://${{ vars.OC_PUBLISH_URL }}" -u "${{ vars.OC_USERNAME }}" -a "${{ secrets.OC_PASSWORD }}" dist/*.whl
+
+  # -----------------------
+  # Dev publish (PRs only)
+  # -----------------------
+  publish-dev:
+    needs: quality
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Install Hatch
+        run: pip install hatch==${{ env.HATCH_VERSION }}
+
+      - name: Get package name from pyproject.toml
+        id: pkgname
+        run: |
+          pkg=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['name'])")
+          echo "package_name=$pkg" >> $GITHUB_OUTPUT
+
+      - name: Determine next dev version
+        id: versioning
+        run: |
+          pkg_name="${{ steps.pkgname.outputs.package_name }}"
+          major_minor=$(hatch version | awk -F. '{print $1"."$2}')
+          uv pip install --upgrade pip
+          latest_dev=$(pip index versions $pkg_name --index-url "${OC_PYPI}" \
+                        | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+\.dev[0-9]+" \
+                        | sort -V \
+                        | tail -n1 || echo "${major_minor}.0.dev0")
+          IFS='.' read -ra parts <<< "$latest_dev"
+          patch=${parts[2]}
+          next_patch=$((patch + 1))
+          # Get PR SHA in shell
+          full_sha="${{ github.event.pull_request.head.sha }}"
+          short_hash="${full_sha:0:7}"
+          dev_version="${major_minor}.${next_patch}.dev${GITHUB_RUN_NUMBER}+g${short_hash}"
+          echo "Next dev version: $dev_version (latest dev was $latest_dev)"
+          echo "version=$dev_version" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        run: hatch version ${{ steps.versioning.outputs.version }}
+
+      - name: Build package
+        run: hatch build
+
+      - name: Publish dev package to OC PyPI
         run: hatch publish -r "https://${{ vars.OC_PUBLISH_URL }}" -u "${{ vars.OC_USERNAME }}" -a "${{ secrets.OC_PASSWORD }}" dist/*.whl
