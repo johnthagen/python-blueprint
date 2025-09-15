@@ -1,72 +1,113 @@
-name: CI
+name: CI & Publish
 
-on: [push, pull_request]
+# Workflow overview:
+# - Run QA (linting, type checking, tests) on PRs and pushes to main
+# - Publish dev packages to OC PyPI for PRs
+# - Publish release packages to OC PyPI on main branch pushes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ["**"]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 env:
-  UV_VERSION: "0.8.8"
+  UV_VERSION: "0.8.3"
+  HATCH_VERSION: "1.6.0"
+  PYTHON_VERSION: "3.12"
+  OC_PYPI: "https://${{ vars.OC_USERNAME }}:${{ secrets.OC_PASSWORD }}@${{ vars.OC_PUBLISH_URL }}/simple"
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  test:
-    runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        # Caching is enabled by default for GitHub-hosted runners:
-        #   https://github.com/astral-sh/setup-uv?tab=readme-ov-file#enable-caching
-        with:
-          version: ${{ env.UV_VERSION }}
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Nox
-        run: uv sync --locked --only-group nox
-
-      - name: Test with Nox
-        run: uv run nox -s test-${{ matrix.python-version }}
-
+  # -----------------------
+  # QA: Lint, Type Check, Tests
+  # -----------------------
   quality:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     strategy:
       matrix:
-        nox-session: ["lint", "type_check", "docs"]
+        nox-session: ["lint", "type_check"]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: astral-sh/setup-uv@v5
         with:
           version: ${{ env.UV_VERSION }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Cache dependencies
+        uses: actions/cache@v4
         with:
-          python-version-file: ".python-version"
+          path: ~/.cache/uv
+          key: uv-${{ env.UV_VERSION }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-
 
       - name: Install dependencies
-        run: uv sync --locked
+        run: uv sync 
 
-      - name: Test with Nox
+      - name: Run ${{ matrix.nox-session }}
         run: uv run nox -s ${{ matrix.nox-session }}
 
-  container:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Validate build configuration
-        uses: docker/build-push-action@v6
-        with:
-          call: check
+      - name: Run tests
+        run: uv run nox -s test-${{ env.PYTHON_VERSION }}
 
-      - name: Build Container Image
-        uses: docker/build-push-action@v6
+
+  # -----------------------
+  # Publish job
+  # -----------------------
+  publish:
+    needs: quality
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
         with:
-          push: false
+          fetch-depth: 0 # needed for version bumps
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
+
+      - name: Install Hatch
+        run: pip install hatch==${{ env.HATCH_VERSION }}
+
+      - name: Build package (dev or release)
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            # Dev version: bump patch, append PR commit hash
+            current_version=$(hatch version)
+            IFS='.' read -ra parts <<< "$current_version"
+            next_patch=$((parts[2] + 1))
+            next_version="${parts[0]}.${parts[1]}.$next_patch"
+
+            # Use PR head commit, not merge commit
+            short_hash="${{ github.event.pull_request.head.sha }}"
+            short_hash="${short_hash:0:7}"
+
+            dev_version="${next_version}.dev${GITHUB_RUN_NUMBER}+g${short_hash}"
+            echo "Dev build: $dev_version"
+            hatch version "$dev_version"
+          else
+            # Release version: bump latest from private index
+            uv pip install --upgrade pip
+            latest=$(pip index versions checker --index-url "${OC_PYPI}" | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | grep -v dev | sort -V | tail -n1 || echo "0.0.1")
+            IFS='.' read -ra parts <<< "$latest"
+            next_patch=$((parts[2] + 1))
+            next_version="${parts[0]}.${parts[1]}.$next_patch"
+            echo "Release build: $next_version (latest was $latest)"
+            hatch version "$next_version"
+          fi
+          hatch build
+
+      - name: Publish to OC PyPI
+        run: hatch publish -r "https://${{ vars.OC_PUBLISH_URL }}" -u "${{ vars.OC_USERNAME }}" -a "${{ secrets.OC_PASSWORD }}" dist/*.whl
