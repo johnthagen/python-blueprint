@@ -1,34 +1,35 @@
-# This GitHub Actions job will build the user guide and publish it to the
-# gh-pages branch each time the main branch is updated. This branch is
-# configured to be served automatically using GitHub Pages.
-name: pages
+# Temporarily disabled as we are not currently using GitHub Pages
+# # This GitHub Actions job will build the user guide and publish it to the
+# # gh-pages branch each time the main branch is updated. This branch is
+# # configured to be served automatically using GitHub Pages.
+# name: pages
 
-on:
-  push:
-    branches: [main]
+# on:
+#   push:
+#     branches: [main]
 
-env:
-  UV_VERSION: "0.8.8"
+# env:
+#   UV_VERSION: "0.8.3"
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          version: ${{ env.UV_VERSION }}
+#       - name: Install uv
+#         uses: astral-sh/setup-uv@v5
+#         with:
+#           version: ${{ env.UV_VERSION }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: ".python-version"
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version-file: ".python-version"
 
-      - name: Install dependencies
-        run: uv sync --locked
+#       - name: Install dependencies
+#         run: uv sync --locked
 
-      - name: Publish Docs
-        run: uv run nox -s docs_github_pages
+#       # - name: Publish Docs
+#       #   run: uv run nox -s docs_github_pages

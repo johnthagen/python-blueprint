@@ -1,6 +1,7 @@
 [project]
 name = "fact"
-version = "1.0.0"
+# version = "1.0.0"
+dynamic = ["version"]
 description = "Example Python project using best practices"
 authors = [
     { name = "John Hagen", email = "johnthagen@users.noreply.github.com" }]
@@ -23,7 +24,7 @@ classifiers = [
     #   https://pypi.org/classifiers/
     "Private :: Do Not Upload",
 ]
-requires-python = ">=3.9"
+requires-python = "==3.12.*"
 dependencies = [
     "rich",
     "typer-slim[standard]"
@@ -68,8 +69,19 @@ licenses = [
 ]
 
 [build-system]
-requires = ["uv_build>=0.8.0,<0.9.0"]
-build-backend = "uv_build"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/fact/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fact", "codeenigma_runtime"]
+
+[tool.poetry]
+name = "fact"
+version = "0.0.1"
+
 
 # For non-src directory projects, explicitly set top level model name:
 #[tool.uv.build-backend]

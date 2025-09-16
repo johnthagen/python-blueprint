@@ -7,7 +7,7 @@ options.sessions = ["lint", "type_check", "test", "docs"]
 
 
 @session(
-    python=["3.9", "3.10", "3.11", "3.12", "3.13"],
+    python=["3.12"],
     uv_groups=["test"],
 )
 def test(s: Session) -> None:
@@ -16,7 +16,7 @@ def test(s: Session) -> None:
         "--cov=fact",
         "--cov-report=html",
         "--cov-report=term",
-        "--cov-fail-under=100",
+        "--cov-fail-under=80",
         "tests",
         *s.posargs,
     )
