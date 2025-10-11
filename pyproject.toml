@@ -1,12 +1,21 @@
 [project]
-name = "fact"
-version = "1.0.0"
-description = "Example Python project using best practices"
-authors = [
-    { name = "John Hagen", email = "johnthagen@users.noreply.github.com" }]
+name = "pinn"
+version = "0.0.1"
+description = "..."
+authors = [{ name = "Giacomo Guidotto", email = "giacomo.guidotto@gmail.com" }]
+keywords = [
+    "pinn",
+    "sir",
+    "epidemiology",
+    "neural-networks",
+    "physics-informed",
+]
+readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE*"]
-readme = "README.md"
+
+
+# https://pypi.org/classifiers/
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -20,22 +29,17 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Typing :: Typed",
     # Include this classifier to prevent accidentally publishing private code to PyPI.
-    #   https://pypi.org/classifiers/
     "Private :: Do Not Upload",
 ]
 requires-python = ">=3.10"
-dependencies = [
-    "rich",
-    "typer-slim[standard]"
-]
 
 [project.urls]
-Homepage = "https://github.com/johnthagen/python-blueprint"
-Documentation = "https://johnthagen.github.io/python-blueprint/"
-Repository = "https://github.com/johnthagen/python-blueprint"
+Homepage = "https://github.com/GiacomoGuidotto/pinn"
+Documentation = "https://GiacomoGuidotto.github.io/pinn/"
+Repository = "https://github.com/GiacomoGuidotto/pinn"
 
 [project.scripts]
-fact = "fact.cli:app"
+pinn = "pinn.cli:app"
 
 [dependency-groups]
 nox = [
@@ -65,6 +69,37 @@ docs = [
 licenses = [
     "pip-licenses-cli",
 ]
+cli = [
+    "rich",
+    "typer-slim[standard]",
+]
+
+core = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+]
+dl = [
+    "torch",
+    "torchaudio",
+    "lightning",
+    "torchmetrics",
+    "tensorboard",
+]
+ml = [
+    "scikit-learn",
+    "statsmodels",
+]
+utils = [
+    "tqdm",
+    "pyyaml",
+    "tabulate",
+    "sympy",
+    "mpmath",
+]
+
 
 [build-system]
 requires = ["uv_build>=0.9.0,<0.10.0"]
@@ -120,6 +155,11 @@ unfixable = [
     # Disable removing unused imports by default and only enable within nox so editors don't delete
     # unused imports while the user is in the middle of editing a file on save.
     "F401",
+]
+ignore = [
+    "N803", # lowercase argument name
+    "N806", # lowercase variable name
+    "E741", # ambiguous variable name
 ]
 
 [tool.ruff.lint.isort]
