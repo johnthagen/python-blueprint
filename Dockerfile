@@ -11,7 +11,7 @@
 FROM python:3.13-slim-trixie AS python_builder
 
 # Pin uv to a specific version to make container builds reproducible.
-ENV UV_VERSION=0.9.2
+ENV UV_VERSION=0.9.5
 ENV UV_PYTHON_DOWNLOADS=never
 
 # Set ENV variables that make Python more friendly to running inside a container.
