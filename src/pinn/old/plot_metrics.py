@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from pinn.sir_pinn import LOG_DIR, SAVED_MODELS_DIR, SIRPINN, SIRData, generate_sir_data, si_re
+from pinn.old.sir_pinn import LOG_DIR, SAVED_MODELS_DIR, SIRPINN, SIRData, generate_sir_data, si_re
 
 FIGURES_DIR = Path("./figures")
 

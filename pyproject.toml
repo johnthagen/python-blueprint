@@ -17,8 +17,7 @@ license-files = ["LICENSE*"]
 
 # https://pypi.org/classifiers/
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
+    "Development Status :: 3 - Alpha",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
@@ -28,8 +27,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Typing :: Typed",
-    # Include this classifier to prevent accidentally publishing private code to PyPI.
-    "Private :: Do Not Upload",
+    "Private :: Do Not Upload", # Include this classifier to prevent accidentally publishing private code to PyPI.
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Mathematics",
 ]
 requires-python = ">=3.10"
 
@@ -44,6 +45,7 @@ pinn = "pinn.cli:app"
 [dependency-groups]
 nox = [
     "nox-uv",
+    "pre-commit",
 ]
 test = [
     "pytest",
@@ -87,6 +89,7 @@ dl = [
     "lightning",
     "torchmetrics",
     "tensorboard",
+    "torchdiffeq",
 ]
 ml = [
     "scikit-learn",
@@ -158,6 +161,7 @@ unfixable = [
 ]
 ignore = [
     "N803", # lowercase argument name
+    "N802", # lowercase function name
     "N806", # lowercase variable name
     "E741", # ambiguous variable name
 ]

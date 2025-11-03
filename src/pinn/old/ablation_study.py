@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 from typing import Any
 
-from pinn.sir_pinn import SIRConfig, train
+from pinn.old.sir_pinn import SIRConfig, train
 
 STUDIES_DIR = "./data/studies"
 
