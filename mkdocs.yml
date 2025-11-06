@@ -86,3 +86,5 @@ repo_url: https://github.com/johnthagen/python-blueprint
 edit_uri: edit/main/docs/user_guide/docs/
 nav:
   - index.md
+  - Third Party Licenses:
+    - licenses/license_report.md

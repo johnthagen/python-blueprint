@@ -106,4 +106,18 @@ def docs_github_pages(s: Session) -> None:
 # Install only main dependencies for the license report.
 @session(uv_groups=["licenses"], uv_no_install_project=True)
 def licenses(s: Session) -> None:
+    s.run(
+        "pip-licenses",
+        "--format=markdown",
+        "--output-file=./docs/licenses/summary.txt",
+        *s.posargs,
+    )
+    s.run(
+        "pip-licenses",
+        "--format=plain-vertical",
+        "--with-license-files",
+        "--no-license-path",
+        "--output-file=./docs/licenses/license_files.txt",
+    )
     s.run("pip-licenses", *s.posargs)
+    s.run("pip-licenses", "--summary")

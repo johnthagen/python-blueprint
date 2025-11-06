@@ -841,16 +841,16 @@ wheels = [
 
 [[package]]
 name = "pip-licenses-cli"
-version = "3.0.0"
+version = "3.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pip-licenses-lib" },
     { name = "prettytable" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e0/35/c4d41639a1b65bc28e4b1d92fef588fa6a160333916c6c31ef96165f3cd0/pip_licenses_cli-3.0.0.tar.gz", hash = "sha256:4331cf9900d64761d65bd8ecd8ff20f6f29983853d355bb8eabbfae535203e51", size = 22773, upload-time = "2025-10-20T09:56:23.078Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9c/89/fb4e266729965a23bc4400aff022ddbafe38668d544b3bc3b11394473551/pip_licenses_cli-3.0.1.tar.gz", hash = "sha256:6d9262325dff114897aa52b2bb996496506be5c41119ecf7b7aba237dc7b3d88", size = 23049, upload-time = "2025-11-06T08:26:38.264Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/69/57c1d82d40e9bd865be5e5c49256105c0c6eca29fd829e2b6536124b4234/pip_licenses_cli-3.0.0-py3-none-any.whl", hash = "sha256:0777e0cb64a7e0117ac47ff0fba0801a5b32edb4036fdf5a389fd283700ebd25", size = 16462, upload-time = "2025-10-20T09:56:22.004Z" },
+    { url = "https://files.pythonhosted.org/packages/cd/d9/fdd6f01b51e11f9a612fad3407726f9b192d3d4025888872e99e3a5ac17b/pip_licenses_cli-3.0.1-py3-none-any.whl", hash = "sha256:d5aec7414c4d7b00bd53d3f2b7ddb1898f2d596f057c1d3c305edc1b60ab5229", size = 16495, upload-time = "2025-11-06T08:26:36.902Z" },
 ]
 
 [[package]]
