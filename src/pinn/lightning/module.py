@@ -1,23 +1,23 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Literal, override
+from dataclasses import dataclass
+from typing import Literal, cast, override
 
 import lightning.pytorch as pl
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 import torch
 from torch import Tensor
 
-from pinn.core import Batch, Problem
+from pinn.core import LOSS_KEY, DataBatch, LogFn, PINNBatch, Problem
 
 
 @dataclass
 class SchedulerConfig:
-    mode: Literal["min", "max"] = "min"
-    factor: float = 0.5
-    patience: int = 50
-    threshold: float = 1e-3
-    min_lr: float = 1e-6
+    mode: Literal["min", "max"]
+    factor: float
+    patience: int
+    threshold: float
+    min_lr: float
 
 
 @dataclass
@@ -33,6 +33,7 @@ class SMMAStoppingConfig:
     lookback: int
 
 
+# TODO: consider further modularization of hyperparameters.
 @dataclass
 class PINNHyperparameters:
     max_epochs: int
@@ -41,10 +42,9 @@ class PINNHyperparameters:
     collocations: int
     lr: float
     gradient_clip_val: float
-    scheduler: SchedulerConfig | None = field(default_factory=SchedulerConfig)
+    scheduler: SchedulerConfig | None = None
     early_stopping: EarlyStoppingConfig | None = None
     smma_stopping: SMMAStoppingConfig | None = None
-    log_prefix: str = "train"
 
 
 class PINNModule(pl.LightningModule):
@@ -64,26 +64,31 @@ class PINNModule(pl.LightningModule):
         self.problem = problem
         self.hp = hp
         self.scheduler = hp.scheduler
-        self.early_stopping = hp.early_stopping
-        self.smma_stopping = hp.smma_stopping
 
-    @override
-    def training_step(self, batch: Batch, batch_idx: int) -> Tensor:
-        total = self.problem.total_loss(batch)
-
-        prefix = self.hp.log_prefix
-        logs = self.problem.get_logs()
-        for k, (v, prog_bar) in logs.items():
+        def _log(key: str, value: Tensor, progress_bar: bool = False) -> None:
             self.log(
-                f"{prefix}/{k}",
-                v,
+                key,
+                value,
                 on_step=False,
                 on_epoch=True,
-                prog_bar=prog_bar,
-                batch_size=self.hp.batch_size,
+                prog_bar=progress_bar,
+                batch_size=hp.batch_size,
             )
 
-        return total
+        self._log = cast(LogFn, _log)
+
+    @override
+    def training_step(self, batch: PINNBatch, batch_idx: int) -> Tensor:
+        loss = self.problem.total_loss(batch, self._log)
+
+        return loss
+
+    @override
+    def predict_step(self, batch: DataBatch, batch_idx: int) -> dict[str, Tensor]:
+        x_data, y_data = batch
+        y_pred = self.problem.predict(x_data)
+
+        return {"x_data": x_data, "y_data": y_data, **y_pred}
 
     @override
     def configure_optimizers(self) -> OptimizerLRScheduler:
@@ -99,11 +104,13 @@ class PINNModule(pl.LightningModule):
             threshold=self.scheduler.threshold,
             min_lr=self.scheduler.min_lr,
         )
+
         return {
             "optimizer": opt,
             "lr_scheduler": {
+                "name": "lr",
                 "scheduler": sch,
-                "monitor": f"{self.hp.log_prefix}/total",
+                "monitor": LOSS_KEY,
                 "interval": "epoch",
                 "frequency": 1,
             },

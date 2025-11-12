@@ -1,6 +1,6 @@
 """Lightning integration for PINN training."""
 
-from pinn.lightning.callbacks import SMMAStopping
+from pinn.lightning.callbacks import FormattedProgressBar, SMMAStopping
 from pinn.lightning.module import (
     EarlyStoppingConfig,
     PINNHyperparameters,
@@ -11,6 +11,7 @@ from pinn.lightning.module import (
 
 __all__ = [
     "EarlyStoppingConfig",
+    "FormattedProgressBar",
     "PINNHyperparameters",
     "PINNModule",
     "SMMAStopping",
