@@ -22,11 +22,13 @@ theme:
   features:
     - content.code.annotate
     - content.code.copy
+    - content.footnote.tooltips
     - content.tabs.link
     - content.tooltips
     - navigation.indexes
     - navigation.expand
     - navigation.footer
+    - navigation.path
     - navigation.instant
     - navigation.top
     - navigation.tracking
