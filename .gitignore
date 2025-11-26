@@ -11,3 +11,6 @@ __pycache__
 *.egg-info
 .coverage
 .coverage.*
+
+nginx/web.conf
+nginx/webroot/

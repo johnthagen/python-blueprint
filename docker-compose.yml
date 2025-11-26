@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  fact:  # Replace this service (fact) with your actual service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fact-service
+    # Run as the non-root user defined in Dockerfile (user:user = 1000:1000 usually)
+    user: "user"
+    # Optional: expose a port if your dummy factorial service serves HTTP
+    # ports:
+    #   - "8000:8000"
+    # Command to run your dummy factorial script
+    command: ["python", "-c", "from fact.lib import factorial; print(factorial(5))"]
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/ssl/default:/etc/nginx/ssl/default:ro
+      - ./nginx/web.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl/${HOSTNAME:-local}/:/etc/letsencrypt/:ro
+    depends_on:
+      - fact  # Replace this service (fact) with your actual service
+    restart: unless-stopped
