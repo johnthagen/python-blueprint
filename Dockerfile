@@ -41,7 +41,7 @@ RUN pip install "uv==${UV_VERSION}"
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 
 # Copy in project dependency specification.
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock LICENSE.txt ./
 
 # Install only project dependencies, as this is cached until pyproject.toml uv.lock are updated.
 RUN uv sync --locked --no-default-groups --no-install-project
