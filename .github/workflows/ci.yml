@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 env:
-  UV_VERSION: "0.9.6"
+  UV_VERSION: "0.9.13"
 
 jobs:
   test:
