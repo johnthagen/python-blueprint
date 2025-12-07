@@ -2,7 +2,9 @@
 
 from pinn.lightning.callbacks import FormattedProgressBar, SMMAStopping
 from pinn.lightning.module import (
+    DataConfig,
     EarlyStoppingConfig,
+    IngestionConfig,
     PINNHyperparameters,
     PINNModule,
     SchedulerConfig,
@@ -10,8 +12,10 @@ from pinn.lightning.module import (
 )
 
 __all__ = [
+    "DataConfig",
     "EarlyStoppingConfig",
     "FormattedProgressBar",
+    "IngestionConfig",
     "PINNHyperparameters",
     "PINNModule",
     "SMMAStopping",

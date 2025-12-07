@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Literal, cast, override
 
 import lightning.pytorch as pl
@@ -8,10 +9,19 @@ from lightning.pytorch.utilities.types import OptimizerLRScheduler
 import torch
 from torch import Tensor
 
-from pinn.core import LOSS_KEY, DataBatch, LogFn, PINNBatch, Problem
+from pinn.core import (
+    LOSS_KEY,
+    DataBatch,
+    LogFn,
+    MLPConfig,
+    PINNBatch,
+    Predictions,
+    Problem,
+    ScalarConfig,
+)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class SchedulerConfig:
     mode: Literal["min", "max"]
     factor: float
@@ -20,31 +30,44 @@ class SchedulerConfig:
     min_lr: float
 
 
-@dataclass
+@dataclass(kw_only=True)
 class EarlyStoppingConfig:
     patience: int
     mode: Literal["min", "max"]
 
 
-@dataclass
+@dataclass(kw_only=True)
 class SMMAStoppingConfig:
     window: int
     threshold: float
     lookback: int
 
 
-# TODO: consider further modularization of hyperparameters.
-@dataclass
-class PINNHyperparameters:
-    max_epochs: int
+@dataclass(kw_only=True)
+class IngestionConfig:
+    df_path: Path
+    x_column: str
+    y_columns: list[str]
+
+
+@dataclass(kw_only=True)
+class DataConfig:
     batch_size: int
     data_ratio: int | float
+    data_noise_level: float
     collocations: int
+
+
+@dataclass(kw_only=True)
+class PINNHyperparameters:
     lr: float
-    gradient_clip_val: float
+    data: DataConfig
+    fields_config: MLPConfig
+    params_config: MLPConfig | ScalarConfig
     scheduler: SchedulerConfig | None = None
     early_stopping: EarlyStoppingConfig | None = None
     smma_stopping: SMMAStoppingConfig | None = None
+    ingestion: IngestionConfig | None = None
 
 
 class PINNModule(pl.LightningModule):
@@ -72,23 +95,18 @@ class PINNModule(pl.LightningModule):
                 on_step=False,
                 on_epoch=True,
                 prog_bar=progress_bar,
-                batch_size=hp.batch_size,
+                batch_size=hp.data.batch_size,
             )
 
         self._log = cast(LogFn, _log)
 
     @override
     def training_step(self, batch: PINNBatch, batch_idx: int) -> Tensor:
-        loss = self.problem.total_loss(batch, self._log)
-
-        return loss
+        return self.problem.total_loss(batch, self._log)
 
     @override
-    def predict_step(self, batch: DataBatch, batch_idx: int) -> dict[str, Tensor]:
-        x_data, y_data = batch
-        y_pred = self.problem.predict(x_data)
-
-        return {"x_data": x_data, "y_data": y_data, **y_pred}
+    def predict_step(self, batch: DataBatch, batch_idx: int) -> Predictions:
+        return self.problem.predict(batch)
 
     @override
     def configure_optimizers(self) -> OptimizerLRScheduler:

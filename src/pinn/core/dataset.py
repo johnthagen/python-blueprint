@@ -1,5 +1,5 @@
 from collections.abc import Sized
-from typing import TypeAlias, TypeVar, cast, override
+from typing import TypeAlias, cast, override
 
 import lightning as pl
 import torch
@@ -14,35 +14,6 @@ Batch is a tuple of (data, collocations) where: data is another tuple of two ten
 (t_data y_data) with both having shape (batch_size, 1); collocations is a tensor with 
 shape (collocations_size, 1) of collocation points over the domain.
 """
-
-
-class Transformer:
-    """
-    Apply a transformation to a batch of data and collocations.
-    """
-
-    T = TypeVar("T", Tensor, float)
-
-    def transform_domain(self, domain: Tensor) -> Tensor:
-        return domain
-
-    def inverse_transform_domain(self, domain: Tensor) -> Tensor:
-        return domain
-
-    def transform_values(self, values: T) -> T:
-        return values
-
-    def inverse_transform_values(self, values: T) -> T:
-        return values
-
-    def transform_batch(self, batch: PINNBatch) -> PINNBatch:
-        (x_data, y_data), x_coll = batch
-
-        x_data = self.transform_domain(x_data)
-        y_data = self.transform_values(y_data)
-        x_coll = self.transform_domain(x_coll)
-
-        return ((x_data, y_data), x_coll)
 
 
 class PINNDataset(Dataset[PINNBatch]):
@@ -72,7 +43,6 @@ class PINNDataset(Dataset[PINNBatch]):
         coll_ds: Dataset[Tensor],
         batch_size: int,
         data_ratio: float | int,
-        transformer: Transformer | None = None,
     ):
         super().__init__()
         assert batch_size > 0
@@ -89,7 +59,6 @@ class PINNDataset(Dataset[PINNBatch]):
 
         self.batch_size = batch_size
         self.C = batch_size - self.K
-        self.transformer = transformer or Transformer()
 
         self.total_data = len(cast(Sized, data_ds))
         self.total_coll = len(cast(Sized, coll_ds))
@@ -107,9 +76,7 @@ class PINNDataset(Dataset[PINNBatch]):
         x_data, y_data = self.data_ds[data_idx]
         x_coll = self.coll_ds[coll_idx]
 
-        batch = ((x_data, y_data), x_coll)
-
-        return self.transformer.transform_batch(batch)
+        return ((x_data, y_data), x_coll)
 
     def _get_data_indices(self, idx: int) -> Tensor:
         """Get data indices for this step without replacement.
@@ -138,8 +105,6 @@ class PINNDataModule(pl.LightningDataModule):
         self.data_ds: Dataset[DataBatch]
         self.coll_ds: Dataset[Tensor]
         self.pinn_ds: PINNDataset
-
-        # TODO: prepare data with either loading CSV or generating synthetic data
 
     @override
     def train_dataloader(self) -> DataLoader[PINNBatch]:

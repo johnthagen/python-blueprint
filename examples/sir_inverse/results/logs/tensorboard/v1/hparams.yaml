@@ -1,0 +1,44 @@
+hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
+  batch_size: 100
+  beta_config: !!python/object:pinn.core.core.MLPConfig
+    activation: tanh
+    encode: null
+    hidden_layers:
+    - 64
+    - 64
+    in_dim: 1
+    name: params/beta
+    out_dim: 1
+    output_activation: softplus
+  beta_smoothness_weight: 0.0
+  collocations: 6000
+  data_ratio: 2
+  data_weight: 1
+  early_stopping: null
+  fields_config: !!python/object:pinn.core.core.MLPConfig
+    activation: tanh
+    encode: null
+    hidden_layers:
+    - 64
+    - 128
+    - 128
+    - 64
+    in_dim: 1
+    name: u
+    out_dim: 1
+    output_activation: softplus
+  gradient_clip_val: 0.1
+  ic_weight: 1
+  lr: 0.0005
+  max_epochs: 1000
+  pde_weight: 100.0
+  scheduler: !!python/object:pinn.lightning.module.SchedulerConfig
+    factor: 0.5
+    min_lr: 1.0e-06
+    mode: min
+    patience: 55
+    threshold: 0.005
+  smma_stopping: !!python/object:pinn.lightning.module.SMMAStoppingConfig
+    lookback: 50
+    threshold: 0.1
+    window: 50

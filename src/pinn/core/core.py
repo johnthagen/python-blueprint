@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Literal, Protocol, override
+from typing import Literal, Protocol, cast, override
 
 import torch
 from torch import Tensor
 import torch.nn as nn
 
-from pinn.core.dataset import PINNBatch, Transformer
+from pinn.core.dataset import DataBatch, PINNBatch
+
+LOSS_KEY = "loss"
 
 Activations = Literal[
     "tanh",
@@ -21,16 +23,7 @@ Activations = Literal[
 ]
 
 
-def get_activation(name: Activations) -> nn.Module:
-    return {
-        "tanh": nn.Tanh(),
-        "relu": nn.ReLU(),
-        "leaky_relu": nn.LeakyReLU(),
-        "sigmoid": nn.Sigmoid(),
-        "selu": nn.SELU(),
-        "softplus": nn.Softplus(),
-        "identity": nn.Identity(),
-    }[name]
+Predictions = tuple[DataBatch, dict[str, Tensor]]
 
 
 class LogFn(Protocol):
@@ -46,7 +39,20 @@ class LogFn(Protocol):
     def __call__(self, name: str, value: Tensor, progress_bar: bool = False) -> None: ...
 
 
-LOSS_KEY: str = "loss"
+def get_activation(name: Activations) -> nn.Module:
+    return {
+        "tanh": nn.Tanh(),
+        "relu": nn.ReLU(),
+        "leaky_relu": nn.LeakyReLU(),
+        "sigmoid": nn.Sigmoid(),
+        "selu": nn.SELU(),
+        "softplus": nn.Softplus(),
+        "identity": nn.Identity(),
+    }[name]
+
+
+def identity(x: Tensor) -> Tensor:
+    return x
 
 
 @dataclass
@@ -57,12 +63,14 @@ class MLPConfig:
     activation: Activations
     output_activation: Activations | None = None
     encode: Callable[[Tensor], Tensor] | None = None
+    true_fn: Callable[[Tensor], Tensor] | None = None  # for logging
     name: str = "u"
 
 
 @dataclass
 class ScalarConfig:
-    init_value: float = 0.1
+    init_value: float
+    true_value: float | None
     name: str = "p"
 
 
@@ -109,10 +117,26 @@ class Field(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         if self.encode is not None:
             x = self.encode(x)
-        return self.net(x)  # type: ignore
+        return cast(Tensor, self.net(x))
 
 
-class Parameter(nn.Module):
+class Argument:
+    def __init__(self, value: float | Callable[[Tensor], Tensor], name: str):
+        self._value = value
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    def __call__(self, x: Tensor) -> Tensor:
+        if callable(self._value):
+            return self._value(x)
+        else:
+            return torch.tensor(self._value, device=x.device)
+
+
+class Parameter(nn.Module, Argument):
     """
     Learnable parameter. Supports scalar or function-valued parameter.
     For β(t), use a small MLP with in_dim=1 -> out_dim=1.
@@ -123,8 +147,10 @@ class Parameter(nn.Module):
         config: ScalarConfig | MLPConfig,
     ):
         super().__init__()
+        self.config = config
         self._name = config.name
         self._mode: Literal["scalar", "mlp"]
+        self.scaler: Scaler | None = None
 
         if isinstance(config, ScalarConfig):
             self._mode = "scalar"
@@ -149,6 +175,7 @@ class Parameter(nn.Module):
             self.apply(self._init)
 
     @property
+    @override
     def name(self) -> str:
         return self._name
 
@@ -168,24 +195,27 @@ class Parameter(nn.Module):
             return self.value if x is None else self.value.expand_as(x)
         else:
             assert x is not None, "Function-valued parameter requires input"
-            return self.net(x)  # type: ignore
+            if self.scaler is not None:
+                x = self.scaler.transform_domain(x)
+            return cast(Tensor, self.net(x))
+
+    def log_loss(self, x_coll: Tensor) -> Tensor | None:
+        if isinstance(self.config, ScalarConfig) and self.config.true_value is not None:
+            true_value = self.config.true_value
+            pred_value = self.value
+            return torch.abs(true_value - pred_value)
+
+        elif isinstance(self.config, MLPConfig) and self.config.true_fn is not None:
+            true_values = self.config.true_fn(x_coll)
+            pred_value = self(x_coll)
+            return cast(Tensor, torch.norm(true_values - pred_value))
+
+        return None
 
 
-# TODO: consider if merging Operator and Constraint into a single protocol is smart.
-class Operator(Protocol):
-    """
-
-    Builds residuals given fields and parameters.
-    Returns dict of name->Loss residuals evaluated at provided batch.
-    """
-
-    def residuals(
-        self,
-        x_coll: Tensor,
-        criterion: nn.Module,
-        transformer: Transformer,
-        log: LogFn | None = None,
-    ) -> Tensor: ...
+ArgsRegistry = dict[str, Argument]
+ParamsRegistry = dict[str, Parameter]
+FieldsRegistry = dict[str, Field]
 
 
 class Constraint(Protocol):
@@ -198,9 +228,18 @@ class Constraint(Protocol):
         self,
         batch: PINNBatch,
         criterion: nn.Module,
-        transformer: Transformer,
         log: LogFn | None = None,
     ) -> Tensor: ...
+
+
+class Scaler(Protocol):
+    def transform_domain(self, domain: Tensor) -> Tensor: ...
+
+    def inverse_domain(self, domain: Tensor) -> Tensor: ...
+
+    def transform_values(self, values: Tensor) -> Tensor: ...
+
+    def inverse_values(self, values: Tensor) -> Tensor: ...
 
 
 class Problem(nn.Module):
@@ -210,47 +249,61 @@ class Problem(nn.Module):
 
     def __init__(
         self,
-        operator: Operator,
         constraints: list[Constraint],
         criterion: nn.Module,
         fields: list[Field],
         params: list[Parameter],
-        transformer: Transformer | None = None,
+        scaler: Scaler | None = None,
     ):
         super().__init__()
-        self.operator = operator
         self.constraints = constraints
         self.criterion = criterion
-
         self.fields = fields
         self.params = params
+
         self._fields = nn.ModuleList(fields)
         self._params = nn.ModuleList(params)
 
-        self.transformer = transformer or Transformer()
+        if scaler is not None:
+            for param in self.params:
+                param.scaler = scaler
+        self.scaler = scaler
 
     def total_loss(self, batch: PINNBatch, log: LogFn | None = None) -> Tensor:
         _, x_coll = batch
 
-        total = self.operator.residuals(x_coll, self.criterion, self.transformer, log)
-
+        total = torch.tensor(0.0, device=x_coll.device)
         for c in self.constraints:
-            total = total + c.loss(batch, self.criterion, self.transformer, log)
+            total = total + c.loss(batch, self.criterion, log)
 
         if log is not None:
             for param in self.params:
-                if param.mode == "scalar":
-                    log(param.name, param.forward(), progress_bar=True)
+                param_loss = param.log_loss(x_coll)
+                if param_loss is not None:
+                    log(f"loss/{param.name}", param_loss, progress_bar=True)
+
             log(LOSS_KEY, total, progress_bar=True)
 
         return total
 
-    def predict(self, x_data: Tensor) -> dict[str, Tensor]:
-        inverse_domain, inverse_values = (
-            self.transformer.inverse_transform_domain,
-            self.transformer.inverse_transform_values,
+    def predict(self, batch: DataBatch) -> Predictions:
+        x_data, y_data = batch
+
+        inverse_domain = self.scaler.inverse_domain if self.scaler is not None else identity
+        inverse_values = self.scaler.inverse_values if self.scaler is not None else identity
+
+        batch = (
+            inverse_domain(x_data).squeeze(-1),
+            inverse_values(y_data).squeeze(-1),
         )
 
-        x_data = inverse_domain(x_data)
+        results = {}
+        for field in self.fields:
+            results[field.name] = inverse_values(field(x_data)).squeeze(-1)
 
-        return {field.name: inverse_values(field.forward(x_data)) for field in self.fields}
+        # params will transform x_data again under the hood
+        x_data = inverse_domain(x_data)
+        for param in self.params:
+            results[param.name] = param(x_data).squeeze(-1)
+
+        return batch, results

@@ -7,8 +7,8 @@ from typing import Any, Literal, TypeAlias, override
 from lightning.pytorch import LightningModule, Trainer
 from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProgressBar
 import torch
-from torch import Tensor
 
+from pinn.core import Predictions
 from pinn.lightning.module import SMMAStoppingConfig
 
 SMMA_KEY = "loss/smma"
@@ -109,7 +109,9 @@ class FormattedProgressBar(TQDMProgressBar):
         return items
 
 
-HookFn: TypeAlias = Callable[[Trainer, LightningModule, dict[str, Tensor], Sequence[Any]], None]
+HookFn: TypeAlias = Callable[
+    [Trainer, LightningModule, Sequence[Predictions], Sequence[Any]], None
+]
 
 
 class PredictionsWriter(BasePredictionWriter):
@@ -130,15 +132,14 @@ class PredictionsWriter(BasePredictionWriter):
         self,
         trainer: Trainer,
         module: LightningModule,
-        predictions_list: Sequence[Any],
+        predictions_list: Sequence[Predictions],
         batch_indices: Sequence[Any],
     ) -> None:
-        predictions = predictions_list[0]
-
         if self.on_prediction is not None:
-            self.on_prediction(trainer, module, predictions, batch_indices)
+            self.on_prediction(trainer, module, predictions_list, batch_indices)
 
         if self.predictions_path is not None:
-            torch.save(predictions, self.predictions_path)
+            torch.save(predictions_list, self.predictions_path)
+
         if self.batch_indices_path is not None:
             torch.save(batch_indices, self.batch_indices_path)
