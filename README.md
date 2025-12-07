@@ -361,17 +361,33 @@ Licensing for the project is defined in:
 
 This project uses a common permissive license, the MIT license.
 
-You may also want to list the licenses of all the packages that your Python project depends on.
-To automatically list the licenses for all dependencies in (and their transitive dependencies)
-using [pip-licenses-cli](https://github.com/stefan6419846/pip-licenses-cli):
+A license report of all third party packages and their transitive dependencies is generated and
+built into the user guide. This allows application developers to comply with these licenses, which
+require that the license be included when the library is shipped to end users.
+
+To automatically list the licenses for all dependencies and regenerate the license report using
+[pip-licenses-cli](https://github.com/stefan6419846/pip-licenses-cli):
 
 ```shell
 $ uv run nox -s licenses
 ...
+nox > pip-licenses
  Name               Version  License
- Pygments           2.19.1   BSD License
- click              8.1.8    BSD License
- markdown-it-py     3.0.0    MIT License
+ Pygments           2.19.2   BSD License
+ click              8.3.0    BSD-3-Clause
+ markdown-it-py     4.0.0    MIT License
+ mdurl              0.1.2    MIT License
+ rich               14.2.0   MIT License
+ shellingham        1.5.4    ISC License (ISCL)
+ typer-slim         0.20.0   MIT License
+ typing_extensions  4.15.0   PSF-2.0
+nox > pip-licenses --summary
+ Count  License
+ 1      BSD License
+ 1      BSD-3-Clause
+ 1      ISC License (ISCL)
+ 4      MIT License
+ 1      PSF-2.0
 ```
 
 # Container

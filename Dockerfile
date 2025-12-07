@@ -11,7 +11,7 @@
 FROM python:3.13-slim-trixie AS python_builder
 
 # Pin uv to a specific version to make container builds reproducible.
-ENV UV_VERSION=0.9.6
+ENV UV_VERSION=0.9.13
 ENV UV_PYTHON_DOWNLOADS=never
 
 # Set ENV variables that make Python more friendly to running inside a container.
@@ -41,7 +41,7 @@ RUN pip install "uv==${UV_VERSION}"
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 
 # Copy in project dependency specification.
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock LICENSE.txt ./
 
 # Install only project dependencies, as this is cached until pyproject.toml uv.lock are updated.
 RUN uv sync --locked --no-default-groups --no-install-project

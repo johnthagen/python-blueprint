@@ -22,11 +22,14 @@ theme:
   features:
     - content.code.annotate
     - content.code.copy
+    - content.code.select
+    - content.footnote.tooltips
     - content.tabs.link
     - content.tooltips
     - navigation.indexes
     - navigation.expand
     - navigation.footer
+    - navigation.path
     - navigation.instant
     - navigation.top
     - navigation.tracking
@@ -40,9 +43,12 @@ markdown_extensions:
   - footnotes
   - pymdownx.details
   - pymdownx.keys
-  - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.snippets
+  - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
@@ -86,3 +92,5 @@ repo_url: https://github.com/johnthagen/python-blueprint
 edit_uri: edit/main/docs/user_guide/docs/
 nav:
   - index.md
+  - Third Party Licenses:
+    - licenses/license_report.md
