@@ -1,6 +1,6 @@
 """Core PINN building blocks."""
 
-from pinn.core.core import (
+from pinn.core.base import (
     LOSS_KEY,
     Activations,
     ArgsRegistry,

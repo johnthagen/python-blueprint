@@ -39,6 +39,19 @@ N_KEY = "N"
 
 
 def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+    """
+    The SIR ODE system.
+    dS/dt = -beta * S * I / N
+    dI/dt = beta * S * I / N - delta * I
+
+    Args:
+        x: Time variable.
+        y: State variables [S, I].
+        args: Arguments dictionary (beta, delta, N).
+
+    Returns:
+        Derivatives [dS/dt, dI/dt].
+    """
     S, I = y
     # TODO: use reflection to automate this
     b = args[BETA_KEY]
@@ -53,6 +66,10 @@ def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
 
 @dataclass(kw_only=True)
 class SIRInvProperties(ODEProperties):
+    """
+    Properties specific to the SIR Inverse problem.
+    """
+
     N: float  # TODO: need a "constant" concept
     delta: float | Callable[[Tensor], Tensor]
     beta: float | Callable[[Tensor], Tensor]
@@ -76,6 +93,10 @@ class SIRInvProperties(ODEProperties):
 
 @dataclass(kw_only=True)
 class SIRInvHyperparameters(PINNHyperparameters):
+    """
+    Hyperparameters for the SIR Inverse problem.
+    """
+
     # TODO: implement adaptive weights
     pde_weight: float
     ic_weight: float
@@ -83,6 +104,11 @@ class SIRInvHyperparameters(PINNHyperparameters):
 
 
 class SIRInvProblem(Problem):
+    """
+    Definition of the SIR Inverse Problem.
+    Infers parameters (beta) from data while satisfying the SIR ODE.
+    """
+
     def __init__(
         self,
         props: SIRInvProperties,
@@ -130,6 +156,10 @@ class SIRInvProblem(Problem):
 
 
 class SIRInvDataset(ODEDataset):
+    """
+    Dataset generator for SIR Inverse problem with optional noise injection.
+    """
+
     def __init__(
         self,
         props: SIRInvProperties,
@@ -141,6 +171,9 @@ class SIRInvDataset(ODEDataset):
 
     @override
     def gen_data(self) -> tuple[Tensor, Tensor]:
+        """
+        Generates synthetic data and adds Poisson noise to observed I.
+        """
         x, data = super().gen_data()
 
         if data.dim() > 2 and data.shape[-1] == 1:
@@ -155,6 +188,10 @@ class SIRInvDataset(ODEDataset):
 
 
 class SIRInvCollocationset(Dataset[Tensor]):
+    """
+    Generates collocation points, sampled logarithmically to focus on early dynamics.
+    """
+
     def __init__(
         self,
         props: SIRInvProperties,
@@ -183,6 +220,10 @@ class SIRInvCollocationset(Dataset[Tensor]):
 
 
 class SIRInvDataModule(PINNDataModule):
+    """
+    DataModule for SIR Inverse problem.
+    """
+
     def __init__(
         self,
         props: SIRInvProperties,

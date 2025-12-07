@@ -23,6 +23,10 @@ from pinn.core import (
 
 @dataclass(kw_only=True)
 class SchedulerConfig:
+    """
+    Configuration for Learning Rate Scheduler (ReduceLROnPlateau).
+    """
+
     mode: Literal["min", "max"]
     factor: float
     patience: int
@@ -32,12 +36,20 @@ class SchedulerConfig:
 
 @dataclass(kw_only=True)
 class EarlyStoppingConfig:
+    """
+    Configuration for Early Stopping callback.
+    """
+
     patience: int
     mode: Literal["min", "max"]
 
 
 @dataclass(kw_only=True)
 class SMMAStoppingConfig:
+    """
+    Configuration for Simple Moving Average Stopping callback.
+    """
+
     window: int
     threshold: float
     lookback: int
@@ -45,6 +57,10 @@ class SMMAStoppingConfig:
 
 @dataclass(kw_only=True)
 class IngestionConfig:
+    """
+    Configuration for data ingestion from files.
+    """
+
     df_path: Path
     x_column: str
     y_columns: list[str]
@@ -52,6 +68,10 @@ class IngestionConfig:
 
 @dataclass(kw_only=True)
 class DataConfig:
+    """
+    Configuration for data loading and batching.
+    """
+
     batch_size: int
     data_ratio: int | float
     data_noise_level: float
@@ -60,6 +80,10 @@ class DataConfig:
 
 @dataclass(kw_only=True)
 class PINNHyperparameters:
+    """
+    Aggregated hyperparameters for the PINN model.
+    """
+
     lr: float
     data: DataConfig
     fields_config: MLPConfig
@@ -74,6 +98,10 @@ class PINNModule(pl.LightningModule):
     """
     Generic PINN Lightning module.
     Expects external Problem + Sampler + optimizer config.
+
+    Args:
+        problem: The PINN problem definition (constraints, fields, etc.).
+        hp: Hyperparameters for training.
     """
 
     def __init__(
@@ -102,14 +130,24 @@ class PINNModule(pl.LightningModule):
 
     @override
     def training_step(self, batch: PINNBatch, batch_idx: int) -> Tensor:
+        """
+        Performs a single training step.
+        Calculates total loss from the problem.
+        """
         return self.problem.total_loss(batch, self._log)
 
     @override
     def predict_step(self, batch: DataBatch, batch_idx: int) -> Predictions:
+        """
+        Performs a prediction step.
+        """
         return self.problem.predict(batch)
 
     @override
     def configure_optimizers(self) -> OptimizerLRScheduler:
+        """
+        Configures the optimizer and learning rate scheduler.
+        """
         opt = torch.optim.Adam(self.parameters(), lr=self.hp.lr)
         if not self.scheduler:
             return opt

@@ -33,6 +33,11 @@ ODE function signature:
 class Domain1D:
     """
     One-dimensional domain: time interval [x0, x1] with step size dx.
+
+    Attributes:
+        x0: Start of the interval.
+        x1: End of the interval.
+        dx: Step size for discretization (if applicable).
     """
 
     x0: float
@@ -42,6 +47,16 @@ class Domain1D:
 
 @dataclass
 class ODEProperties:
+    """
+    Properties defining an Ordinary Differential Equation problem.
+
+    Attributes:
+        ode: The ODE function (callable).
+        domain: The 1D domain for the problem.
+        args: Arguments/Parameters for the ODE.
+        Y0: Initial conditions [y1(0), y2(0), ...].
+    """
+
     ode: ODECallable
     domain: Domain1D
     args: ArgsRegistry
@@ -51,6 +66,7 @@ class ODEProperties:
 class LinearScaler(Scaler):
     """
     Apply a linear scaling to a batch of data and collocations.
+    Scales domain [x_min, x_max] to [0, 1] (or similar) and values by y_scale.
     """
 
     def __init__(
@@ -69,9 +85,9 @@ class LinearScaler(Scaler):
         Infer scaling parameters from domain and data.
 
         Args:
-            domain_info: Object with x0 and x1 attributes or similar
-            data: Observation data tensor
-            Y0: Initial conditions
+            domain: Domain object with x0 and x1 attributes.
+            data: Observation data tensor.
+            Y0: Initial conditions.
         """
         self.x_min = domain.x0
         self.x_max = domain.x1
@@ -82,8 +98,8 @@ class LinearScaler(Scaler):
         data_max = torch.max(torch.abs(data)) if data.numel() > 0 else torch.tensor(0.0)
         Y0_max = torch.max(torch.abs(y0_tensor)) if y0_tensor.numel() > 0 else torch.tensor(0.0)
 
-        max = float(torch.max(data_max, Y0_max).item())
-        self.y_scale = max if max > 1e-8 else 1.0
+        max_val = float(torch.max(data_max, Y0_max).item())
+        self.y_scale = max_val if max_val > 1e-8 else 1.0
 
     @override
     def transform_domain(self, domain: Tensor) -> Tensor:
@@ -109,6 +125,12 @@ class LinearScaler(Scaler):
         dt/dt_s = t_scale
         dy_s/dy = 1/y_scale
         dy_s/dt_s = (1/y_scale) * dy/dt * t_scale
+
+        Args:
+            ode: Original ODE function.
+
+        Returns:
+            Scaled ODE function.
         """
 
         def ode_s(t_s: Tensor, y_s: Tensor, args: ArgsRegistry) -> Tensor:
@@ -123,7 +145,13 @@ class LinearScaler(Scaler):
 
     def scale_residual(self, residual: Tensor) -> Tensor:
         """
-        Normalize residual by t_scale to match physical time derivative magnitude
+        Normalize residual by t_scale to match physical time derivative magnitude.
+
+        Args:
+            residual: The residual tensor.
+
+        Returns:
+            Scaled residual.
         """
         if self.x_scale != 0:
             residual = residual / self.x_scale
@@ -131,6 +159,18 @@ class LinearScaler(Scaler):
 
 
 class ResidualsConstraint(Constraint):
+    """
+    Constraint enforcing the ODE residuals.
+    Minimizes ||dy/dt - f(t, y)||^2.
+
+    Args:
+        props: ODE properties.
+        fields: List of fields.
+        params: List of parameters.
+        weight: Weight for this loss term.
+        scaler: Linear scaler instance.
+    """
+
     def __init__(
         self,
         props: ODEProperties,
@@ -185,6 +225,17 @@ class ResidualsConstraint(Constraint):
 
 
 class ICConstraint(Constraint):
+    """
+    Constraint enforcing Initial Conditions (IC).
+    Minimizes ||y(t0) - Y0||^2.
+
+    Args:
+        fields: List of fields.
+        weight: Weight for this loss term.
+        props: ODE properties (containing Y0 and domain).
+        scaler: Linear scaler instance.
+    """
+
     def __init__(
         self,
         fields: list[Field],
@@ -230,6 +281,16 @@ PredictDataFn: TypeAlias = Callable[[Tensor, FieldsRegistry], Tensor]
 
 
 class DataConstraint(Constraint):
+    """
+    Constraint enforcing fit to observed data.
+    Minimizes ||Predictions - Data||^2.
+
+    Args:
+        fields: List of fields.
+        predict_data: Function to predict data values from fields.
+        weight: Weight for this loss term.
+    """
+
     def __init__(
         self,
         fields: list[Field],
@@ -261,6 +322,15 @@ class DataConstraint(Constraint):
 
 
 class ODEDataset(Dataset[DataBatch]):
+    """
+    Dataset for ODE problems. Can generate synthetic data or load from CSV.
+
+    Args:
+        props: ODE properties.
+        hp: Hyperparameters (including ingestion config).
+        scaler: Linear scaler instance.
+    """
+
     def __init__(
         self,
         props: ODEProperties,
@@ -277,6 +347,7 @@ class ODEDataset(Dataset[DataBatch]):
         )
 
     def gen_data(self) -> tuple[Tensor, Tensor]:
+        """Generate synthetic data by solving the ODE."""
         x0, x1, dx = self.domain.x0, self.domain.x1, self.domain.dx
         steps = int((x1 - x0) / dx) + 1
 
@@ -296,6 +367,7 @@ class ODEDataset(Dataset[DataBatch]):
         return x.unsqueeze(-1), data.unsqueeze(-1)
 
     def load_data(self, ingestion: IngestionConfig) -> tuple[Tensor, Tensor]:
+        """Load data from a CSV file."""
         df = pd.read_csv(ingestion.df_path)
 
         x_col, y_cols = ingestion.x_column, ingestion.y_columns

@@ -7,13 +7,10 @@ from torch import Tensor
 from torch.utils.data import DataLoader, Dataset
 
 DataBatch: TypeAlias = tuple[Tensor, Tensor]
+"""Type alias for data batch: (x, y)."""
 
 PINNBatch: TypeAlias = tuple[DataBatch, Tensor]
-"""
-Batch is a tuple of (data, collocations) where: data is another tuple of two tensors 
-(t_data y_data) with both having shape (batch_size, 1); collocations is a tensor with 
-shape (collocations_size, 1) of collocation points over the domain.
-"""
+"""Batch tuple: ((t_data, y_data), t_coll)."""
 
 
 class PINNDataset(Dataset[PINNBatch]):
@@ -34,7 +31,6 @@ class PINNDataset(Dataset[PINNBatch]):
         batch_size: Size of the batch.
         data_ratio: Ratio of data points to collocation points, either as a ratio [0,1] or absolute
             count [0,batch_size].
-        transform: Optional transformation to apply to the batch.
     """
 
     def __init__(
@@ -100,6 +96,16 @@ class PINNDataset(Dataset[PINNBatch]):
 
 
 class PINNDataModule(pl.LightningDataModule):
+    """
+    LightningDataModule for PINNs.
+    Manages data and collocation datasets and creates the combined PINNDataset.
+
+    Attributes:
+        data_ds: Dataset containing observed data.
+        coll_ds: Dataset containing collocation points.
+        pinn_ds: Combined PINNDataset for training.
+    """
+
     def __init__(self) -> None:
         super().__init__()
         self.data_ds: Dataset[DataBatch]
@@ -108,6 +114,9 @@ class PINNDataModule(pl.LightningDataModule):
 
     @override
     def train_dataloader(self) -> DataLoader[PINNBatch]:
+        """
+        Returns the training dataloader using PINNDataset.
+        """
         assert self.pinn_ds is not None
         return DataLoader[PINNBatch](
             self.pinn_ds,
@@ -118,6 +127,9 @@ class PINNDataModule(pl.LightningDataModule):
 
     @override
     def predict_dataloader(self) -> DataLoader[DataBatch]:
+        """
+        Returns the prediction dataloader using only the data dataset.
+        """
         assert self.data_ds is not None
         data_size = len(cast(Sized, self.data_ds))
         return DataLoader[DataBatch](
