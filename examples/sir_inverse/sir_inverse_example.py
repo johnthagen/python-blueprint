@@ -22,6 +22,7 @@ from torch import Tensor
 from pinn.core import LOSS_KEY, MLPConfig, Predictions
 from pinn.lightning import (
     DataConfig,
+    IngestionConfig,
     PINNModule,
     SchedulerConfig,
     SMMAStopping,
@@ -85,8 +86,10 @@ def execute(
         clean_dir(config.csv_dir / config.experiment_name / config.run_name)
         clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
 
+    C = 1e5
+
     scaler = LinearScaler(
-        y_scale=props.N,
+        y_scale=C,
         x_min=props.domain.x0,
         x_max=props.domain.x1,
     )
@@ -107,6 +110,7 @@ def execute(
         module = PINNModule.load_from_checkpoint(
             model_path,
             problem=problem,
+            weights_only=False,
         )
     else:
         module = PINNModule(
@@ -179,7 +183,7 @@ def execute(
         trainer.predict(module, dm)
     else:
         trainer.fit(module, dm)
-        trainer.save_checkpoint(model_path)
+        trainer.save_checkpoint(model_path, weights_only=False)
 
     clean_dir(config.checkpoint_dir)
 
@@ -269,7 +273,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    run_name = "v5"
+    run_name = "v6"
 
     results_dir = Path("./results")
 
@@ -348,11 +352,11 @@ if __name__ == "__main__":
             threshold=0.1,
             lookback=50,
         ),
-        # ingestion=IngestionConfig(
-        #     df_path=Path("./data/generated_data.csv"),
-        #     x_column="t",
-        #     y_columns=["I_obs"],
-        # ),
+        ingestion=IngestionConfig(
+            df_path=Path("./data/original_data.csv"),
+            x_column="t",
+            y_columns=["I_obs"],
+        ),
         pde_weight=100.0,
         ic_weight=1,
         data_weight=1,

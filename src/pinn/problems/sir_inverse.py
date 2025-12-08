@@ -20,7 +20,7 @@ from pinn.core import (
     PINNDataset,
     Problem,
 )
-from pinn.lightning import PINNHyperparameters
+from pinn.lightning import IngestionConfig, PINNHyperparameters
 from pinn.problems.ode import (
     DataConstraint,
     ICConstraint,
@@ -186,6 +186,11 @@ class SIRInvDataset(ODEDataset):
 
         return x, I_obs_scaled.unsqueeze(-1)
 
+    @override
+    def load_data(self, ingestion: IngestionConfig) -> tuple[Tensor, Tensor]:
+        x, obs = super().load_data(ingestion)
+        I_obs = (obs.squeeze(-1))[:, 0]
+        return x, I_obs.unsqueeze(-1)
 
 class SIRInvCollocationset(Dataset[Tensor]):
     """
