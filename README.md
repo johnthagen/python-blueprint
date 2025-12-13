@@ -502,19 +502,17 @@ project:
 
 ## Ruff Integration
 
-Integrate [Ruff](https://docs.astral.sh/ruff/editors/setup/#pycharm) linting and
-formatting into PyCharm.
+PyCharm natively supports [Ruff](https://docs.astral.sh/ruff/editors/setup/#pycharm) linting and
+formatting.
 
-### Linting and Formatting
+1. Open Preferences or Settings | Python | Tools | Ruff
+    - **Check**: Enable
+    - Open **All Actions on Save...**
+        - **Check**: Reformat Code
+            - Files:Python
 
-1. Install the [Ruff PyCharm Plugin](https://plugins.jetbrains.com/plugin/20574-ruff)
-2. Open Preferences or Settings | Tools | Ruff
-    - **Check**: Run Ruff when the python file is saved
-    - **Check**: Use Import Optimizer
-    - **Check**: Use ruff format
-
-Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatted and imports
-sorted on save.
+Now, on <kbd>ctrl+s</kbd>, the current source file will be automatically formatted and linting
+errors will be shown within the editor.
 
 > [!TIP]
 > These tools work best if you properly mark directories as excluded from the project that should
