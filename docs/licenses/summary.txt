@@ -1,7 +1,7 @@
 | Name              | Version | License            |
 |-------------------|---------|--------------------|
 | Pygments          | 2.19.2  | BSD License        |
-| click             | 8.3.0   | BSD-3-Clause       |
+| click             | 8.3.1   | BSD-3-Clause       |
 | markdown-it-py    | 4.0.0   | MIT License        |
 | mdurl             | 0.1.2   | MIT License        |
 | rich              | 14.2.0  | MIT License        |
