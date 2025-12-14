@@ -31,93 +31,79 @@ from pinn.problems.ode import (
     ResidualsConstraint,
 )
 
-S_KEY = "S"
 I_KEY = "I"
-BETA_KEY = "beta"
 DELTA_KEY = "delta"
-N_KEY = "N"
+Rt_KEY = "Rt"
 
 
-def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     """
-    The SIR ODE system.
-    dS/dt = -beta * S * I / N
-    dI/dt = beta * S * I / N - delta * I
+    The reduced SIR ODE system.
+    dS/dt = -delta * R * I
+    dI/dt = delta * (R - 1) * I
 
     Args:
         x: Time variable.
-        y: State variables [S, I].
-        args: Arguments dictionary (beta, delta, N).
+        y: State variables [I].
+        args: Arguments dictionary (delta, Rt).
 
     Returns:
-        Derivatives [dS/dt, dI/dt].
+        Derivatives [dI/dt].
     """
-    S, I = y
-    # TODO: use reflection to automate this
-    b = args[BETA_KEY]
+    I = y
     d = args[DELTA_KEY]
-    N = args[N_KEY]
+    Rt = args[Rt_KEY]
 
-    dS = -b(x) * S * I / N(x)
-    dI = b(x) * S * I / N(x) - d(x) * I
-    # dR = d(x) * I
-    return torch.stack([dS, dI])
+    dI = d(x) * (Rt(x) - 1) * I
+    return dI
 
 
 @dataclass(kw_only=True)
-class SIRInvProperties(ODEProperties):
+class ReducedSIRInvProperties(ODEProperties):
     """
-    Properties specific to the SIR Inverse problem.
+    Properties specific to the Reduced SIR Inverse problem.
     """
 
-    N: float  # TODO: need a "constant" concept
+    N: float
     delta: float | Callable[[Tensor], Tensor]
-    beta: float | Callable[[Tensor], Tensor]
+    Rt: float | Callable[[Tensor], Tensor]
 
     I0: float
 
-    ode: ODECallable = field(default_factory=lambda: SIR)
+    ode: ODECallable = field(default_factory=lambda: rSIR)
     args: ArgsRegistry = field(default_factory=dict)
     Y0: list[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.args = {
             DELTA_KEY: Argument(self.delta, name=DELTA_KEY),
-            BETA_KEY: Argument(self.beta, name=BETA_KEY),
-            N_KEY: Argument(self.N, name=N_KEY),
+            Rt_KEY: Argument(self.Rt, name=Rt_KEY),
         }
 
-        S0 = self.N - self.I0
-        self.Y0 = [S0, self.I0]
+        self.Y0 = [self.I0]
 
 
 @dataclass(kw_only=True)
-class SIRInvHyperparameters(PINNHyperparameters):
+class ReducedSIRInvHyperparameters(PINNHyperparameters):
     """
-    Hyperparameters for the SIR Inverse problem.
+    Hyperparameters for the Reduced SIR Inverse problem.
     """
 
-    # TODO: implement adaptive weights
-    pde_weight: float
-    ic_weight: float
-    data_weight: float
 
-
-class SIRInvProblem(Problem):
+class ReducedSIRInvProblem(Problem):
     """
-    Definition of the SIR Inverse Problem.
-    Infers parameters (beta) from data while satisfying the SIR ODE.
+    Definition of the Reduced SIR Inverse Problem.
+    Infers parameters (delta, R) from data while satisfying the Reduced SIR ODE.
     """
 
     def __init__(
         self,
-        props: SIRInvProperties,
-        hp: SIRInvHyperparameters,
+        props: ReducedSIRInvProperties,
+        hp: ReducedSIRInvHyperparameters,
         scaler: LinearScaler,
     ) -> None:
-        S_field = Field(config=replace(hp.fields_config, name=S_KEY))
         I_field = Field(config=replace(hp.fields_config, name=I_KEY))
-        beta = Parameter(config=replace(hp.params_config, name=BETA_KEY))
+        R = Parameter(config=replace(hp.params_config, name=Rt_KEY))
 
         def predict_data(t_data: Tensor, fields: FieldsRegistry) -> Tensor:
             I = fields[I_KEY]
@@ -126,21 +112,18 @@ class SIRInvProblem(Problem):
         constraints: list[Constraint] = [
             ResidualsConstraint(
                 props=props,
-                fields=[S_field, I_field],
-                params=[beta],
+                fields=[I_field],
+                params=[R],
                 scaler=scaler,
-                weight=hp.pde_weight,
             ),
             ICConstraint(
                 props=props,
-                fields=[S_field, I_field],
+                fields=[I_field],
                 scaler=scaler,
-                weight=hp.ic_weight,
             ),
             DataConstraint(
-                fields=[S_field, I_field],
+                fields=[I_field],
                 predict_data=predict_data,
-                weight=hp.data_weight,
             ),
         ]
 
@@ -149,21 +132,21 @@ class SIRInvProblem(Problem):
         super().__init__(
             constraints=constraints,
             criterion=criterion,
-            fields=[S_field, I_field],
-            params=[beta],
+            fields=[I_field],
+            params=[R],
             scaler=scaler,
         )
 
 
-class SIRInvDataset(ODEDataset):
+class ReducedSIRInvDataset(ODEDataset):
     """
     Dataset generator for SIR Inverse problem with optional noise injection.
     """
 
     def __init__(
         self,
-        props: SIRInvProperties,
-        hp: SIRInvHyperparameters,
+        props: ReducedSIRInvProperties,
+        hp: ReducedSIRInvHyperparameters,
         scaler: LinearScaler,
     ):
         self.data_noise_level = hp.data.data_noise_level
@@ -193,15 +176,15 @@ class SIRInvDataset(ODEDataset):
         return x, I_obs.unsqueeze(-1)
 
 
-class SIRInvCollocationset(Dataset[Tensor]):
+class ReducedSIRInvCollocationset(Dataset[Tensor]):
     """
     Generates collocation points, sampled logarithmically to focus on early dynamics.
     """
 
     def __init__(
         self,
-        props: SIRInvProperties,
-        hp: SIRInvHyperparameters,
+        props: ReducedSIRInvProperties,
+        hp: ReducedSIRInvHyperparameters,
         scaler: LinearScaler,
     ):
         self.domain = props.domain
@@ -225,15 +208,15 @@ class SIRInvCollocationset(Dataset[Tensor]):
         return len(self.t)
 
 
-class SIRInvDataModule(PINNDataModule):
+class ReducedSIRInvDataModule(PINNDataModule):
     """
-    DataModule for SIR Inverse problem.
+    DataModule for Reduced SIR Inverse problem.
     """
 
     def __init__(
         self,
-        props: SIRInvProperties,
-        hp: SIRInvHyperparameters,
+        props: ReducedSIRInvProperties,
+        hp: ReducedSIRInvHyperparameters,
         scaler: LinearScaler,
     ):
         super().__init__()
@@ -243,12 +226,12 @@ class SIRInvDataModule(PINNDataModule):
 
     @override
     def setup(self, stage: str | None = None) -> None:
-        self.data_ds = SIRInvDataset(
+        self.data_ds = ReducedSIRInvDataset(
             self.props,
             self.hp,
             self.scaler,
         )
-        self.coll_ds = SIRInvCollocationset(
+        self.coll_ds = ReducedSIRInvCollocationset(
             self.props,
             self.hp,
             self.scaler,

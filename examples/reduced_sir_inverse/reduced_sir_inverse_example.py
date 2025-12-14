@@ -17,28 +17,21 @@ import torch
 from torch import Tensor
 
 from pinn.core import LOSS_KEY, MLPConfig, Predictions
-from pinn.lightning import (
-    DataConfig,
-    IngestionConfig,
-    PINNModule,
-    SchedulerConfig,
-    SMMAStopping,
-    SMMAStoppingConfig,
-)
+from pinn.lightning import DataConfig, IngestionConfig, PINNModule, SchedulerConfig, SMMAStopping
 from pinn.lightning.callbacks import FormattedProgressBar, Metric, PredictionsWriter
 from pinn.problems import (
     Domain1D,
     LinearScaler,
-    SIRInvDataModule,
-    SIRInvHyperparameters,
-    SIRInvProblem,
-    SIRInvProperties,
+    ReducedSIRInvDataModule,
+    ReducedSIRInvHyperparameters,
+    ReducedSIRInvProblem,
+    ReducedSIRInvProperties,
 )
-from pinn.problems.sir_inverse import BETA_KEY, I_KEY, S_KEY
+from pinn.problems.reduced_sir_inverse import I_KEY, Rt_KEY
 
 
 @dataclass
-class SIRInvTrainConfig:
+class ReducedSIRInvTrainConfig:
     max_epochs: int
     gradient_clip_val: float
 
@@ -52,7 +45,7 @@ class SIRInvTrainConfig:
 
 
 def create_dir(dir: Path) -> Path:
-    dir.mkdir(exist_ok=True)
+    dir.mkdir(exist_ok=True, parents=True)
     return dir
 
 
@@ -69,19 +62,20 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
 
 
 delta = 1 / 5
-Rt_vals = pd.read_csv("./data/synthetic_data.csv")["Rt"].values
-beta_vals = torch.tensor(Rt_vals * delta, dtype=torch.float32).squeeze(-1)
+Rt_vals = torch.tensor(
+    pd.read_csv("./data/synthetic_data.csv")["Rt"].values, dtype=torch.float32
+).squeeze(-1)
 
 
-def beta_fn(x: Tensor) -> Tensor:
+def Rt_fn(x: Tensor) -> Tensor:
     x = x.squeeze(-1).long()
-    return beta_vals.to(x.device)[x]
+    return Rt_vals.to(x.device)[x]
 
 
 def execute(
-    props: SIRInvProperties,
-    hp: SIRInvHyperparameters,
-    config: SIRInvTrainConfig,
+    props: ReducedSIRInvProperties,
+    hp: ReducedSIRInvHyperparameters,
+    config: ReducedSIRInvTrainConfig,
     predict: bool = False,
 ) -> None:
     model_path = config.saved_models_dir / f"{config.run_name}.ckpt"
@@ -97,13 +91,13 @@ def execute(
         x_max=props.domain.x1,
     )
 
-    dm = SIRInvDataModule(
+    dm = ReducedSIRInvDataModule(
         props=props,
         hp=hp,
         scaler=scaler,
     )
 
-    problem = SIRInvProblem(
+    problem = ReducedSIRInvProblem(
         props=props,
         hp=hp,
         scaler=scaler,
@@ -192,50 +186,38 @@ def execute(
 def plot_and_save(
     predictions: Predictions,
     predictions_dir: Path,
-    props: SIRInvProperties,
+    props: ReducedSIRInvProperties,
 ) -> None:
     batch, preds, trues = predictions
     t_data, I_data = batch
 
-    S_pred = preds[S_KEY]
-    I_pred = preds[I_KEY]
-    R_pred = props.N - S_pred - I_pred
+    Rt_pred = preds[Rt_KEY]
+    Rt_true = trues[Rt_KEY] if trues else None
 
-    beta_pred = preds[BETA_KEY]
-    beta_true = trues[BETA_KEY] if trues else None
+    I_pred = preds[I_KEY]
+    S_pred = -delta * Rt_pred * I_pred
+    R_pred = props.N - S_pred - I_pred
 
     # plot
     sns.set_theme(style="darkgrid")
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
-    ax1 = axes[0]
-    ax2 = ax1.twinx()
+    sns.lineplot(x=t_data, y=S_pred, label="$S_{pred}$", ax=axes[0])
+    sns.lineplot(x=t_data, y=I_pred, label="$I_{pred}$", ax=axes[0])
+    sns.lineplot(x=t_data, y=R_pred, label="$R_{pred}$", ax=axes[0])
+    sns.lineplot(x=t_data, y=I_data, label="$I_{observed}$", linestyle="--", ax=axes[0])
 
-    sns.lineplot(x=t_data, y=S_pred, label="$S_{pred}$", ax=ax1, color="C0")
-    ax1.set_ylabel("S (Population)", color="C0")
-    ax1.tick_params(axis="y", labelcolor="C0")
+    axes[0].set_title("SIR Model Predictions")
+    axes[0].set_xlabel("Time (days)")
+    axes[0].set_ylabel("Fraction of Population")
+    axes[0].legend()
 
-    sns.lineplot(x=t_data, y=I_pred, label="$I_{pred}$", ax=ax2, color="C3")
-    sns.lineplot(x=t_data, y=R_pred, label="$R_{pred}$", ax=ax2, color="C3")
-    sns.lineplot(x=t_data, y=I_data, label="$I_{observed}$", linestyle="--", ax=ax2, color="C1")
-    ax2.set_ylabel("I, R (Population)", color="C3")
-    ax2.tick_params(axis="y", labelcolor="C3")
-    ax2.grid(False)  # disable grid on secondary axis to avoid overlap with legend
+    sns.lineplot(x=t_data, y=Rt_true, label=r"$Rt_{true}$", ax=axes[1])
+    sns.lineplot(x=t_data, y=Rt_pred, label=r"$Rt_{pred}$", linestyle="--", ax=axes[1])
 
-    ax1.set_title("SIR Model Predictions")
-    ax1.set_xlabel("Time (days)")
-
-    lines1, labels1 = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper center")
-    ax2.legend().remove()
-
-    sns.lineplot(x=t_data, y=beta_true, label=r"$\beta_{true}$", ax=axes[1])
-    sns.lineplot(x=t_data, y=beta_pred, label=r"$\beta_{pred}$", linestyle="--", ax=axes[1])
-
-    axes[1].set_title(r"$\beta$ Parameter Prediction")
+    axes[1].set_title(r"$R_t$ Parameter Prediction")
     axes[1].set_xlabel("Time (days)")
-    axes[1].set_ylabel(r"$\beta$")
+    axes[1].set_ylabel(r"$R_t$ Value")
     axes[1].legend()
 
     plt.tight_layout()
@@ -250,8 +232,8 @@ def plot_and_save(
             "S_pred": S_pred,
             "I_pred": I_pred,
             "R_pred": R_pred,
-            "beta_pred": beta_pred,
-            "beta_true": beta_true,
+            "Rt_pred": Rt_pred,
+            "Rt_true": Rt_true,
         }
     )
 
@@ -267,7 +249,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    run_name = "v2"
+    run_name = "v0"
 
     results_dir = Path("./results")
 
@@ -286,7 +268,7 @@ if __name__ == "__main__":
     create_dir(log_dir)
     create_dir(temp_dir)
 
-    config = SIRInvTrainConfig(
+    config = ReducedSIRInvTrainConfig(
         max_epochs=1000,
         gradient_clip_val=0.1,
         run_name=run_name,
@@ -297,19 +279,19 @@ if __name__ == "__main__":
         checkpoint_dir=temp_dir,
     )
 
-    props = SIRInvProperties(
+    props = ReducedSIRInvProperties(
         domain=Domain1D(
             x0=0.0,
             x1=90.0,
             dx=1.0,
         ),
         N=56e6,
-        delta=delta,
-        beta=beta_fn,
+        delta=1 / 5,
+        Rt=Rt_fn,
         I0=1.0,
     )
 
-    hp = SIRInvHyperparameters(
+    hp = ReducedSIRInvHyperparameters(
         lr=5e-4,
         data=DataConfig(
             batch_size=100,
@@ -330,7 +312,7 @@ if __name__ == "__main__":
             hidden_layers=[64, 64],
             activation="tanh",
             output_activation="softplus",
-            true_fn=beta_fn,
+            true_fn=Rt_fn,
         ),
         scheduler=SchedulerConfig(
             mode="min",
@@ -339,19 +321,15 @@ if __name__ == "__main__":
             threshold=5e-3,
             min_lr=1e-6,
         ),
-        smma_stopping=SMMAStoppingConfig(
-            window=50,
-            threshold=0.1,
-            lookback=50,
-        ),
+        # smma_stopping=SMMAStoppingConfig(
+        #     window=50,
+        #     threshold=0.1,
+        #     lookback=50,
+        # ),
         ingestion=IngestionConfig(
             df_path=Path("./data/synthetic_data.csv"),
-            x_column="t",
             y_columns=["I_obs"],
         ),
-        pde_weight=100.0,
-        ic_weight=1,
-        data_weight=1,
     )
 
     execute(props, hp, config, args.predict)

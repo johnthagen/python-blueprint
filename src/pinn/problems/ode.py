@@ -176,8 +176,8 @@ class ResidualsConstraint(Constraint):
         props: ODEProperties,
         fields: list[Field],
         params: list[Parameter],
-        weight: float,
         scaler: LinearScaler,
+        weight: float = 1.0,
     ):
         self.scaler = scaler
         self.fields = fields
@@ -239,9 +239,9 @@ class ICConstraint(Constraint):
     def __init__(
         self,
         fields: list[Field],
-        weight: float,
         props: ODEProperties,
         scaler: LinearScaler,
+        weight: float = 1.0,
     ):
         Y0 = torch.tensor(props.Y0, dtype=torch.float32).reshape(-1, 1, 1)
         t0 = torch.tensor(props.domain.x0, dtype=torch.float32).reshape(1, 1)
@@ -295,7 +295,7 @@ class DataConstraint(Constraint):
         self,
         fields: list[Field],
         predict_data: PredictDataFn,
-        weight: float,
+        weight: float = 1.0,
     ):
         self.fields: FieldsRegistry = {f.name: f for f in fields}
         self.predict_data = predict_data
@@ -371,14 +371,19 @@ class ODEDataset(Dataset[DataBatch]):
         df = pd.read_csv(ingestion.df_path)
 
         x_col, y_cols = ingestion.x_column, ingestion.y_columns
-        if not {x_col, *y_cols}.issubset(df.columns):
+
+        if not set(y_cols).issubset(df.columns) or (x_col is not None and x_col not in df.columns):
+            x_msg = f" and {x_col}" if x_col is not None else ""
             raise ValueError(
-                f"Expected {', '.join(y_cols)} and {x_col} columns in the dataframe, "
+                f"Expected {', '.join(y_cols)}{x_msg} columns in the dataframe, "
                 f"but got {', '.join(df.columns)}"
             )
 
-        x = torch.tensor(df[x_col].values, dtype=torch.float32)
         obs = torch.tensor(df[y_cols].values, dtype=torch.float32)
+        if x_col is not None:
+            x = torch.tensor(df[x_col].values, dtype=torch.float32)
+        else:
+            x = torch.arange(len(df), dtype=torch.float32)
 
         # transforming x to the problem domain
         x0, x1 = self.domain.x0, self.domain.x1

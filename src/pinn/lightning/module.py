@@ -59,10 +59,11 @@ class SMMAStoppingConfig:
 class IngestionConfig:
     """
     Configuration for data ingestion from files.
+    If x_column is None, the data is assumed to be evenly spaced.
     """
 
     df_path: Path
-    x_column: str
+    x_column: str | None = None
     y_columns: list[str]
 
 

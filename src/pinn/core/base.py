@@ -24,8 +24,8 @@ Activations: TypeAlias = Literal[
 ]
 """Supported activation functions."""
 
-Predictions: TypeAlias = tuple[DataBatch, dict[str, Tensor]]
-"""Type alias for model predictions: (input_batch, results_dictionary)."""
+Predictions: TypeAlias = tuple[DataBatch, dict[str, Tensor], dict[str, Tensor] | None]
+"""Type alias for model predictions: (input_batch, results_dictionary, true_values_dictionary)."""
 
 
 class LogFn(Protocol):
@@ -292,6 +292,16 @@ class Parameter(nn.Module, Argument):
                 x = self.scaler.transform_domain(x)
             return cast(Tensor, self.net(x))
 
+    def true_values(self, x_coll: Tensor) -> Tensor | None:
+        """
+        Get the true values of the parameter.
+        """
+        if isinstance(self.config, ScalarConfig) and self.config.true_value is not None:
+            return torch.tensor(self.config.true_value, device=x_coll.device)
+        elif isinstance(self.config, MLPConfig) and self.config.true_fn is not None:
+            return self.config.true_fn(x_coll)
+        return None
+
     def log_loss(self, x_coll: Tensor) -> Tensor | None:
         """
         Calculate loss against true value (if available) for logging purposes.
@@ -302,17 +312,14 @@ class Parameter(nn.Module, Argument):
         Returns:
             The error/loss value, or None if no true value is configured.
         """
-        if isinstance(self.config, ScalarConfig) and self.config.true_value is not None:
-            true_value = self.config.true_value
-            pred_value = self.value
-            return torch.abs(true_value - pred_value)
+        true = self.true_values(x_coll)
+        if true is None:
+            return None
 
-        elif isinstance(self.config, MLPConfig) and self.config.true_fn is not None:
-            true_values = self.config.true_fn(x_coll)
-            pred_value = self(x_coll)
-            return cast(Tensor, torch.norm(true_values - pred_value))
+        if self.mode == "scalar":
+            return torch.abs(true - self.value)
 
-        return None
+        return cast(Tensor, torch.norm(true - self(x_coll)))
 
 
 ArgsRegistry = dict[str, Argument]
@@ -439,25 +446,21 @@ class Problem(nn.Module):
             batch: Batch of input coordinates.
 
         Returns:
-            Tuple of (original_batch, results_dict).
+            Tuple of (original_batch, predictions_dict, true_values_dict).
         """
-        x_data, y_data = batch
+        inv_d = self.scaler.inverse_domain if self.scaler else identity
+        inv_v = self.scaler.inverse_values if self.scaler else identity
 
-        inverse_domain = self.scaler.inverse_domain if self.scaler is not None else identity
-        inverse_values = self.scaler.inverse_values if self.scaler is not None else identity
+        x, y = batch
 
-        batch = (
-            inverse_domain(x_data).squeeze(-1),
-            inverse_values(y_data).squeeze(-1),
-        )
+        batch = (inv_d(x).squeeze(-1), inv_v(y).squeeze(-1))
 
-        results = {}
-        for field in self.fields:
-            results[field.name] = inverse_values(field(x_data)).squeeze(-1)
+        preds = {f.name: inv_v(f(x)).squeeze(-1) for f in self.fields}
 
         # params will transform x_data again under the hood
-        x_data = inverse_domain(x_data)
-        for param in self.params:
-            results[param.name] = param(x_data).squeeze(-1)
+        x_orig = inv_d(x)
+        preds |= {p.name: p(x_orig).squeeze(-1) for p in self.params}
 
-        return batch, results
+        trues = {p.name: tv for p in self.params if (tv := p.true_values(x_orig)) is not None}
+
+        return batch, preds, trues or None
