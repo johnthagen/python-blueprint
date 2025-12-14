@@ -1,11 +1,9 @@
 hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
-  batch_size: 100
-  beta_config: !!python/object:pinn.core.core.ScalarConfig
-    init_value: 0.5
-    name: params/beta
-  beta_smoothness_weight: 0.0
-  collocations: 6000
-  data_ratio: 2
+  data: !!python/object:pinn.lightning.module.DataConfig
+    batch_size: 100
+    collocations: 6000
+    data_noise_level: 1.0
+    data_ratio: 2
   data_weight: 1
   early_stopping: null
   fields_config: !!python/object:pinn.core.core.MLPConfig
@@ -20,10 +18,14 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
     name: u
     out_dim: 1
     output_activation: softplus
-  gradient_clip_val: 0.1
+    true_fn: null
   ic_weight: 1
+  ingestion: null
   lr: 0.0005
-  max_epochs: 1000
+  params_config: !!python/object:pinn.core.core.ScalarConfig
+    init_value: 0.5
+    name: p
+    true_value: 0.6
   pde_weight: 100.0
   scheduler: !!python/object:pinn.lightning.module.SchedulerConfig
     factor: 0.5

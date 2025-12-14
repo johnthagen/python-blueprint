@@ -69,7 +69,7 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
 
 
 delta = 1 / 5
-Rt_vals = pd.read_csv("./data/synthetic_data.csv")["Rt"].values
+Rt_vals = pd.read_csv("./data/real_data.csv")["Rt"].values
 beta_vals = torch.tensor(Rt_vals * delta, dtype=torch.float32).squeeze(-1)
 
 
@@ -345,8 +345,7 @@ if __name__ == "__main__":
             lookback=50,
         ),
         ingestion=IngestionConfig(
-            df_path=Path("./data/synthetic_data.csv"),
-            x_column="t",
+            df_path=Path("./data/real_data.csv"),
             y_columns=["I_obs"],
         ),
         pde_weight=100.0,
