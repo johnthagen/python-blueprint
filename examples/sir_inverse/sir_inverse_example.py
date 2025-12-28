@@ -13,28 +13,25 @@ from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import torch
-from torch import Tensor
 
-from pinn.core import LOSS_KEY, MLPConfig, Predictions
-from pinn.lightning import (
-    DataConfig,
+from pinn.core import (
+    LOSS_KEY,
+    ColumnRef,
     IngestionConfig,
-    PINNModule,
+    MLPConfig,
+    Predictions,
     SchedulerConfig,
-    SMMAStopping,
     SMMAStoppingConfig,
+    ValidationRegistry,
 )
+from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import (
-    Domain1D,
-    LinearScaler,
-    SIRInvDataModule,
-    SIRInvHyperparameters,
-    SIRInvProblem,
-    SIRInvProperties,
-)
+from pinn.problems import SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem, SIRInvProperties
 from pinn.problems.sir_inverse import BETA_KEY, I_KEY, S_KEY
+
+# ============================================================================
+# Configuration
+# ============================================================================
 
 
 @dataclass
@@ -49,6 +46,11 @@ class SIRInvTrainConfig:
     predictions_dir: Path
     checkpoint_dir: Path
     experiment_name: str = ""  # empty string defaults to no experiments
+
+
+# ============================================================================
+# Helpers
+# ============================================================================
 
 
 def create_dir(dir: Path) -> Path:
@@ -68,20 +70,16 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
     return value
 
 
-delta = 1 / 5
-Rt_vals = pd.read_csv("./data/real_data.csv")["Rt"].values
-beta_vals = torch.tensor(Rt_vals * delta, dtype=torch.float32).squeeze(-1)
-
-
-def beta_fn(x: Tensor) -> Tensor:
-    x = x.squeeze(-1).long()
-    return beta_vals.to(x.device)[x]
+# ============================================================================
+# Training / Prediction Execution
+# ============================================================================
 
 
 def execute(
     props: SIRInvProperties,
     hp: SIRInvHyperparameters,
     config: SIRInvTrainConfig,
+    validation: ValidationRegistry,
     predict: bool = False,
 ) -> None:
     model_path = config.saved_models_dir / f"{config.run_name}.ckpt"
@@ -90,23 +88,15 @@ def execute(
         clean_dir(config.csv_dir / config.experiment_name / config.run_name)
         clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
 
-    scaler = LinearScaler(
-        y_scale=1e5,
-        # y_scale=props.N,
-        x_min=props.domain.x0,
-        x_max=props.domain.x1,
-    )
-
     dm = SIRInvDataModule(
         props=props,
         hp=hp,
-        scaler=scaler,
     )
 
     problem = SIRInvProblem(
         props=props,
         hp=hp,
-        scaler=scaler,
+        validation=validation,
     )
 
     if predict:
@@ -189,6 +179,11 @@ def execute(
     clean_dir(config.checkpoint_dir)
 
 
+# ============================================================================
+# Plotting and Saving
+# ============================================================================
+
+
 def plot_and_save(
     predictions: Predictions,
     predictions_dir: Path,
@@ -258,6 +253,11 @@ def plot_and_save(
     df.to_csv(predictions_dir / "predictions.csv", index=False, float_format="%.6e")
 
 
+# ============================================================================
+# Main
+# ============================================================================
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SIR Inverse Example")
     parser.add_argument(
@@ -286,6 +286,13 @@ if __name__ == "__main__":
     create_dir(log_dir)
     create_dir(temp_dir)
 
+    # ========================================================================
+    # Experiment Configuration
+    # ========================================================================
+
+    delta = 1 / 5
+    data_path = Path("./data/real_data.csv")
+
     config = SIRInvTrainConfig(
         max_epochs=1000,
         gradient_clip_val=0.1,
@@ -297,25 +304,28 @@ if __name__ == "__main__":
         checkpoint_dir=temp_dir,
     )
 
+    # ========================================================================
+    # Problem Properties - only define TRUE constants!
+    # Domain, Y0 are inferred from training data.
+    # beta is learned, not defined here.
+    # ========================================================================
     props = SIRInvProperties(
-        domain=Domain1D(
-            x0=0.0,
-            x1=90.0,
-            dx=1.0,
-        ),
         N=56e6,
         delta=delta,
-        beta=beta_fn,
-        I0=1.0,
     )
 
+    # ========================================================================
+    # Hyperparameters
+    # ========================================================================
     hp = SIRInvHyperparameters(
         lr=5e-4,
-        data=DataConfig(
+        training_data=IngestionConfig(
             batch_size=100,
             data_ratio=2,
             data_noise_level=1.0,
             collocations=6000,
+            df_path=data_path,
+            y_columns=["I_obs"],
         ),
         fields_config=MLPConfig(
             in_dim=1,
@@ -330,7 +340,6 @@ if __name__ == "__main__":
             hidden_layers=[64, 64],
             activation="tanh",
             output_activation="softplus",
-            true_fn=beta_fn,
         ),
         scheduler=SchedulerConfig(
             mode="min",
@@ -344,13 +353,18 @@ if __name__ == "__main__":
             threshold=0.1,
             lookback=50,
         ),
-        ingestion=IngestionConfig(
-            df_path=Path("./data/real_data.csv"),
-            y_columns=["I_obs"],
-        ),
         pde_weight=100.0,
         ic_weight=1,
         data_weight=1,
     )
 
-    execute(props, hp, config, args.predict)
+    # ========================================================================
+    # Validation Configuration (separate from problem definition!)
+    # This defines ground truth for logging/validation.
+    # Resolved lazily when data is loaded.
+    # ========================================================================
+    validation: ValidationRegistry = {
+        BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * delta),
+    }
+
+    execute(props, hp, config, validation, args.predict)

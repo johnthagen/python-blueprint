@@ -7,7 +7,7 @@ from typing import cast, override
 import torch
 from torch import Tensor
 import torch.nn as nn
-from torch.utils.data import Dataset
+from torchdiffeq import odeint
 
 from pinn.core import (
     ArgsRegistry,
@@ -15,18 +15,18 @@ from pinn.core import (
     Constraint,
     Field,
     FieldsRegistry,
+    GenerationConfig,
+    InferredContext,
     Parameter,
     PINNDataModule,
-    PINNDataset,
+    PINNHyperparameters,
     Problem,
+    ValidationRegistry,
 )
-from pinn.lightning import IngestionConfig, PINNHyperparameters
 from pinn.problems.ode import (
     DataConstraint,
     ICConstraint,
-    LinearScaler,
     ODECallable,
-    ODEDataset,
     ODEProperties,
     ResidualsConstraint,
 )
@@ -62,25 +62,20 @@ def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
 class ReducedSIRInvProperties(ODEProperties):
     """
     Properties specific to the Reduced SIR Inverse problem.
+
+    Attributes:
+        delta: Recovery rate (constant or callable).
     """
 
-    N: float
     delta: float | Callable[[Tensor], Tensor]
-    Rt: float | Callable[[Tensor], Tensor]
-
-    I0: float
 
     ode: ODECallable = field(default_factory=lambda: rSIR)
     args: ArgsRegistry = field(default_factory=dict)
-    Y0: list[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.args = {
             DELTA_KEY: Argument(self.delta, name=DELTA_KEY),
-            Rt_KEY: Argument(self.Rt, name=Rt_KEY),
         }
-
-        self.Y0 = [self.I0]
 
 
 @dataclass(kw_only=True)
@@ -93,17 +88,17 @@ class ReducedSIRInvHyperparameters(PINNHyperparameters):
 class ReducedSIRInvProblem(Problem):
     """
     Definition of the Reduced SIR Inverse Problem.
-    Infers parameters (delta, R) from data while satisfying the Reduced SIR ODE.
+    Infers parameters (Rt) from data while satisfying the Reduced SIR ODE.
     """
 
     def __init__(
         self,
         props: ReducedSIRInvProperties,
         hp: ReducedSIRInvHyperparameters,
-        scaler: LinearScaler,
+        validation: ValidationRegistry | None = None,
     ) -> None:
         I_field = Field(config=replace(hp.fields_config, name=I_KEY))
-        R = Parameter(config=replace(hp.params_config, name=Rt_KEY))
+        Rt = Parameter(config=replace(hp.params_config, name=Rt_KEY))
 
         def predict_data(t_data: Tensor, fields: FieldsRegistry) -> Tensor:
             I = fields[I_KEY]
@@ -113,13 +108,10 @@ class ReducedSIRInvProblem(Problem):
             ResidualsConstraint(
                 props=props,
                 fields=[I_field],
-                params=[R],
-                scaler=scaler,
+                params=[Rt],
             ),
             ICConstraint(
-                props=props,
                 fields=[I_field],
-                scaler=scaler,
             ),
             DataConstraint(
                 fields=[I_field],
@@ -133,112 +125,46 @@ class ReducedSIRInvProblem(Problem):
             constraints=constraints,
             criterion=criterion,
             fields=[I_field],
-            params=[R],
-            scaler=scaler,
+            params=[Rt],
+            validation=validation,
         )
 
-
-class ReducedSIRInvDataset(ODEDataset):
+class ReducedSIRInvDataModule(PINNDataModule):
     """
-    Dataset generator for SIR Inverse problem with optional noise injection.
-    """
-
-    def __init__(
-        self,
-        props: ReducedSIRInvProperties,
-        hp: ReducedSIRInvHyperparameters,
-        scaler: LinearScaler,
-    ):
-        self.data_noise_level = hp.data.data_noise_level
-        super().__init__(props, hp, scaler)
-
-    @override
-    def gen_data(self) -> tuple[Tensor, Tensor]:
-        """
-        Generates synthetic data and adds Poisson noise to observed I.
-        """
-        x, data = super().gen_data()
-
-        if data.dim() > 2 and data.shape[-1] == 1:
-            data = data.squeeze(-1)
-
-        I_scaled = data[:, 1].clamp_min(0.0)
-        I_physical = self.scaler.inverse_values(I_scaled)
-        I_obs_physical = torch.poisson(I_physical / self.data_noise_level) * self.data_noise_level
-        I_obs_scaled = self.scaler.transform_values(I_obs_physical)
-
-        return x, I_obs_scaled.unsqueeze(-1)
-
-    @override
-    def load_data(self, ingestion: IngestionConfig) -> tuple[Tensor, Tensor]:
-        x, obs = super().load_data(ingestion)
-        I_obs = (obs.squeeze(-1))[:, 0]
-        return x, I_obs.unsqueeze(-1)
-
-
-class ReducedSIRInvCollocationset(Dataset[Tensor]):
-    """
-    Generates collocation points, sampled logarithmically to focus on early dynamics.
+    DataModule for the Reduced SIR Inverse problem.
     """
 
     def __init__(
         self,
         props: ReducedSIRInvProperties,
         hp: ReducedSIRInvHyperparameters,
-        scaler: LinearScaler,
     ):
-        self.domain = props.domain
-        self.collocations = hp.data.collocations
-        t = self.gen_coll()
+        super().__init__(hp)
+        self.props = props
+        self.hp = hp
 
-        self.t = scaler.transform_domain(t)
-
-    def gen_coll(self) -> Tensor:
-        t0_s = torch.log1p(torch.tensor(self.domain.x0, dtype=torch.float32))
-        t1_s = torch.log1p(torch.tensor(self.domain.x1, dtype=torch.float32))
-        t_s = torch.rand((self.collocations, 1)) * (t1_s - t0_s) + t0_s
+    @override
+    def gen_coll(self, context: InferredContext) -> Tensor:
+        """Generate collocation points."""
+        t0_s = torch.log1p(torch.tensor(context.domain.x0, dtype=torch.float32))
+        t1_s = torch.log1p(torch.tensor(context.domain.x1, dtype=torch.float32))
+        t_s = torch.rand((self.hp.training_data.collocations, 1)) * (t1_s - t0_s) + t0_s
         t = torch.expm1(t_s)
         return t
 
     @override
-    def __getitem__(self, idx: int) -> Tensor:
-        return self.t[idx]
+    def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
+        """Generate synthetic data."""
+        args = self.props.args.copy()
+        args.update(config.args_to_train)
 
-    def __len__(self) -> int:
-        return len(self.t)
-
-
-class ReducedSIRInvDataModule(PINNDataModule):
-    """
-    DataModule for Reduced SIR Inverse problem.
-    """
-
-    def __init__(
-        self,
-        props: ReducedSIRInvProperties,
-        hp: ReducedSIRInvHyperparameters,
-        scaler: LinearScaler,
-    ):
-        super().__init__()
-        self.props = props
-        self.hp = hp
-        self.scaler = scaler
-
-    @override
-    def setup(self, stage: str | None = None) -> None:
-        self.data_ds = ReducedSIRInvDataset(
-            self.props,
-            self.hp,
-            self.scaler,
+        data = odeint(
+            lambda x, y: self.props.ode(x, y, args),
+            config.y0,
+            config.x,
         )
-        self.coll_ds = ReducedSIRInvCollocationset(
-            self.props,
-            self.hp,
-            self.scaler,
-        )
-        self.pinn_ds = PINNDataset(
-            data_ds=self.data_ds,
-            coll_ds=self.coll_ds,
-            batch_size=self.hp.data.batch_size,
-            data_ratio=self.hp.data.data_ratio,
-        )
+
+        I_true = data[:, 1].clamp_min(0.0)
+        I_obs = torch.poisson(I_true / config.data_noise_level) * config.data_noise_level
+
+        return config.x.unsqueeze(-1), I_obs.unsqueeze(-1)

@@ -1,28 +1,25 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Literal, Protocol, TypeAlias, cast, override
+from pathlib import Path
+from typing import TYPE_CHECKING, Literal, Protocol, TypeAlias, cast, override
 
 import torch
 from torch import Tensor
 import torch.nn as nn
 
+from pinn.core.config import Activations, MLPConfig, ScalarConfig
 from pinn.core.dataset import DataBatch, PINNBatch
+from pinn.core.validation import resolve_validation_registry
+
+if TYPE_CHECKING:
+    from pinn.core.validation import ResolvedValidation, ValidationRegistry
 
 LOSS_KEY = "loss"
 """Key used for logging the total loss."""
 
-Activations: TypeAlias = Literal[
-    "tanh",
-    "relu",
-    "leaky_relu",
-    "sigmoid",
-    "selu",
-    "softplus",
-    "identity",
-]
-"""Supported activation functions."""
 
 Predictions: TypeAlias = tuple[DataBatch, dict[str, Tensor], dict[str, Tensor] | None]
 """Type alias for model predictions: (input_batch, results_dictionary, true_values_dictionary)."""
@@ -45,6 +42,22 @@ class LogFn(Protocol):
         ...
 
 
+@dataclass
+class Domain1D:
+    """
+    One-dimensional domain: time interval [x0, x1] with step size dx.
+
+    Attributes:
+        x0: Start of the interval.
+        x1: End of the interval.
+        dx: Step size for discretization (if applicable).
+    """
+
+    x0: float
+    x1: float
+    dx: float
+
+
 def get_activation(name: Activations) -> nn.Module:
     """
     Get the activation function module by name.
@@ -64,61 +77,6 @@ def get_activation(name: Activations) -> nn.Module:
         "softplus": nn.Softplus(),
         "identity": nn.Identity(),
     }[name]
-
-
-def identity(x: Tensor) -> Tensor:
-    """
-    Identity function for tensors.
-
-    Args:
-        x: Input tensor.
-
-    Returns:
-        The input tensor unchanged.
-    """
-    return x
-
-
-@dataclass
-class MLPConfig:
-    """
-    Configuration for a Multi-Layer Perceptron (MLP).
-
-    Attributes:
-        in_dim: Dimension of input layer.
-        out_dim: Dimension of output layer.
-        hidden_layers: List of dimensions for hidden layers.
-        activation: Activation function to use between layers.
-        output_activation: Optional activation function for the output layer.
-        encode: Optional function to encode inputs before passing to MLP.
-        true_fn: Optional function providing ground truth values for logging/validation.
-        name: Name of the field or parameter.
-    """
-
-    in_dim: int
-    out_dim: int
-    hidden_layers: list[int]
-    activation: Activations
-    output_activation: Activations | None = None
-    encode: Callable[[Tensor], Tensor] | None = None
-    true_fn: Callable[[Tensor], Tensor] | None = None  # for logging
-    name: str = "u"
-
-
-@dataclass
-class ScalarConfig:
-    """
-    Configuration for a scalar parameter.
-
-    Attributes:
-        init_value: Initial value for the parameter.
-        true_value: Optional true value for logging/validation.
-        name: Name of the parameter.
-    """
-
-    init_value: float
-    true_value: float | None
-    name: str = "p"
 
 
 class Field(nn.Module):
@@ -232,7 +190,6 @@ class Parameter(nn.Module, Argument):
         self.config = config
         self._name = config.name
         self._mode: Literal["scalar", "mlp"]
-        self.scaler: Scaler | None = None
 
         if isinstance(config, ScalarConfig):
             self._mode = "scalar"
@@ -288,38 +245,7 @@ class Parameter(nn.Module, Argument):
             return self.value if x is None else self.value.expand_as(x)
         else:
             assert x is not None, "Function-valued parameter requires input"
-            if self.scaler is not None:
-                x = self.scaler.transform_domain(x)
             return cast(Tensor, self.net(x))
-
-    def true_values(self, x_coll: Tensor) -> Tensor | None:
-        """
-        Get the true values of the parameter.
-        """
-        if isinstance(self.config, ScalarConfig) and self.config.true_value is not None:
-            return torch.tensor(self.config.true_value, device=x_coll.device)
-        elif isinstance(self.config, MLPConfig) and self.config.true_fn is not None:
-            return self.config.true_fn(x_coll)
-        return None
-
-    def log_loss(self, x_coll: Tensor) -> Tensor | None:
-        """
-        Calculate loss against true value (if available) for logging purposes.
-
-        Args:
-            x_coll: Collocation points (used for 'mlp' mode comparison).
-
-        Returns:
-            The error/loss value, or None if no true value is configured.
-        """
-        true = self.true_values(x_coll)
-        if true is None:
-            return None
-
-        if self.mode == "scalar":
-            return torch.abs(true - self.value)
-
-        return cast(Tensor, torch.norm(true - self(x_coll)))
 
 
 ArgsRegistry = dict[str, Argument]
@@ -327,12 +253,23 @@ ParamsRegistry = dict[str, Parameter]
 FieldsRegistry = dict[str, Field]
 
 
-class Constraint(Protocol):
+class Constraint(ABC):
     """
-    Protocol for a constraint (loss term) in the PINN.
+    Abstract base class for a constraint (loss term) in the PINN.
     Returns a loss value for the given batch.
     """
 
+    def inject_context(self, context: InferredContext) -> None:
+        """
+        Inject the context into the constraint. This can be used by the constraint to access the
+        data used to compute the loss.
+
+        Args:
+            context: The context to inject.
+        """
+        return None
+
+    @abstractmethod
     def loss(
         self,
         batch: PINNBatch,
@@ -350,42 +287,58 @@ class Constraint(Protocol):
         Returns:
             The calculated loss tensor.
         """
-        ...
 
 
-class Scaler(Protocol):
+@dataclass
+class InferredContext:
     """
-    Protocol for scaling/normalizing domain and values.
+    Runtime context inferred from training data.
+
+    This holds the domain, initial conditions, and scaler that are either
+    explicitly provided in props or inferred from training data.
     """
 
-    def transform_domain(self, domain: Tensor) -> Tensor:
-        """Transform domain coordinates to scaled space."""
-        ...
+    domain: Domain1D
+    Y0: Tensor
 
-    def inverse_domain(self, domain: Tensor) -> Tensor:
-        """Inverse transform domain coordinates from scaled space."""
-        ...
+    @classmethod
+    def from_data(
+        cls,
+        x: Tensor,
+        y: Tensor,
+    ) -> InferredContext:
+        """
+        Infer context from either generated or loaded data.
 
-    def transform_values(self, values: Tensor) -> Tensor:
-        """Transform field values to scaled space."""
-        ...
+        Args:
+            x_raw: Loaded x coordinates (unscaled).
+            y_raw: Loaded observations (unscaled).
 
-    def inverse_values(self, values: Tensor) -> Tensor:
-        """Inverse transform field values from scaled space."""
-        ...
+        Returns:
+            InferredContext with domain, Y0, and scaler.
+        """
+        assert x.shape[0] > 1, "At least two points are required to infer the domain."
+        x0 = x[0].item()
+        x1 = x[-1].item()
+        dx = (x[1] - x[0]).item()
+        domain = Domain1D(x0=x0, x1=x1, dx=dx)
+
+        Y0 = y[0].clone()
+
+        return cls(domain=domain, Y0=Y0)
 
 
 class Problem(nn.Module):
     """
     Aggregates operator residuals and constraints into total loss.
-    Manages fields, parameters, and constraints.
+    Manages fields, parameters, constraints, and validation.
 
     Args:
         constraints: List of constraints to enforce.
         criterion: Loss function module.
         fields: List of fields (neural networks) to solve for.
         params: List of learnable parameters.
-        scaler: Optional scaler for normalization.
+        validation: Optional registry mapping parameter names to validation sources.
     """
 
     def __init__(
@@ -394,7 +347,7 @@ class Problem(nn.Module):
         criterion: nn.Module,
         fields: list[Field],
         params: list[Parameter],
-        scaler: Scaler | None = None,
+        validation: ValidationRegistry | None = None,
     ):
         super().__init__()
         self.constraints = constraints
@@ -405,10 +358,68 @@ class Problem(nn.Module):
         self._fields = nn.ModuleList(fields)
         self._params = nn.ModuleList(params)
 
-        if scaler is not None:
-            for param in self.params:
-                param.scaler = scaler
-        self.scaler = scaler
+        self._validation: ValidationRegistry = validation or {}
+        self._resolved_validation: ResolvedValidation = {}
+
+    def inject_context(self, context: InferredContext) -> None:
+        """
+        Inject the context into the problem.
+
+        Args:
+            context: The context to inject.
+        """
+        self.context = context
+        for c in self.constraints:
+            c.inject_context(context)
+
+    def resolve_validation(self, df_path: Path | None = None) -> None:
+        """
+        Resolve ColumnRef entries in the validation registry to callables.
+
+        This should be called after data is loaded but before training starts.
+        Pure function entries are passed through unchanged.
+
+        Args:
+            df_path: Path to the CSV file for ColumnRef resolution.
+        """
+
+        self._resolved_validation = resolve_validation_registry(
+            self._validation,
+            df_path,
+        )
+
+    def get_true_values(self, param_name: str, x: Tensor) -> Tensor | None:
+        """
+        Get the ground truth values for a parameter at given coordinates.
+
+        Args:
+            param_name: Name of the parameter.
+            x: Input coordinates.
+
+        Returns:
+            Ground truth values, or None if no validation source is configured.
+        """
+        if param_name not in self._resolved_validation:
+            return None
+        return self._resolved_validation[param_name](x)
+
+    def compute_validation_loss(self, param: Parameter, x_coll: Tensor) -> Tensor | None:
+        """
+        Compute validation loss for a parameter against ground truth.
+
+        Args:
+            param: The parameter to compute validation loss for.
+            x_coll: The input coordinates.
+
+        Returns:
+            Loss value, or None if no validation source is configured.
+        """
+        true = self.get_true_values(param.name, x_coll)
+        if true is None:
+            return None
+
+        pred = param(x_coll)
+        return cast(Tensor, torch.norm(true - pred))
 
     def total_loss(self, batch: PINNBatch, log: LogFn | None = None) -> Tensor:
         """
@@ -429,7 +440,7 @@ class Problem(nn.Module):
 
         if log is not None:
             for param in self.params:
-                param_loss = param.log_loss(x_coll)
+                param_loss = self.compute_validation_loss(param, x_coll)
                 if param_loss is not None:
                     log(f"loss/{param.name}", param_loss, progress_bar=True)
 
@@ -448,19 +459,19 @@ class Problem(nn.Module):
         Returns:
             Tuple of (original_batch, predictions_dict, true_values_dict).
         """
-        inv_d = self.scaler.inverse_domain if self.scaler else identity
-        inv_v = self.scaler.inverse_values if self.scaler else identity
 
         x, y = batch
 
-        batch = (inv_d(x).squeeze(-1), inv_v(y).squeeze(-1))
+        batch = (x.squeeze(-1), y.squeeze(-1))
 
-        preds = {f.name: inv_v(f(x)).squeeze(-1) for f in self.fields}
+        preds = {f.name: f(x).squeeze(-1) for f in self.fields}
 
-        # params will transform x_data again under the hood
-        x_orig = inv_d(x)
-        preds |= {p.name: p(x_orig).squeeze(-1) for p in self.params}
+        preds |= {p.name: p(x).squeeze(-1) for p in self.params}
 
-        trues = {p.name: tv for p in self.params if (tv := p.true_values(x_orig)) is not None}
+        trues = {
+            p.name: true_val.squeeze(-1)
+            for p in self.params
+            if (true_val := self.get_true_values(p.name, x)) is not None
+        }
 
         return batch, preds, trues or None

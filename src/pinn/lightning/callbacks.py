@@ -8,8 +8,7 @@ from lightning.pytorch import LightningModule, Trainer
 from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProgressBar
 import torch
 
-from pinn.core import Predictions
-from pinn.lightning.module import SMMAStoppingConfig
+from pinn.core import Predictions, SMMAStoppingConfig
 
 SMMA_KEY = "loss/smma"
 

@@ -1,98 +1,15 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, cast, override
+from typing import cast, override
 
 import lightning.pytorch as pl
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 import torch
 from torch import Tensor
 
-from pinn.core import (
-    LOSS_KEY,
-    DataBatch,
-    LogFn,
-    MLPConfig,
-    PINNBatch,
-    Predictions,
-    Problem,
-    ScalarConfig,
-)
-
-
-@dataclass(kw_only=True)
-class SchedulerConfig:
-    """
-    Configuration for Learning Rate Scheduler (ReduceLROnPlateau).
-    """
-
-    mode: Literal["min", "max"]
-    factor: float
-    patience: int
-    threshold: float
-    min_lr: float
-
-
-@dataclass(kw_only=True)
-class EarlyStoppingConfig:
-    """
-    Configuration for Early Stopping callback.
-    """
-
-    patience: int
-    mode: Literal["min", "max"]
-
-
-@dataclass(kw_only=True)
-class SMMAStoppingConfig:
-    """
-    Configuration for Simple Moving Average Stopping callback.
-    """
-
-    window: int
-    threshold: float
-    lookback: int
-
-
-@dataclass(kw_only=True)
-class IngestionConfig:
-    """
-    Configuration for data ingestion from files.
-    If x_column is None, the data is assumed to be evenly spaced.
-    """
-
-    df_path: Path
-    x_column: str | None = None
-    y_columns: list[str]
-
-
-@dataclass(kw_only=True)
-class DataConfig:
-    """
-    Configuration for data loading and batching.
-    """
-
-    batch_size: int
-    data_ratio: int | float
-    data_noise_level: float
-    collocations: int
-
-
-@dataclass(kw_only=True)
-class PINNHyperparameters:
-    """
-    Aggregated hyperparameters for the PINN model.
-    """
-
-    lr: float
-    data: DataConfig
-    fields_config: MLPConfig
-    params_config: MLPConfig | ScalarConfig
-    scheduler: SchedulerConfig | None = None
-    early_stopping: EarlyStoppingConfig | None = None
-    smma_stopping: SMMAStoppingConfig | None = None
-    ingestion: IngestionConfig | None = None
+from pinn.core import LOSS_KEY, DataBatch, LogFn, PINNBatch, Predictions, Problem
+from pinn.core.config import IngestionConfig, PINNHyperparameters
 
 
 class PINNModule(pl.LightningModule):
@@ -124,10 +41,32 @@ class PINNModule(pl.LightningModule):
                 on_step=False,
                 on_epoch=True,
                 prog_bar=progress_bar,
-                batch_size=hp.data.batch_size,
+                batch_size=hp.training_data.batch_size,
             )
 
         self._log = cast(LogFn, _log)
+
+    def _get_df_path(self) -> Path | None:
+        """Get df_path from training_data if it's an IngestionConfig."""
+        training_data = self.hp.training_data
+        if isinstance(training_data, IngestionConfig):
+            return training_data.df_path
+        return None
+
+    @override
+    def on_fit_start(self) -> None:
+        """
+        Called when fit begins. Resolves validation sources using loaded data.
+        """
+        self.problem.resolve_validation(self._get_df_path())
+        self.problem.inject_context(self.trainer.datamodule.context)  # type: ignore
+
+    @override
+    def on_predict_start(self) -> None:
+        """
+        Called when predict begins. Resolves validation sources using loaded data.
+        """
+        self.problem.resolve_validation(self._get_df_path())
 
     @override
     def training_step(self, batch: PINNBatch, batch_idx: int) -> Tensor:
