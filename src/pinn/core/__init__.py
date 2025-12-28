@@ -1,22 +1,6 @@
 """Core PINN building blocks."""
 
-from pinn.core.base import (
-    LOSS_KEY,
-    ArgsRegistry,
-    Argument,
-    Constraint,
-    Field,
-    FieldsRegistry,
-    InferredContext,
-    LogFn,
-    Parameter,
-    ParamsRegistry,
-    Predictions,
-    Problem,
-    get_activation,
-)
 from pinn.core.config import (
-    Activations,
     EarlyStoppingConfig,
     GenerationConfig,
     IngestionConfig,
@@ -27,7 +11,20 @@ from pinn.core.config import (
     SMMAStoppingConfig,
     TrainingDataConfig,
 )
-from pinn.core.dataset import DataBatch, DataCallback, PINNBatch, PINNDataModule, PINNDataset
+from pinn.core.context import InferredContext
+from pinn.core.dataset import DataCallback, PINNDataModule, PINNDataset
+from pinn.core.nn import (
+    ArgsRegistry,
+    Argument,
+    Domain1D,
+    Field,
+    FieldsRegistry,
+    Parameter,
+    ParamsRegistry,
+    get_activation,
+)
+from pinn.core.problem import Constraint, Problem
+from pinn.core.types import LOSS_KEY, Activations, DataBatch, LogFn, PINNBatch, Predictions
 from pinn.core.validation import (
     ColumnRef,
     ResolvedValidation,
@@ -39,13 +36,13 @@ from pinn.core.validation import (
 __all__ = [
     "LOSS_KEY",
     "Activations",
-    "Activations",
     "ArgsRegistry",
     "Argument",
     "ColumnRef",
     "Constraint",
     "DataBatch",
     "DataCallback",
+    "Domain1D",
     "EarlyStoppingConfig",
     "Field",
     "FieldsRegistry",
@@ -65,8 +62,6 @@ __all__ = [
     "ResolvedValidation",
     "SMMAStoppingConfig",
     "ScalarConfig",
-    "ScalarConfig",
-    "Scaler",
     "SchedulerConfig",
     "TrainingDataConfig",
     "ValidationRegistry",

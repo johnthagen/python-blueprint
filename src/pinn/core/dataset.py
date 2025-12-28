@@ -1,6 +1,8 @@
+"""Data handling for PINN training."""
+
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Protocol, TypeAlias, cast, override, runtime_checkable
+from typing import Protocol, cast, override, runtime_checkable
 
 import lightning as pl
 import pandas as pd
@@ -8,13 +10,9 @@ import torch
 from torch import Tensor
 from torch.utils.data import DataLoader, Dataset, TensorDataset
 
-from pinn.core import GenerationConfig, InferredContext, IngestionConfig, PINNHyperparameters
-
-DataBatch: TypeAlias = tuple[Tensor, Tensor]
-"""Type alias for data batch: (x, y)."""
-
-PINNBatch: TypeAlias = tuple[DataBatch, Tensor]
-"""Batch tuple: ((t_data, y_data), t_coll)."""
+from pinn.core.config import GenerationConfig, IngestionConfig, PINNHyperparameters
+from pinn.core.context import InferredContext
+from pinn.core.types import DataBatch, PINNBatch
 
 
 @runtime_checkable

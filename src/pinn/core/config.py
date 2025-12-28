@@ -1,22 +1,18 @@
+"""Configuration dataclasses for PINN models."""
+
+from __future__ import annotations
+
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, TypeAlias
+from typing import TYPE_CHECKING, Literal
 
 from torch import Tensor
 
-from pinn.core import ArgsRegistry
+from pinn.core.types import Activations
 
-Activations: TypeAlias = Literal[
-    "tanh",
-    "relu",
-    "leaky_relu",
-    "sigmoid",
-    "selu",
-    "softplus",
-    "identity",
-]
-"""Supported activation functions."""
+if TYPE_CHECKING:
+    from pinn.core.nn import ArgsRegistry
 
 
 @dataclass(kw_only=True)
