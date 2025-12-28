@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 import shutil
 from typing import Any
@@ -16,18 +16,21 @@ import seaborn as sns
 
 from pinn.core import (
     LOSS_KEY,
+    Argument,
     ColumnRef,
+    Field,
     IngestionConfig,
     MLPConfig,
+    Parameter,
     Predictions,
     SchedulerConfig,
     SMMAStoppingConfig,
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
-from pinn.lightning.callbacks import FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem, SIRInvProperties
-from pinn.problems.sir_inverse import BETA_KEY, I_KEY, S_KEY
+from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
+from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
+from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY, SIR
 
 # ============================================================================
 # Configuration
@@ -76,7 +79,7 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
 
 
 def execute(
-    props: SIRInvProperties,
+    props: ODEProperties,
     hp: SIRInvHyperparameters,
     config: SIRInvTrainConfig,
     validation: ValidationRegistry,
@@ -91,11 +94,21 @@ def execute(
     dm = SIRInvDataModule(
         props=props,
         hp=hp,
+        callbacks=[
+            DataScaling(scale=1 / 1e5),
+        ],
     )
+
+    # define problem
+    S_field = Field(config=replace(hp.fields_config, name=S_KEY))
+    I_field = Field(config=replace(hp.fields_config, name=I_KEY))
+    beta = Parameter(config=replace(hp.params_config, name=BETA_KEY))
 
     problem = SIRInvProblem(
         props=props,
         hp=hp,
+        fields=[S_field, I_field],
+        params=[beta],
         validation=validation,
     )
 
@@ -187,14 +200,16 @@ def execute(
 def plot_and_save(
     predictions: Predictions,
     predictions_dir: Path,
-    props: SIRInvProperties,
+    props: ODEProperties,
 ) -> None:
     batch, preds, trues = predictions
     t_data, I_data = batch
 
+    N = props.args[N_KEY](t_data)
+
     S_pred = preds[S_KEY]
     I_pred = preds[I_KEY]
-    R_pred = props.N - S_pred - I_pred
+    R_pred = N - S_pred - I_pred
 
     beta_pred = preds[BETA_KEY]
     beta_true = trues[BETA_KEY] if trues else None
@@ -267,7 +282,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    run_name = "v2"
+    run_name = "v3"
 
     results_dir = Path("./results")
 
@@ -290,9 +305,6 @@ if __name__ == "__main__":
     # Experiment Configuration
     # ========================================================================
 
-    delta = 1 / 5
-    data_path = Path("./data/real_data.csv")
-
     config = SIRInvTrainConfig(
         max_epochs=1000,
         gradient_clip_val=0.1,
@@ -305,16 +317,6 @@ if __name__ == "__main__":
     )
 
     # ========================================================================
-    # Problem Properties - only define TRUE constants!
-    # Domain, Y0 are inferred from training data.
-    # beta is learned, not defined here.
-    # ========================================================================
-    props = SIRInvProperties(
-        N=56e6,
-        delta=delta,
-    )
-
-    # ========================================================================
     # Hyperparameters
     # ========================================================================
     hp = SIRInvHyperparameters(
@@ -324,7 +326,7 @@ if __name__ == "__main__":
             data_ratio=2,
             data_noise_level=1.0,
             collocations=6000,
-            df_path=data_path,
+            df_path=Path("./data/real_data.csv"),
             y_columns=["I_obs"],
         ),
         fields_config=MLPConfig(
@@ -356,6 +358,20 @@ if __name__ == "__main__":
         pde_weight=100.0,
         ic_weight=1,
         data_weight=1,
+    )
+
+    # ========================================================================
+    # Problem Properties - only true constants are defined
+    # Domain, Y0 are inferred from training data.
+    # beta is learned, not defined here.
+    # ========================================================================
+    delta = 1 / 5
+    props = ODEProperties(
+        ode=SIR,
+        args={
+            DELTA_KEY: Argument(delta, name=DELTA_KEY),
+            N_KEY: Argument(56e6, name=N_KEY),
+        },
     )
 
     # ========================================================================

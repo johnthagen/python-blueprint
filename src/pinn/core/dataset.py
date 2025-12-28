@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import TypeAlias, cast, override
+from collections.abc import Sequence
+from typing import Protocol, TypeAlias, cast, override, runtime_checkable
 
 import lightning as pl
 import pandas as pd
@@ -16,6 +17,15 @@ PINNBatch: TypeAlias = tuple[DataBatch, Tensor]
 """Batch tuple: ((t_data, y_data), t_coll)."""
 
 
+@runtime_checkable
+class DataCallback(Protocol):
+    """Abstract base class for building new data callbacks."""
+
+    def on_data(self, dm: "PINNDataModule", stage: str | None = None) -> None:
+        """Called after data is loaded and before context is created."""
+        ...
+
+
 class PINNDataset(Dataset[PINNBatch]):
     """
     Dataset used for PINN training. Combines labeled data and collocation points
@@ -29,8 +39,9 @@ class PINNDataset(Dataset[PINNBatch]):
     The dataset produces a batch of shape ((t_data[K,1], y_data[K,1]), t_coll[C,1]).
 
     Args:
-        data_ds: Dataset of data points.
-        coll_ds: Dataset of collocation points.
+        x_data: Data point x coordinates (time values).
+        y_data: Data point y values (observations).
+        x_coll: Collocation point x coordinates.
         batch_size: Size of the batch.
         data_ratio: Ratio of data points to collocation points, either as a ratio [0,1] or absolute
             count [0,batch_size].
@@ -110,11 +121,17 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         data_ds: Dataset containing observed data.
         coll_ds: Dataset containing collocation points.
         pinn_ds: Combined PINNDataset for training.
+        callbacks: Sequence of DataCallback callbacks applied after data loading.
     """
 
-    def __init__(self, hp: PINNHyperparameters) -> None:
+    def __init__(
+        self,
+        hp: PINNHyperparameters,
+        callbacks: Sequence[DataCallback] | None = None,
+    ) -> None:
         super().__init__()
         self.hp = hp
+        self.callbacks: list[DataCallback] = list(callbacks) if callbacks else []
 
     def load_data(self, ingestion: IngestionConfig) -> tuple[Tensor, Tensor]:
         """Load raw data from IngestionConfig."""
@@ -139,13 +156,18 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
     @override
     def setup(self, stage: str | None = None) -> None:
-        """Create InferredContext and datasets."""
-        """Load raw data from IngestionConfig, or generate synthetic data from GenerationConfig."""
+        """
+        Load raw data from IngestionConfig, or generate synthetic data from GenerationConfig.
+        Apply registered callbacks, create InferredContext and datasets.
+        """
         self.x_loaded, self.y_loaded = (
             self.load_data(self.hp.training_data)
             if isinstance(self.hp.training_data, IngestionConfig)
             else self.gen_data(self.hp.training_data)
         )
+
+        for callback in self.callbacks:
+            callback.on_data(self, stage)
 
         assert self.x_loaded.shape[0] == self.y_loaded.shape[0], (
             "Size mismatch between x_loaded and y_loaded."
@@ -167,6 +189,16 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             self.x_loaded,
             self.y_loaded,
         )
+
+    @property
+    def data(self) -> tuple[Tensor, Tensor]:
+        """Get loaded data tensors."""
+        return self.x_loaded, self.y_loaded
+
+    @data.setter
+    def data(self, value: tuple[Tensor, Tensor]) -> None:
+        """Set loaded data tensors."""
+        self.x_loaded, self.y_loaded = value
 
     @property
     def context(self) -> InferredContext:

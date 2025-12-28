@@ -311,8 +311,8 @@ class InferredContext:
         Infer context from either generated or loaded data.
 
         Args:
-            x_raw: Loaded x coordinates (unscaled).
-            y_raw: Loaded observations (unscaled).
+            x: Loaded x coordinates (unscaled).
+            y: Loaded observations (unscaled).
 
         Returns:
             InferredContext with domain, Y0, and scaler.

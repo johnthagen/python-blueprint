@@ -8,7 +8,7 @@ from lightning.pytorch import LightningModule, Trainer
 from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProgressBar
 import torch
 
-from pinn.core import Predictions, SMMAStoppingConfig
+from pinn.core import DataCallback, PINNDataModule, Predictions, SMMAStoppingConfig
 
 SMMA_KEY = "loss/smma"
 
@@ -167,3 +167,19 @@ class PredictionsWriter(BasePredictionWriter):
 
         if self.batch_indices_path is not None:
             torch.save(batch_indices, self.batch_indices_path)
+
+
+class DataScaling(DataCallback):
+    """
+    Callback to scale the data.
+    """
+
+    def __init__(self, scale: float):
+        super().__init__()
+        self.scale = scale
+
+    @override
+    def on_data(self, dm: PINNDataModule, stage: str | None = None) -> None:
+        """Scale the data."""
+        (x, y) = dm.data
+        dm.data = (x * self.scale, y * self.scale)

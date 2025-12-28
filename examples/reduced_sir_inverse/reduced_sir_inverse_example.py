@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 import shutil
 from typing import Any
@@ -16,23 +16,21 @@ import seaborn as sns
 
 from pinn.core import (
     LOSS_KEY,
+    Argument,
     ColumnRef,
+    Field,
     IngestionConfig,
     MLPConfig,
+    Parameter,
     Predictions,
     SchedulerConfig,
     SMMAStoppingConfig,
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
-from pinn.lightning.callbacks import FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import (
-    ReducedSIRInvDataModule,
-    ReducedSIRInvHyperparameters,
-    ReducedSIRInvProblem,
-    ReducedSIRInvProperties,
-)
-from pinn.problems.reduced_sir_inverse import I_KEY, Rt_KEY
+from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
+from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
+from pinn.problems.sir_inverse import DELTA_KEY, I_KEY, Rt_KEY, rSIR
 
 # ============================================================================
 # Configuration
@@ -81,8 +79,8 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
 
 
 def execute(
-    props: ReducedSIRInvProperties,
-    hp: ReducedSIRInvHyperparameters,
+    props: ODEProperties,
+    hp: SIRInvHyperparameters,
     config: ReducedSIRInvTrainConfig,
     validation: ValidationRegistry,
     predict: bool = False,
@@ -93,14 +91,23 @@ def execute(
         clean_dir(config.csv_dir / config.experiment_name / config.run_name)
         clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
 
-    dm = ReducedSIRInvDataModule(
+    dm = SIRInvDataModule(
         props=props,
         hp=hp,
+        callbacks=[
+            DataScaling(scale=1 / 1e5),
+        ],
     )
 
-    problem = ReducedSIRInvProblem(
+    # define problem
+    I_field = Field(config=replace(hp.fields_config, name=I_KEY))
+    Rt = Parameter(config=replace(hp.params_config, name=Rt_KEY))
+
+    problem = SIRInvProblem(
         props=props,
         hp=hp,
+        fields=[I_field],
+        params=[Rt],
         validation=validation,
     )
 
@@ -192,7 +199,7 @@ def execute(
 def plot_and_save(
     predictions: Predictions,
     predictions_dir: Path,
-    props: ReducedSIRInvProperties,
+    props: ODEProperties,
 ) -> None:
     batch, preds, trues = predictions
     t_data, I_data = batch
@@ -288,18 +295,9 @@ if __name__ == "__main__":
     )
 
     # ========================================================================
-    # Problem Properties - only define TRUE constants!
-    # Domain, Y0 are inferred from training data.
-    # Rt is learned, not defined here.
-    # ========================================================================
-    props = ReducedSIRInvProperties(
-        delta=1 / 5,
-    )
-
-    # ========================================================================
     # Hyperparameters
     # ========================================================================
-    hp = ReducedSIRInvHyperparameters(
+    hp = SIRInvHyperparameters(
         lr=5e-4,
         training_data=IngestionConfig(
             batch_size=100,
@@ -335,6 +333,18 @@ if __name__ == "__main__":
             threshold=0.01,
             lookback=50,
         ),
+    )
+
+    # ========================================================================
+    # Problem Properties - only define TRUE constants!
+    # Domain, Y0 are inferred from training data.
+    # Rt is learned, not defined here.
+    # ========================================================================
+    props = ODEProperties(
+        ode=rSIR,
+        args={
+            DELTA_KEY: Argument(1 / 5, name=DELTA_KEY),
+        },
     )
 
     # ========================================================================

@@ -27,7 +27,7 @@ from pinn.core.config import (
     SMMAStoppingConfig,
     TrainingDataConfig,
 )
-from pinn.core.dataset import DataBatch, PINNBatch, PINNDataModule, PINNDataset
+from pinn.core.dataset import DataBatch, DataCallback, PINNBatch, PINNDataModule, PINNDataset
 from pinn.core.validation import (
     ColumnRef,
     ResolvedValidation,
@@ -45,6 +45,7 @@ __all__ = [
     "ColumnRef",
     "Constraint",
     "DataBatch",
+    "DataCallback",
     "EarlyStoppingConfig",
     "Field",
     "FieldsRegistry",

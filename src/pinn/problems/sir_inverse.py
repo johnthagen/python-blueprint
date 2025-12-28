@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from dataclasses import dataclass, field, replace
+from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import cast, override
 
 import torch
@@ -11,8 +11,8 @@ from torchdiffeq import odeint
 
 from pinn.core import (
     ArgsRegistry,
-    Argument,
     Constraint,
+    DataCallback,
     Field,
     FieldsRegistry,
     GenerationConfig,
@@ -23,19 +23,14 @@ from pinn.core import (
     Problem,
     ValidationRegistry,
 )
-from pinn.problems.ode import (
-    DataConstraint,
-    ICConstraint,
-    ODECallable,
-    ODEProperties,
-    ResidualsConstraint,
-)
+from pinn.problems.ode import DataConstraint, ICConstraint, ODEProperties, ResidualsConstraint
 
 S_KEY = "S"
 I_KEY = "I"
 BETA_KEY = "beta"
 DELTA_KEY = "delta"
 N_KEY = "N"
+Rt_KEY = "Rt"
 
 
 def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
@@ -43,6 +38,7 @@ def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     The SIR ODE system.
     dS/dt = -beta * S * I / N
     dI/dt = beta * S * I / N - delta * I
+    dR/dt = delta * I
 
     Args:
         x: Time variable.
@@ -60,27 +56,26 @@ def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     return torch.stack([dS, dI])
 
 
-@dataclass(kw_only=True)
-class SIRInvProperties(ODEProperties):
+def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     """
-    Properties specific to the SIR Inverse problem.
+    The reduced SIR ODE system.
+    dS/dt = -delta * R * I
+    dI/dt = delta * (R - 1) * I
 
-    Attributes:
-        N: Total population (constant).
-        delta: Recovery rate (constant or callable).
+    Args:
+        x: Time variable.
+        y: State variables [I].
+        args: Arguments dictionary (delta, Rt).
+
+    Returns:
+        Derivatives [dI/dt].
     """
+    I = y
+    d = args[DELTA_KEY]
+    Rt = args[Rt_KEY]
 
-    N: float
-    delta: float | Callable[[Tensor], Tensor]
-
-    ode: ODECallable = field(default_factory=lambda: SIR)
-    args: ArgsRegistry = field(default_factory=dict)
-
-    def __post_init__(self) -> None:
-        self.args = {
-            DELTA_KEY: Argument(self.delta, name=DELTA_KEY),
-            N_KEY: Argument(self.N, name=N_KEY),
-        }
+    dI = d(x) * (Rt(x) - 1) * I
+    return dI
 
 
 @dataclass(kw_only=True)
@@ -90,9 +85,9 @@ class SIRInvHyperparameters(PINNHyperparameters):
     """
 
     # TODO: implement adaptive weights
-    pde_weight: float
-    ic_weight: float
-    data_weight: float
+    pde_weight: float = 1.0
+    ic_weight: float = 1.0
+    data_weight: float = 1.0
 
 
 class SIRInvProblem(Problem):
@@ -103,14 +98,12 @@ class SIRInvProblem(Problem):
 
     def __init__(
         self,
-        props: SIRInvProperties,
+        props: ODEProperties,
         hp: SIRInvHyperparameters,
+        fields: list[Field],
+        params: list[Parameter],
         validation: ValidationRegistry | None = None,
     ) -> None:
-        S_field = Field(config=replace(hp.fields_config, name=S_KEY))
-        I_field = Field(config=replace(hp.fields_config, name=I_KEY))
-        beta = Parameter(config=replace(hp.params_config, name=BETA_KEY))
-
         def predict_data(t_data: Tensor, fields: FieldsRegistry) -> Tensor:
             I = fields[I_KEY]
             return cast(Tensor, I(t_data))
@@ -118,16 +111,16 @@ class SIRInvProblem(Problem):
         constraints: list[Constraint] = [
             ResidualsConstraint(
                 props=props,
-                fields=[S_field, I_field],
-                params=[beta],
+                fields=fields,
+                params=params,
                 weight=hp.pde_weight,
             ),
             ICConstraint(
-                fields=[S_field, I_field],
+                fields=fields,
                 weight=hp.ic_weight,
             ),
             DataConstraint(
-                fields=[S_field, I_field],
+                fields=fields,
                 predict_data=predict_data,
                 weight=hp.data_weight,
             ),
@@ -138,8 +131,8 @@ class SIRInvProblem(Problem):
         super().__init__(
             constraints=constraints,
             criterion=criterion,
-            fields=[S_field, I_field],
-            params=[beta],
+            fields=fields,
+            params=params,
             validation=validation,
         )
 
@@ -151,12 +144,12 @@ class SIRInvDataModule(PINNDataModule):
 
     def __init__(
         self,
-        props: SIRInvProperties,
+        props: ODEProperties,
         hp: SIRInvHyperparameters,
+        callbacks: Sequence[DataCallback] | None = None,
     ):
-        super().__init__(hp)
+        super().__init__(hp, callbacks)
         self.props = props
-        self.hp = hp
 
     @override
     def gen_coll(self, context: InferredContext) -> Tensor:
