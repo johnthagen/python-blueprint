@@ -21,11 +21,11 @@ DataBatch: TypeAlias = tuple[Tensor, Tensor]
 PINNBatch: TypeAlias = tuple[DataBatch, Tensor]
 """Batch tuple: ((t_data, y_data), t_coll)."""
 
-LOSS_KEY = "loss"
-"""Key used for logging the total loss."""
-
 Predictions: TypeAlias = tuple[DataBatch, dict[str, Tensor], dict[str, Tensor] | None]
 """Type alias for model predictions: (input_batch, results_dictionary, true_values_dictionary)."""
+
+LOSS_KEY = "loss"
+"""Key used for logging the total loss."""
 
 
 class LogFn(Protocol):

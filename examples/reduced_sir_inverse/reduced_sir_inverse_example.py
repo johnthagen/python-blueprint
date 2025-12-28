@@ -95,7 +95,7 @@ def execute(
         props=props,
         hp=hp,
         callbacks=[
-            DataScaling(scale=1 / 1e5),
+            DataScaling(scale=1 / 1e5, normalize_domain=True),
         ],
     )
 

@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TypeAlias, override
+from typing import Protocol, TypeAlias, override
 
 import torch
 from torch import Tensor
@@ -9,6 +9,7 @@ import torch.nn as nn
 from pinn.core import (
     ArgsRegistry,
     Constraint,
+    Domain1D,
     Field,
     FieldsRegistry,
     InferredContext,
@@ -17,11 +18,15 @@ from pinn.core import (
     PINNBatch,
 )
 
-ODECallable = Callable[[Tensor, Tensor, ArgsRegistry], Tensor]
-"""
-ODE function signature:
-    ode(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor
-"""
+
+class ODECallable(Protocol):
+    def __call__(
+        self,
+        x: Tensor,
+        y: Tensor,
+        args: ArgsRegistry,
+        domain: Domain1D,
+    ) -> Tensor: ...
 
 
 @dataclass
@@ -66,6 +71,12 @@ class ResidualsConstraint(Constraint):
         self.args = props.args.copy()
         self.args.update({p.name: p for p in params})
 
+    def inject_context(self, context: InferredContext) -> None:
+        """
+        Inject the domain form the problem context to pass it down to the ODE.
+        """
+        self.domain = context.domain
+
     @override
     def loss(
         self,
@@ -79,7 +90,7 @@ class ResidualsConstraint(Constraint):
         preds = [f(x_coll) for f in self.fields]
         y = torch.stack(preds)
 
-        dy_dt_pred = self.ode(x_coll, y, self.args)
+        dy_dt_pred = self.ode(x_coll, y, self.args, self.domain)
 
         dy_dt = torch.stack(
             [

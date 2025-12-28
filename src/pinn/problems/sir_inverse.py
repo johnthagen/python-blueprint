@@ -13,6 +13,7 @@ from pinn.core import (
     ArgsRegistry,
     Constraint,
     DataCallback,
+    Domain1D,
     Field,
     FieldsRegistry,
     GenerationConfig,
@@ -33,12 +34,16 @@ N_KEY = "N"
 Rt_KEY = "Rt"
 
 
-def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+def SIR(x: Tensor, y: Tensor, args: ArgsRegistry, _: Domain1D) -> Tensor:
     """
     The SIR ODE system.
-    dS/dt = -beta * S * I / N
-    dI/dt = beta * S * I / N - delta * I
-    dR/dt = delta * I
+    $$
+    \\begin{align}
+    \\frac{dS}{dt} &= -beta * S * I / N \\\\
+    \\frac{dI}{dt} &= beta * S * I / N - delta * I \\\\
+    \\frac{dR}{dt} &= delta * I \\\\
+    \\end{align}
+    $$
 
     Args:
         x: Time variable.
@@ -56,10 +61,16 @@ def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     return torch.stack([dS, dI])
 
 
-def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry, _: Domain1D) -> Tensor:
     """
     The reduced SIR ODE system.
-    dS/dt = -delta * R * I
+    $$
+    \\begin{align}
+    \\frac{dS}{dt} &= -delta * R * I \\
+    \\frac{dI}{dt} &= delta * (R - 1) * I \\
+    \\end{align}
+    $$
+
     dI/dt = delta * (R - 1) * I
 
     Args:
@@ -71,8 +82,7 @@ def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
         Derivatives [dI/dt].
     """
     I = y
-    d = args[DELTA_KEY]
-    Rt = args[Rt_KEY]
+    d, Rt = args[DELTA_KEY], args[Rt_KEY]
 
     dI = d(x) * (Rt(x) - 1) * I
     return dI
@@ -166,8 +176,13 @@ class SIRInvDataModule(PINNDataModule):
         args = self.props.args.copy()
         args.update(config.args_to_train)
 
+        # workaround to build a domain before the context is created
+        x0, xf = config.x[0].item(), config.x[-1].item()
+        dx = (config.x[1] - config.x[0]).item()
+        domain = Domain1D(x0=x0, x1=xf, dx=dx)
+
         data = odeint(
-            lambda x, y: self.props.ode(x, y, args),
+            lambda x, y: self.props.ode(x, y, args, domain),
             config.y0,
             config.x,
         )

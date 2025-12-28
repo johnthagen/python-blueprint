@@ -174,12 +174,18 @@ class DataScaling(DataCallback):
     Callback to scale the data.
     """
 
-    def __init__(self, scale: float):
+    def __init__(self, scale: float, normalize_domain: bool = False):
         super().__init__()
         self.scale = scale
+        self.normalize_domain = normalize_domain
 
     @override
     def on_data(self, dm: PINNDataModule, stage: str | None = None) -> None:
         """Scale the data."""
         (x, y) = dm.data
+
+        if self.normalize_domain:
+            x0, xf = x[0], x[-1]
+            x = (x - x0) / (xf - x0)
+
         dm.data = (x * self.scale, y * self.scale)

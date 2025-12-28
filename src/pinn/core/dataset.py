@@ -105,9 +105,8 @@ class PINNDataset(Dataset[PINNBatch]):
         if self.total_coll == 0:
             return torch.empty(0, 1)
 
-        temp_generator = torch.Generator()
-        temp_generator.manual_seed(idx)
-        return torch.randint(0, self.total_coll, (self.C,), generator=temp_generator)
+        temp_gen = torch.Generator().manual_seed(idx)
+        return torch.randint(0, self.total_coll, (self.C,), generator=temp_gen)
 
 
 class PINNDataModule(pl.LightningDataModule, ABC):
@@ -142,7 +141,10 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
         y = torch.tensor(df[ingestion.y_columns].values, dtype=torch.float32)
 
-        return x.unsqueeze(-1), y.unsqueeze(-1)
+        if y.shape[1] != 1:
+            y = y.unsqueeze(-1)
+
+        return x.unsqueeze(-1), y
 
     @abstractmethod
     def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:

@@ -13,11 +13,15 @@ from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import torch
+from torch import Tensor
 
 from pinn.core import (
     LOSS_KEY,
+    ArgsRegistry,
     Argument,
     ColumnRef,
+    Domain1D,
     Field,
     IngestionConfig,
     MLPConfig,
@@ -30,7 +34,7 @@ from pinn.core import (
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
 from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
-from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY, SIR
+from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY
 
 # ============================================================================
 # Configuration
@@ -95,7 +99,7 @@ def execute(
         props=props,
         hp=hp,
         callbacks=[
-            DataScaling(scale=1 / 1e5),
+            DataScaling(scale=1 / 1e5, normalize_domain=True),
         ],
     )
 
@@ -350,11 +354,11 @@ if __name__ == "__main__":
             threshold=5e-3,
             min_lr=1e-6,
         ),
-        smma_stopping=SMMAStoppingConfig(
-            window=50,
-            threshold=0.1,
-            lookback=50,
-        ),
+        # smma_stopping=SMMAStoppingConfig(
+        #     window=50,
+        #     threshold=0.1,
+        #     lookback=50,
+        # ),
         pde_weight=100.0,
         ic_weight=1,
         data_weight=1,
@@ -365,9 +369,24 @@ if __name__ == "__main__":
     # Domain, Y0 are inferred from training data.
     # beta is learned, not defined here.
     # ========================================================================
+
+    def SIR_s(x: Tensor, y: Tensor, args: ArgsRegistry, domain: Domain1D) -> Tensor:
+        S, I = y
+        b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
+
+        C = 1e5
+        x0, xf = domain.x0, domain.x1
+
+        C1 = (xf - x0) * C / N(x)
+        C2 = (xf - x0) * d(x) * C
+
+        dS = -C1 * b(x) * I * S
+        dI = C1 * b(x) * I * S - C2 * I
+        return torch.stack([dS, dI])
+
     delta = 1 / 5
     props = ODEProperties(
-        ode=SIR,
+        ode=SIR_s,
         args={
             DELTA_KEY: Argument(delta, name=DELTA_KEY),
             N_KEY: Argument(56e6, name=N_KEY),
@@ -379,6 +398,7 @@ if __name__ == "__main__":
     # This defines ground truth for logging/validation.
     # Resolved lazily when data is loaded.
     # ========================================================================
+
     validation: ValidationRegistry = {
         BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * delta),
     }
