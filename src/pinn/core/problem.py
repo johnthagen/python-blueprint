@@ -189,10 +189,7 @@ class Problem(nn.Module):
 
         x, y = batch
 
-        batch = (x.squeeze(-1), y.squeeze(-1))
-
         preds = {f.name: f(x).squeeze(-1) for f in self.fields}
-
         preds |= {p.name: p(x).squeeze(-1) for p in self.params}
 
         trues = {
@@ -200,5 +197,7 @@ class Problem(nn.Module):
             for p in self.params
             if (true_val := self.get_true_values(p.name, x)) is not None
         }
+
+        batch = (x.squeeze(-1), y.squeeze(-1))
 
         return batch, preds, trues or None

@@ -28,7 +28,6 @@ from pinn.core import (
     Parameter,
     Predictions,
     SchedulerConfig,
-    SMMAStoppingConfig,
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
@@ -49,10 +48,10 @@ class SIRInvTrainConfig:
     run_name: str
     tensorboard_dir: Path
     csv_dir: Path
-    saved_models_dir: Path
+    model_path: Path
     predictions_dir: Path
     checkpoint_dir: Path
-    experiment_name: str = ""  # empty string defaults to no experiments
+    experiment_name: str
 
 
 # ============================================================================
@@ -89,7 +88,6 @@ def execute(
     validation: ValidationRegistry,
     predict: bool = False,
 ) -> None:
-    model_path = config.saved_models_dir / f"{config.run_name}.ckpt"
     clean_dir(config.checkpoint_dir)
     if not predict:
         clean_dir(config.csv_dir / config.experiment_name / config.run_name)
@@ -118,7 +116,7 @@ def execute(
 
     if predict:
         module = PINNModule.load_from_checkpoint(
-            model_path,
+            config.model_path,
             problem=problem,
             weights_only=False,
         )
@@ -191,7 +189,7 @@ def execute(
         trainer.predict(module, dm)
     else:
         trainer.fit(module, dm)
-        trainer.save_checkpoint(model_path, weights_only=False)
+        trainer.save_checkpoint(config.model_path, weights_only=False)
 
     clean_dir(config.checkpoint_dir)
 
@@ -286,23 +284,22 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    experiment_name = "sir-inverse"
     run_name = "v3"
 
-    results_dir = Path("./results")
-
-    log_dir = results_dir / "logs"
+    log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
     csv_dir = log_dir / "csv"
 
-    models_dir = results_dir / "models" / run_name
-    predictions_dir = models_dir / "predictions"
+    models_dir = Path("./models") / experiment_name / run_name
+    model_path = models_dir / "model.ckpt"
+    predictions_dir = models_dir
 
     temp_dir = Path("./temp")
 
-    create_dir(results_dir)
+    create_dir(log_dir)
     create_dir(models_dir)
     create_dir(predictions_dir)
-    create_dir(log_dir)
     create_dir(temp_dir)
 
     # ========================================================================
@@ -315,9 +312,10 @@ if __name__ == "__main__":
         run_name=run_name,
         tensorboard_dir=tensorboard_dir,
         csv_dir=csv_dir,
-        saved_models_dir=models_dir,
+        model_path=model_path,
         predictions_dir=predictions_dir,
         checkpoint_dir=temp_dir,
+        experiment_name=experiment_name,
     )
 
     # ========================================================================
@@ -330,7 +328,7 @@ if __name__ == "__main__":
             data_ratio=2,
             data_noise_level=1.0,
             collocations=6000,
-            df_path=Path("./data/real_data.csv"),
+            df_path=Path("./data/synt_sir_data.csv"),
             y_columns=["I_obs"],
         ),
         fields_config=MLPConfig(
@@ -365,9 +363,9 @@ if __name__ == "__main__":
     )
 
     # ========================================================================
-    # Problem Properties - only true constants are defined
+    # Problem Properties: only system and constants
     # Domain, Y0 are inferred from training data.
-    # beta is learned, not defined here.
+    # beta is learned.
     # ========================================================================
 
     def SIR_s(x: Tensor, y: Tensor, args: ArgsRegistry, domain: Domain1D) -> Tensor:

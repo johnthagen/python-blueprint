@@ -185,7 +185,7 @@ class DataScaling(DataCallback):
         (x, y) = dm.data
 
         if self.normalize_domain:
-            x0, xf = x[0], x[-1]
+            x0, xf = min(x), max(x)
             x = (x - x0) / (xf - x0)
 
-        dm.data = (x * self.scale, y * self.scale)
+        dm.data = (x, y * self.scale)
