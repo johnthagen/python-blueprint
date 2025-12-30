@@ -24,13 +24,13 @@ from pinn.core.nn import (
     get_activation,
 )
 from pinn.core.problem import Constraint, Problem
-from pinn.core.types import LOSS_KEY, Activations, DataBatch, LogFn, PINNBatch, Predictions
+from pinn.core.types import LOSS_KEY, Activations, DataBatch, LogFn, Predictions, TrainingBatch
 from pinn.core.validation import (
     ColumnRef,
     ResolvedValidation,
     ValidationRegistry,
     ValidationSource,
-    resolve_validation_registry,
+    resolve_validation,
 )
 
 __all__ = [
@@ -51,7 +51,6 @@ __all__ = [
     "IngestionConfig",
     "LogFn",
     "MLPConfig",
-    "PINNBatch",
     "PINNDataModule",
     "PINNDataset",
     "PINNHyperparameters",
@@ -63,9 +62,10 @@ __all__ = [
     "SMMAStoppingConfig",
     "ScalarConfig",
     "SchedulerConfig",
+    "TrainingBatch",
     "TrainingDataConfig",
     "ValidationRegistry",
     "ValidationSource",
     "get_activation",
-    "resolve_validation_registry",
+    "resolve_validation",
 ]

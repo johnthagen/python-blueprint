@@ -112,7 +112,6 @@ class SIRInvProblem(Problem):
         hp: SIRInvHyperparameters,
         fields: list[Field],
         params: list[Parameter],
-        validation: ValidationRegistry | None = None,
     ) -> None:
         def predict_data(x_data: Tensor, fields: FieldsRegistry) -> Tensor:
             I = fields[I_KEY]
@@ -144,7 +143,6 @@ class SIRInvProblem(Problem):
             criterion=criterion,
             fields=fields,
             params=params,
-            validation=validation,
         )
 
 
@@ -157,9 +155,10 @@ class SIRInvDataModule(PINNDataModule):
         self,
         props: ODEProperties,
         hp: SIRInvHyperparameters,
+        validation: ValidationRegistry | None = None,
         callbacks: Sequence[DataCallback] | None = None,
     ):
-        super().__init__(hp, callbacks)
+        super().__init__(hp, validation, callbacks)
         self.props = props
 
     @override

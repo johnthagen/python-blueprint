@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from typing import Protocol, cast, override, runtime_checkable
 
 import lightning as pl
+from lightning.pytorch.trainer.states import TrainerFn
 import pandas as pd
 import torch
 from torch import Tensor
@@ -12,19 +13,20 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 
 from pinn.core.config import GenerationConfig, IngestionConfig, PINNHyperparameters
 from pinn.core.context import InferredContext
-from pinn.core.types import DataBatch, PINNBatch
+from pinn.core.types import PredictionBatch, TrainingBatch
+from pinn.core.validation import ValidationRegistry, resolve_validation
 
 
 @runtime_checkable
 class DataCallback(Protocol):
     """Abstract base class for building new data callbacks."""
 
-    def on_data(self, dm: "PINNDataModule", stage: str | None = None) -> None:
+    def on_data(self, dm: "PINNDataModule", stage: TrainerFn | None = None) -> None:
         """Called after data is loaded and before context is created."""
         ...
 
 
-class PINNDataset(Dataset[PINNBatch]):
+class PINNDataset(Dataset[TrainingBatch]):
     """
     Dataset used for PINN training. Combines labeled data and collocation points
     per sample.  Given a data_ratio, the amount of data points `K` is determined
@@ -78,7 +80,7 @@ class PINNDataset(Dataset[PINNBatch]):
         return (self.total_data + self.K - 1) // self.K
 
     @override
-    def __getitem__(self, idx: int) -> PINNBatch:
+    def __getitem__(self, idx: int) -> TrainingBatch:
         """Return one sample containing K data points and C collocation points."""
         data_idx = self._get_data_indices(idx)
         coll_idx = self._get_coll_indices(idx)
@@ -124,11 +126,14 @@ class PINNDataModule(pl.LightningDataModule, ABC):
     def __init__(
         self,
         hp: PINNHyperparameters,
+        validation: ValidationRegistry | None = None,
         callbacks: Sequence[DataCallback] | None = None,
     ) -> None:
         super().__init__()
         self.hp = hp
         self.callbacks: list[DataCallback] = list(callbacks) if callbacks else []
+
+        self._unresolved_validation = validation or {}
 
     def load_data(self, ingestion: IngestionConfig) -> tuple[Tensor, Tensor]:
         """Load raw data from IngestionConfig."""
@@ -160,46 +165,59 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         Load raw data from IngestionConfig, or generate synthetic data from GenerationConfig.
         Apply registered callbacks, create InferredContext and datasets.
         """
-        self._x, self._y = (
-            self.load_data(self.hp.training_data)
-            if isinstance(self.hp.training_data, IngestionConfig)
-            else self.gen_data(self.hp.training_data)
+        config = self.hp.training_data
+
+        self.validation = resolve_validation(
+            self._unresolved_validation,
+            config.df_path if isinstance(config, IngestionConfig) else None,
         )
 
-        self._coll = self.gen_coll(InferredContext.from_data(self._x, self._y))
+        self.data = (
+            self.load_data(config)
+            if isinstance(config, IngestionConfig)
+            else self.gen_data(config)
+        )
+
+        x_data, y_data = self.data
+        self.x_original = x_data.clone()
+
+        temp_cxt = InferredContext(x_data, y_data, self.validation)
+        self.collocation = self.gen_coll(temp_cxt)
 
         for callback in self.callbacks:
-            callback.on_data(self, stage)
+            callback.on_data(self, cast(TrainerFn, stage))
 
-        assert self._x.shape[0] == self._y.shape[0], "Size mismatch between x and y."
-        assert self._x.ndim == 2, "x shape differs than (n, 1)."
-        assert self._x.shape[1] == 1, "x shape differs than (n, 1)."
-        assert self._y.ndim == 2, "y shape differs than (n, 1)."
-        assert self._y.shape[1] == 1, "y shape differs than (n, 1)."
-        assert self._coll.ndim == 2, "coll shape differs than (m, 1)."
-        assert self._coll.shape[1] == 1, "coll shape differs than (m, 1)."
+        assert x_data.shape[0] == y_data.shape[0], "Size mismatch between x and y."
+        assert x_data.ndim == 2, "x shape differs than (n, 1)."
+        assert x_data.shape[1] == 1, "x shape differs than (n, 1)."
+        assert y_data.ndim == 2, "y shape differs than (n, 1)."
+        assert y_data.shape[1] == 1, "y shape differs than (n, 1)."
+        assert self.collocation.ndim == 2, "coll shape differs than (m, 1)."
+        assert self.collocation.shape[1] == 1, "coll shape differs than (m, 1)."
 
-        self._context = InferredContext.from_data(self._x, self._y)
+        self._size = x_data.shape[0]
+        self._context = InferredContext(x_data, y_data, self.validation)
 
         self.pinn_ds = PINNDataset(
-            self._x,
-            self._y,
-            self._coll,
-            self.hp.training_data.batch_size,
-            self.hp.training_data.data_ratio,
+            x_data,
+            y_data,
+            self.collocation,
+            config.batch_size,
+            config.data_ratio,
         )
 
         self.predict_ds = TensorDataset(
-            self._x,
-            self._y,
+            x_data,
+            y_data,
+            self.x_original,
         )
 
     @override
-    def train_dataloader(self) -> DataLoader[PINNBatch]:
+    def train_dataloader(self) -> DataLoader[TrainingBatch]:
         """
         Returns the training dataloader using PINNDataset.
         """
-        return DataLoader[PINNBatch](
+        return DataLoader[TrainingBatch](
             self.pinn_ds,
             batch_size=None,  # handled internally
             num_workers=7,
@@ -207,33 +225,16 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         )
 
     @override
-    def predict_dataloader(self) -> DataLoader[DataBatch]:
+    def predict_dataloader(self) -> DataLoader[PredictionBatch]:
         """
         Returns the prediction dataloader using only the data dataset.
         """
-        return DataLoader[DataBatch](
-            cast(Dataset[DataBatch], self.predict_ds),
-            batch_size=self._x.shape[0],
+        return DataLoader[PredictionBatch](
+            cast(Dataset[PredictionBatch], self.predict_ds),
+            batch_size=self._size,
             num_workers=7,
             persistent_workers=True,
         )
-
-    @property
-    def data(self) -> tuple[Tensor, Tensor]:
-        """(x, y) data tensors for training and prediction."""
-        return self._x, self._y
-
-    @data.setter
-    def data(self, value: tuple[Tensor, Tensor]) -> None:
-        self._x, self._y = value
-
-    @property
-    def coll(self) -> Tensor:
-        return self._coll
-
-    @coll.setter
-    def coll(self, value: Tensor) -> None:
-        self._coll = value
 
     @property
     def context(self) -> InferredContext:

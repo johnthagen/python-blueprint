@@ -6,7 +6,9 @@ from typing import Any, Literal, TypeAlias, override
 
 from lightning.pytorch import LightningModule, Trainer
 from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProgressBar
+from lightning.pytorch.trainer.states import TrainerFn
 import torch
+from torch import Tensor
 
 from pinn.core import DataCallback, PINNDataModule, Predictions, SMMAStoppingConfig
 
@@ -180,16 +182,19 @@ class DataScaling(DataCallback):
         self.normalize_domain = normalize_domain
 
     @override
-    def on_data(self, dm: PINNDataModule, stage: str | None = None) -> None:
-        """Scale the data."""
-        (x, y) = dm.data
-        coll = dm.coll
+    def on_data(self, dm: PINNDataModule, stage: TrainerFn | None = None) -> None:
+        """Scale and, if requested, normalize the data domain and update validation callables."""
+        x, y = dm.data
+        coll = dm.collocation
 
         if self.normalize_domain:
-            x0, xf = min(x), max(x)
-            x = (x - x0) / (xf - x0)
+            x0, xf = torch.min(x), torch.max(x)
 
-            coll = (coll - x0) / (xf - x0)
+            def norm(z: Tensor) -> Tensor:
+                return (z - x0) / (xf - x0)
 
-        dm.data = (x, y * self.scale)
-        dm.coll = coll
+            x = norm(x)
+            coll = norm(coll)
+
+        dm.training_data = (x, y * self.scale)
+        dm.collocation = coll

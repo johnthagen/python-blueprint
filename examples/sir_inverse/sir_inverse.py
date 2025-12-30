@@ -96,6 +96,7 @@ def execute(
     dm = SIRInvDataModule(
         props=props,
         hp=hp,
+        validation=validation,
         callbacks=[
             DataScaling(scale=1 / 1e5, normalize_domain=True),
         ],
@@ -111,7 +112,6 @@ def execute(
         hp=hp,
         fields=[S_field, I_field],
         params=[beta],
-        validation=validation,
     )
 
     if predict:
@@ -242,7 +242,8 @@ def plot_and_save(
     ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper center")
     ax2.legend().remove()
 
-    sns.lineplot(x=t_data, y=beta_true, label=r"$\beta_{true}$", ax=axes[1])
+    if beta_true is not None:
+        sns.lineplot(x=t_data, y=beta_true, label=r"$\beta_{true}$", ax=axes[1])
     sns.lineplot(x=t_data, y=beta_pred, label=r"$\beta_{pred}$", linestyle="--", ax=axes[1])
 
     axes[1].set_title(r"$\beta$ Parameter Prediction")
@@ -305,7 +306,6 @@ if __name__ == "__main__":
     # ========================================================================
     # Experiment Configuration
     # ========================================================================
-
     config = SIRInvTrainConfig(
         max_epochs=1000,
         gradient_clip_val=0.1,
@@ -392,7 +392,7 @@ if __name__ == "__main__":
     )
 
     # ========================================================================
-    # Validation Configuration (separate from problem definition!)
+    # Validation Configuration
     # This defines ground truth for logging/validation.
     # Resolved lazily when data is loaded.
     # ========================================================================

@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TypeAlias
 
+import pandas as pd
+import torch
 from torch import Tensor
 
 
@@ -57,7 +59,7 @@ ResolvedValidation: TypeAlias = dict[str, Callable[[Tensor], Tensor]]
 """Validation registry after ColumnRef entries have been resolved to callables."""
 
 
-def resolve_validation_registry(
+def resolve_validation(
     registry: ValidationRegistry,
     df_path: Path | None = None,
 ) -> ResolvedValidation:
@@ -77,8 +79,6 @@ def resolve_validation_registry(
     Raises:
         ValueError: If a ColumnRef cannot be resolved (missing column or no df_path).
     """
-    import pandas as pd
-    import torch
 
     resolved: ResolvedValidation = {}
 
@@ -87,11 +87,9 @@ def resolve_validation_registry(
             continue
 
         if callable(source) and not isinstance(source, ColumnRef):
-            # Pure function - use directly
             resolved[name] = source
 
         elif isinstance(source, ColumnRef):
-            # Need to resolve from data
             if df_path is None:
                 raise ValueError(
                     f"Cannot resolve ColumnRef for '{name}': no df_path provided. "
@@ -107,14 +105,11 @@ def resolve_validation_registry(
                     f"Available columns: {list(df.columns)}"
                 )
 
-            # Extract column values as tensor
             column_values = torch.tensor(df[source.column].values, dtype=torch.float32)
 
-            # Apply transform if provided
             if source.transform is not None:
                 column_values = source.transform(column_values)
 
-            # Create a closure that indexes into the column values
             def make_lookup_fn(values: Tensor) -> Callable[[Tensor], Tensor]:
                 def lookup(x: Tensor) -> Tensor:
                     idx = x.squeeze(-1).long()

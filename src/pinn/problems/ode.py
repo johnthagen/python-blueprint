@@ -15,7 +15,7 @@ from pinn.core import (
     InferredContext,
     LogFn,
     Parameter,
-    PINNBatch,
+    TrainingBatch,
 )
 
 
@@ -81,7 +81,7 @@ class ResidualsConstraint(Constraint):
     @override
     def loss(
         self,
-        batch: PINNBatch,
+        batch: TrainingBatch,
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
@@ -142,7 +142,7 @@ class ICConstraint(Constraint):
     @override
     def loss(
         self,
-        batch: PINNBatch,
+        batch: TrainingBatch,
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
@@ -191,7 +191,7 @@ class DataConstraint(Constraint):
     @override
     def loss(
         self,
-        batch: PINNBatch,
+        batch: TrainingBatch,
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import cast, override
 
 import lightning.pytorch as pl
@@ -8,8 +7,9 @@ from lightning.pytorch.utilities.types import OptimizerLRScheduler
 import torch
 from torch import Tensor
 
-from pinn.core import LOSS_KEY, DataBatch, LogFn, PINNBatch, Predictions, Problem
-from pinn.core.config import IngestionConfig, PINNHyperparameters
+from pinn.core import LOSS_KEY, LogFn, Predictions, Problem, TrainingBatch
+from pinn.core.config import PINNHyperparameters
+from pinn.core.types import PredictionBatch
 
 
 class PINNModule(pl.LightningModule):
@@ -46,19 +46,11 @@ class PINNModule(pl.LightningModule):
 
         self._log = cast(LogFn, _log)
 
-    def _get_df_path(self) -> Path | None:
-        """Get df_path from training_data if it's an IngestionConfig."""
-        training_data = self.hp.training_data
-        if isinstance(training_data, IngestionConfig):
-            return training_data.df_path
-        return None
-
     @override
     def on_fit_start(self) -> None:
         """
         Called when fit begins. Resolves validation sources using loaded data.
         """
-        self.problem.resolve_validation(self._get_df_path())
         self.problem.inject_context(self.trainer.datamodule.context)  # type: ignore
 
     @override
@@ -66,22 +58,27 @@ class PINNModule(pl.LightningModule):
         """
         Called when predict begins. Resolves validation sources using loaded data.
         """
-        self.problem.resolve_validation(self._get_df_path())
+        self.problem.inject_context(self.trainer.datamodule.context)  # type: ignore
 
     @override
-    def training_step(self, batch: PINNBatch, batch_idx: int) -> Tensor:
+    def training_step(self, batch: TrainingBatch, batch_idx: int) -> Tensor:
         """
         Performs a single training step.
         Calculates total loss from the problem.
         """
-        return self.problem.total_loss(batch, self._log)
+        return self.problem.training_loss(batch, self._log)
 
     @override
-    def predict_step(self, batch: DataBatch, batch_idx: int) -> Predictions:
+    def predict_step(self, batch: PredictionBatch, batch_idx: int) -> Predictions:
         """
         Performs a prediction step.
         """
-        return self.problem.predict(batch)
+        x_data, y_data, x_true = batch
+
+        (data_batch, predictions) = self.problem.predict((x_data, y_data))
+        true_values = self.problem.true_values(x_true)
+
+        return (data_batch, predictions, true_values)
 
     @override
     def configure_optimizers(self) -> OptimizerLRScheduler:

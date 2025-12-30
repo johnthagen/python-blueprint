@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import torch
 from torch import Tensor
@@ -12,11 +11,7 @@ import torch.nn as nn
 
 from pinn.core.context import InferredContext
 from pinn.core.nn import Field, Parameter
-from pinn.core.types import LOSS_KEY, DataBatch, LogFn, PINNBatch, Predictions
-from pinn.core.validation import resolve_validation_registry
-
-if TYPE_CHECKING:
-    from pinn.core.validation import ResolvedValidation, ValidationRegistry
+from pinn.core.types import LOSS_KEY, DataBatch, LogFn, TrainingBatch
 
 
 class Constraint(ABC):
@@ -38,7 +33,7 @@ class Constraint(ABC):
     @abstractmethod
     def loss(
         self,
-        batch: PINNBatch,
+        batch: TrainingBatch,
         criterion: nn.Module,
         log: LogFn | None = None,
     ) -> Tensor:
@@ -74,7 +69,6 @@ class Problem(nn.Module):
         criterion: nn.Module,
         fields: list[Field],
         params: list[Parameter],
-        validation: ValidationRegistry | None = None,
     ):
         super().__init__()
         self.constraints = constraints
@@ -85,12 +79,12 @@ class Problem(nn.Module):
         self._fields = nn.ModuleList(fields)
         self._params = nn.ModuleList(params)
 
-        self._validation: ValidationRegistry = validation or {}
-        self._resolved_validation: ResolvedValidation = {}
-
     def inject_context(self, context: InferredContext) -> None:
         """
         Inject the context into the problem.
+
+        This should be called after data is loaded but before training starts.
+        Pure function entries are passed through unchanged.
 
         Args:
             context: The context to inject.
@@ -99,56 +93,7 @@ class Problem(nn.Module):
         for c in self.constraints:
             c.inject_context(context)
 
-    def resolve_validation(self, df_path: Path | None = None) -> None:
-        """
-        Resolve ColumnRef entries in the validation registry to callables.
-
-        This should be called after data is loaded but before training starts.
-        Pure function entries are passed through unchanged.
-
-        Args:
-            df_path: Path to the CSV file for ColumnRef resolution.
-        """
-
-        self._resolved_validation = resolve_validation_registry(
-            self._validation,
-            df_path,
-        )
-
-    def get_true_values(self, param_name: str, x: Tensor) -> Tensor | None:
-        """
-        Get the ground truth values for a parameter at given coordinates.
-
-        Args:
-            param_name: Name of the parameter.
-            x: Input coordinates.
-
-        Returns:
-            Ground truth values, or None if no validation source is configured.
-        """
-        if param_name not in self._resolved_validation:
-            return None
-        return self._resolved_validation[param_name](x)
-
-    def compute_validation_loss(self, param: Parameter, x_coll: Tensor) -> Tensor | None:
-        """
-        Compute validation loss for a parameter against ground truth.
-
-        Args:
-            param: The parameter to compute validation loss for.
-            x_coll: The input coordinates.
-
-        Returns:
-            Loss value, or None if no validation source is configured.
-        """
-        true = self.get_true_values(param.name, x_coll)
-        if true is None:
-            return None
-
-        pred = param(x_coll)
-        return cast(Tensor, torch.norm(true - pred))
-
-    def total_loss(self, batch: PINNBatch, log: LogFn | None = None) -> Tensor:
+    def training_loss(self, batch: TrainingBatch, log: LogFn | None = None) -> Tensor:
         """
         Calculate the total loss from all constraints.
 
@@ -167,7 +112,7 @@ class Problem(nn.Module):
 
         if log is not None:
             for param in self.params:
-                param_loss = self.compute_validation_loss(param, x_coll)
+                param_loss = self._param_validation_loss(param, x_coll)
                 if param_loss is not None:
                     log(f"loss/{param.name}", param_loss, progress_bar=True)
 
@@ -175,7 +120,7 @@ class Problem(nn.Module):
 
         return total
 
-    def predict(self, batch: DataBatch) -> Predictions:
+    def predict(self, batch: DataBatch) -> tuple[DataBatch, dict[str, Tensor]]:
         """
         Generate predictions for a given batch of data.
         Returns unscaled predictions in original domain.
@@ -184,7 +129,7 @@ class Problem(nn.Module):
             batch: Batch of input coordinates.
 
         Returns:
-            Tuple of (original_batch, predictions_dict, true_values_dict).
+            Tuple of (original_batch, predictions_dict).
         """
 
         x, y = batch
@@ -192,12 +137,48 @@ class Problem(nn.Module):
         preds = {f.name: f(x).squeeze(-1) for f in self.fields}
         preds |= {p.name: p(x).squeeze(-1) for p in self.params}
 
-        trues = {
-            p.name: true_val.squeeze(-1)
+        return (x.squeeze(-1), y.squeeze(-1)), preds
+
+    def true_values(self, x: Tensor) -> dict[str, Tensor] | None:
+        """
+        Get the true values for a given x coordinates.
+        Returns None if no validation source is configured.
+        """
+        return {
+            p.name: p_true.squeeze(-1)
             for p in self.params
-            if (true_val := self.get_true_values(p.name, x)) is not None
-        }
+            if (p_true := self._get_true_param(p.name, x)) is not None
+        } or None
 
-        batch = (x.squeeze(-1), y.squeeze(-1))
+    def _get_true_param(self, param_name: str, x: Tensor) -> Tensor | None:
+        """
+        Get the ground truth values for a parameter at given coordinates.
 
-        return batch, preds, trues or None
+        Args:
+            param_name: Name of the parameter.
+            x: Input coordinates.
+
+        Returns:
+            Ground truth values, or None if no validation source is configured.
+        """
+        if param_name not in self.context.validation:
+            return None
+        return self.context.validation[param_name](x)
+
+    def _param_validation_loss(self, param: Parameter, x_coll: Tensor) -> Tensor | None:
+        """
+        Compute validation loss for a parameter against ground truth.
+
+        Args:
+            param: The parameter to compute validation loss for.
+            x_coll: The input coordinates.
+
+        Returns:
+            Loss value, or None if no validation source is configured.
+        """
+        true = self._get_true_param(param.name, x_coll)
+        if true is None:
+            return None
+
+        pred = param(x_coll)
+        return cast(Tensor, torch.norm(true - pred))

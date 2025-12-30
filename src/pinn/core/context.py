@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from torch import Tensor
 
 from pinn.core.nn import Domain1D
+from pinn.core.validation import ResolvedValidation
 
 
 @dataclass
@@ -14,19 +15,15 @@ class InferredContext:
     """
     Runtime context inferred from training data.
 
-    This holds the domain, initial conditions, and scaler that are either
-    explicitly provided in props or inferred from training data.
+    This holds the data that is either explicitly provided in props or inferred from training data.
     """
 
-    domain: Domain1D
-    Y0: Tensor
-
-    @classmethod
-    def from_data(
-        cls,
+    def __init__(
+        self,
         x: Tensor,
         y: Tensor,
-    ) -> InferredContext:
+        validation: ResolvedValidation,
+    ):
         """
         Infer context from either generated or loaded data.
 
@@ -45,4 +42,6 @@ class InferredContext:
 
         Y0 = y[0].clone()
 
-        return cls(domain=domain, Y0=Y0)
+        self.domain = domain
+        self.Y0 = Y0
+        self.validation = validation
