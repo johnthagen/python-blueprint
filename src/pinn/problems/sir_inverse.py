@@ -114,9 +114,10 @@ class SIRInvProblem(Problem):
         params: list[Parameter],
         validation: ValidationRegistry | None = None,
     ) -> None:
-        def predict_data(t_data: Tensor, fields: FieldsRegistry) -> Tensor:
+        def predict_data(x_data: Tensor, fields: FieldsRegistry) -> Tensor:
             I = fields[I_KEY]
-            return cast(Tensor, I(t_data))
+            I_pred = I(x_data)
+            return cast(Tensor, I_pred)
 
         constraints: list[Constraint] = [
             ResidualsConstraint(

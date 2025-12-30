@@ -51,41 +51,6 @@ def get_activation(name: Activations) -> nn.Module:
     }[name]
 
 
-class Argument:
-    """
-    Represents an argument that can be passed to an ODE/PDE function.
-    Can be a fixed float value or a callable function.
-
-    Args:
-        value: The value (float) or function (callable).
-        name: The name of the argument.
-    """
-
-    def __init__(self, value: float | Callable[[Tensor], Tensor], name: str):
-        self._value = value
-        self._name = name
-
-    @property
-    def name(self) -> str:
-        """Name of the argument."""
-        return self._name
-
-    def __call__(self, x: Tensor) -> Tensor:
-        """
-        Evaluate the argument.
-
-        Args:
-            x: Input tensor (context).
-
-        Returns:
-            The value of the argument, broadcasted if necessary.
-        """
-        if callable(self._value):
-            return self._value(x)
-        else:
-            return torch.tensor(self._value, device=x.device)
-
-
 class Field(nn.Module):
     """
     A neural field mapping coordinates -> vector of state variables.
@@ -143,6 +108,45 @@ class Field(nn.Module):
         if self.encode is not None:
             x = self.encode(x)
         return cast(Tensor, self.net(x))
+
+
+class Argument:
+    """
+    Represents an argument that can be passed to an ODE/PDE function.
+    Can be a fixed float value or a callable function.
+
+    Args:
+        value: The value (float) or function (callable).
+        name: The name of the argument.
+    """
+
+    def __init__(self, value: float | Callable[[Tensor], Tensor], name: str):
+        self._value = value
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """Name of the argument."""
+        return self._name
+
+    def __call__(self, x: Tensor) -> Tensor:
+        """
+        Evaluate the argument.
+
+        Args:
+            x: Input tensor (context).
+
+        Returns:
+            The value of the argument, broadcasted if necessary.
+        """
+        if callable(self._value):
+            return self._value(x)
+        else:
+            return torch.tensor(self._value, device=x.device)
+
+    @override
+    def __repr__(self) -> str:
+        return f"Argument(name={self._name}, value={self._value})"
 
 
 class Parameter(nn.Module, Argument):
@@ -220,7 +224,6 @@ class Parameter(nn.Module, Argument):
             return cast(Tensor, self.net(x))
 
 
-# Type aliases for registries
 ArgsRegistry: TypeAlias = dict[str, Argument]
 ParamsRegistry: TypeAlias = dict[str, Parameter]
 FieldsRegistry: TypeAlias = dict[str, Field]

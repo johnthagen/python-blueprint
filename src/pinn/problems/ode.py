@@ -71,6 +71,7 @@ class ResidualsConstraint(Constraint):
         self.args = props.args.copy()
         self.args.update({p.name: p for p in params})
 
+    @override
     def inject_context(self, context: InferredContext) -> None:
         """
         Inject the domain form the problem context to pass it down to the ODE.

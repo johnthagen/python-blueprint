@@ -183,9 +183,13 @@ class DataScaling(DataCallback):
     def on_data(self, dm: PINNDataModule, stage: str | None = None) -> None:
         """Scale the data."""
         (x, y) = dm.data
+        coll = dm.coll
 
         if self.normalize_domain:
             x0, xf = min(x), max(x)
             x = (x - x0) / (xf - x0)
 
+            coll = (coll - x0) / (xf - x0)
+
         dm.data = (x, y * self.scale)
+        dm.coll = coll

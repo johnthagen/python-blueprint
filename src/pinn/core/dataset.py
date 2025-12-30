@@ -160,52 +160,39 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         Load raw data from IngestionConfig, or generate synthetic data from GenerationConfig.
         Apply registered callbacks, create InferredContext and datasets.
         """
-        self.x_loaded, self.y_loaded = (
+        self._x, self._y = (
             self.load_data(self.hp.training_data)
             if isinstance(self.hp.training_data, IngestionConfig)
             else self.gen_data(self.hp.training_data)
         )
 
+        self._coll = self.gen_coll(InferredContext.from_data(self._x, self._y))
+
         for callback in self.callbacks:
             callback.on_data(self, stage)
 
-        assert self.x_loaded.shape[0] == self.y_loaded.shape[0], (
-            "Size mismatch between x_loaded and y_loaded."
-        )
+        assert self._x.shape[0] == self._y.shape[0], "Size mismatch between x and y."
+        assert self._x.ndim == 2, "x shape differs than (n, 1)."
+        assert self._x.shape[1] == 1, "x shape differs than (n, 1)."
+        assert self._y.ndim == 2, "y shape differs than (n, 1)."
+        assert self._y.shape[1] == 1, "y shape differs than (n, 1)."
+        assert self._coll.ndim == 2, "coll shape differs than (m, 1)."
+        assert self._coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
-        self._context = InferredContext.from_data(self.x_loaded, self.y_loaded)
-
-        self.coll = self.gen_coll(self.context)
+        self._context = InferredContext.from_data(self._x, self._y)
 
         self.pinn_ds = PINNDataset(
-            self.x_loaded,
-            self.y_loaded,
-            self.coll,
+            self._x,
+            self._y,
+            self._coll,
             self.hp.training_data.batch_size,
             self.hp.training_data.data_ratio,
         )
 
         self.predict_ds = TensorDataset(
-            self.x_loaded,
-            self.y_loaded,
+            self._x,
+            self._y,
         )
-
-    @property
-    def data(self) -> tuple[Tensor, Tensor]:
-        """Get loaded data tensors."""
-        return self.x_loaded, self.y_loaded
-
-    @data.setter
-    def data(self, value: tuple[Tensor, Tensor]) -> None:
-        """Set loaded data tensors."""
-        self.x_loaded, self.y_loaded = value
-
-    @property
-    def context(self) -> InferredContext:
-        assert self._context is not None, (
-            "Context does not exist. `setup` stage not completed yet."
-        )
-        return self._context
 
     @override
     def train_dataloader(self) -> DataLoader[PINNBatch]:
@@ -226,7 +213,31 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         """
         return DataLoader[DataBatch](
             cast(Dataset[DataBatch], self.predict_ds),
-            batch_size=self.x_loaded.shape[0],
+            batch_size=self._x.shape[0],
             num_workers=7,
             persistent_workers=True,
         )
+
+    @property
+    def data(self) -> tuple[Tensor, Tensor]:
+        """(x, y) data tensors for training and prediction."""
+        return self._x, self._y
+
+    @data.setter
+    def data(self, value: tuple[Tensor, Tensor]) -> None:
+        self._x, self._y = value
+
+    @property
+    def coll(self) -> Tensor:
+        return self._coll
+
+    @coll.setter
+    def coll(self, value: Tensor) -> None:
+        self._coll = value
+
+    @property
+    def context(self) -> InferredContext:
+        assert self._context is not None, (
+            "Context does not exist. `setup` stage not completed yet."
+        )
+        return self._context
