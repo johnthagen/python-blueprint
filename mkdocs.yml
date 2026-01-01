@@ -85,7 +85,7 @@ watch:
   # Watch src/ directory to reload on changes to docstrings for mkdocstrings plugin.
   - src
 site_name: fact
-copyright: Copyright &copy; 2018-2023 John Hagen
+copyright: Copyright &copy; 2018-2026 John Hagen
 # GitHub Specific Configuration.
 repo_name: python-blueprint
 repo_url: https://github.com/johnthagen/python-blueprint
