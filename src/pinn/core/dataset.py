@@ -178,22 +178,23 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             else self.gen_data(config)
         )
 
-        x_data, y_data = self.data
-        self.x_original = x_data.clone()
+        # x tensor for arguments, not scaled or normalized.
+        self.x_args = self.data[0].clone()
 
-        temp_cxt = InferredContext(x_data, y_data, self.validation)
-        self.collocation = self.gen_coll(temp_cxt)
+        # use a temporary context, create it again after callbacks are applied
+        self.coll = self.gen_coll(InferredContext(*self.data, self.validation))
 
         for callback in self.callbacks:
             callback.on_data(self, cast(TrainerFn, stage))
 
+        x_data, y_data = self.data
         assert x_data.shape[0] == y_data.shape[0], "Size mismatch between x and y."
         assert x_data.ndim == 2, "x shape differs than (n, 1)."
         assert x_data.shape[1] == 1, "x shape differs than (n, 1)."
         assert y_data.ndim == 2, "y shape differs than (n, 1)."
         assert y_data.shape[1] == 1, "y shape differs than (n, 1)."
-        assert self.collocation.ndim == 2, "coll shape differs than (m, 1)."
-        assert self.collocation.shape[1] == 1, "coll shape differs than (m, 1)."
+        assert self.coll.ndim == 2, "coll shape differs than (m, 1)."
+        assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
         self._size = x_data.shape[0]
         self._context = InferredContext(x_data, y_data, self.validation)
@@ -201,7 +202,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         self.pinn_ds = PINNDataset(
             x_data,
             y_data,
-            self.collocation,
+            self.coll,
             config.batch_size,
             config.data_ratio,
         )
@@ -209,7 +210,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         self.predict_ds = TensorDataset(
             x_data,
             y_data,
-            self.x_original,
+            self.x_args,
         )
 
     @override

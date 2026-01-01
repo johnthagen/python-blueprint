@@ -185,11 +185,11 @@ def execute(
         log_every_n_steps=0,
     )
 
-    if predict:
-        trainer.predict(module, dm)
-    else:
+    if not predict:
         trainer.fit(module, dm)
         trainer.save_checkpoint(config.model_path, weights_only=False)
+
+    trainer.predict(module, dm)
 
     clean_dir(config.checkpoint_dir)
 
@@ -208,9 +208,10 @@ def plot_and_save(
     t_data, I_data = batch
 
     N = props.args[N_KEY](t_data)
+    C = 1e5
 
-    S_pred = preds[S_KEY]
-    I_pred = preds[I_KEY]
+    S_pred = C * preds[S_KEY]
+    I_pred = C * preds[I_KEY]
     R_pred = N - S_pred - I_pred
 
     beta_pred = preds[BETA_KEY]
@@ -376,7 +377,7 @@ if __name__ == "__main__":
         x0, xf = domain.x0, domain.x1
 
         C1 = (xf - x0) * C / N(x)
-        C2 = (xf - x0) * d(x) * C
+        C2 = (xf - x0) * d(x)
 
         dS = -C1 * b(x) * I * S
         dI = C1 * b(x) * I * S - C2 * I

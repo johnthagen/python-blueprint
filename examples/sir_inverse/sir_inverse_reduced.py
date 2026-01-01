@@ -99,6 +99,7 @@ def execute(
     dm = SIRInvDataModule(
         props=props,
         hp=hp,
+        validation=validation,
         callbacks=[
             DataScaling(scale=1 / 1e5, normalize_domain=True),
         ],
@@ -113,7 +114,6 @@ def execute(
         hp=hp,
         fields=[I_field],
         params=[Rt],
-        validation=validation,
     )
 
     if predict:
@@ -187,11 +187,11 @@ def execute(
         log_every_n_steps=0,
     )
 
-    if predict:
-        trainer.predict(module, dm)
-    else:
+    if not predict:
         trainer.fit(module, dm)
         trainer.save_checkpoint(config.model_path, weights_only=False)
+
+    trainer.predict(module, dm)
 
     clean_dir(config.checkpoint_dir)
 

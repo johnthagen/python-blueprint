@@ -185,7 +185,7 @@ class DataScaling(DataCallback):
     def on_data(self, dm: PINNDataModule, stage: TrainerFn | None = None) -> None:
         """Scale and, if requested, normalize the data domain and update validation callables."""
         x, y = dm.data
-        coll = dm.collocation
+        coll = dm.coll
 
         if self.normalize_domain:
             x0, xf = torch.min(x), torch.max(x)
@@ -196,5 +196,5 @@ class DataScaling(DataCallback):
             x = norm(x)
             coll = norm(coll)
 
-        dm.training_data = (x, y * self.scale)
-        dm.collocation = coll
+        dm.data = (x, y * self.scale)
+        dm.coll = coll

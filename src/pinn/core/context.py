@@ -30,9 +30,7 @@ class InferredContext:
         Args:
             x: Loaded x coordinates (unscaled).
             y: Loaded observations (unscaled).
-
-        Returns:
-            InferredContext with domain, Y0, and scaler.
+            validation: Resolved validation dictionary.
         """
         assert x.shape[0] > 1, "At least two points are required to infer the domain."
         x0 = x[0].item()

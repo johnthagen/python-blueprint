@@ -60,7 +60,6 @@ class Problem(nn.Module):
         criterion: Loss function module.
         fields: List of fields (neural networks) to solve for.
         params: List of learnable parameters.
-        validation: Optional registry mapping parameter names to validation sources.
     """
 
     def __init__(
