@@ -95,7 +95,6 @@ class TrainingDataConfig:
 
     batch_size: int
     data_ratio: int | float
-    data_noise_level: float
     collocations: int
 
 
@@ -119,6 +118,7 @@ class GenerationConfig(TrainingDataConfig):
 
     x: Tensor
     y0: Tensor
+    noise_level: float
     args_to_train: ArgsRegistry
 
 

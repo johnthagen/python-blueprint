@@ -73,10 +73,10 @@ class PINNModule(pl.LightningModule):
         """
         Performs a prediction step.
         """
-        x_data, y_data, x_args = batch
+        x_data, y_data = batch
 
         (data_batch, predictions) = self.problem.predict((x_data, y_data))
-        true_values = self.problem.true_values(x_args)
+        true_values = self.problem.true_values(x_data)
 
         return (data_batch, predictions, true_values)
 

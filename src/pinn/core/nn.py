@@ -29,6 +29,16 @@ class Domain1D:
     x1: float
     dx: float
 
+    @classmethod
+    def from_x(cls, x: Tensor) -> Domain1D:
+        """Create a domain from x coordinates."""
+        assert x.shape[0] > 1, "At least two points are required to infer the domain."
+
+        x0, x1 = x[0].item(), x[-1].item()
+        dx = (x[1] - x[0]).item()
+
+        return cls(x0=x0, x1=x1, dx=dx)
+
 
 def get_activation(name: Activations) -> nn.Module:
     """

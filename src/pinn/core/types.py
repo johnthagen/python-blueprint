@@ -21,8 +21,8 @@ DataBatch: TypeAlias = tuple[Tensor, Tensor]
 TrainingBatch: TypeAlias = tuple[DataBatch, Tensor]
 """Training batch tuple: ((x_data, y_data), x_coll)."""
 
-PredictionBatch: TypeAlias = tuple[Tensor, Tensor, Tensor]
-"""Prediction batch tuple: (x_data, y_data, x_true)."""
+PredictionBatch: TypeAlias = tuple[Tensor, Tensor]
+"""Prediction batch tuple: (x_data, y_data)."""
 
 Predictions: TypeAlias = tuple[DataBatch, dict[str, Tensor], dict[str, Tensor] | None]
 """

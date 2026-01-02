@@ -28,18 +28,10 @@ class InferredContext:
         Infer context from either generated or loaded data.
 
         Args:
-            x: Loaded x coordinates (unscaled).
-            y: Loaded observations (unscaled).
+            x: x coordinates.
+            y: observations.
             validation: Resolved validation dictionary.
         """
-        assert x.shape[0] > 1, "At least two points are required to infer the domain."
-        x0 = x[0].item()
-        x1 = x[-1].item()
-        dx = (x[1] - x[0]).item()
-        domain = Domain1D(x0=x0, x1=x1, dx=dx)
-
-        Y0 = y[0].clone()
-
-        self.domain = domain
-        self.Y0 = Y0
+        self.domain = Domain1D.from_x(x)
+        self.Y0 = y[0].clone()
         self.validation = validation

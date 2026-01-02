@@ -6,11 +6,9 @@ from typing import Any, Literal, TypeAlias, override
 
 from lightning.pytorch import LightningModule, Trainer
 from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProgressBar
-from lightning.pytorch.trainer.states import TrainerFn
 import torch
-from torch import Tensor
 
-from pinn.core import DataCallback, PINNDataModule, Predictions, SMMAStoppingConfig
+from pinn.core import Predictions, SMMAStoppingConfig
 
 SMMA_KEY = "loss/smma"
 
@@ -169,32 +167,3 @@ class PredictionsWriter(BasePredictionWriter):
 
         if self.batch_indices_path is not None:
             torch.save(batch_indices, self.batch_indices_path)
-
-
-class DataScaling(DataCallback):
-    """
-    Callback to scale the data.
-    """
-
-    def __init__(self, scale: float, normalize_domain: bool = False):
-        super().__init__()
-        self.scale = scale
-        self.normalize_domain = normalize_domain
-
-    @override
-    def on_data(self, dm: PINNDataModule, stage: TrainerFn | None = None) -> None:
-        """Scale and, if requested, normalize the data domain and update validation callables."""
-        x, y = dm.data
-        coll = dm.coll
-
-        if self.normalize_domain:
-            x0, xf = torch.min(x), torch.max(x)
-
-            def norm(z: Tensor) -> Tensor:
-                return (z - x0) / (xf - x0)
-
-            x = norm(x)
-            coll = norm(coll)
-
-        dm.data = (x, y * self.scale)
-        dm.coll = coll

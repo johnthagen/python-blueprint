@@ -20,10 +20,9 @@ from pinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
-    ColumnRef,
     Domain1D,
     Field,
-    IngestionConfig,
+    GenerationConfig,
     MLPConfig,
     Parameter,
     Predictions,
@@ -31,7 +30,7 @@ from pinn.core import (
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
-from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
+from pinn.lightning.callbacks import FormattedProgressBar, Metric, PredictionsWriter
 from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
 from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY
 
@@ -97,9 +96,6 @@ def execute(
         props=props,
         hp=hp,
         validation=validation,
-        callbacks=[
-            DataScaling(scale=1 / 1e5, normalize_domain=True),
-        ],
     )
 
     # define problem
@@ -322,15 +318,27 @@ if __name__ == "__main__":
     # ========================================================================
     # Hyperparameters
     # ========================================================================
+    N = 56e6
+    C = 1e5
     hp = SIRInvHyperparameters(
         lr=5e-4,
-        training_data=IngestionConfig(
+        # training_data=IngestionConfig(
+        #     batch_size=100,
+        #     data_ratio=2,
+        #     collocations=6000,
+        #     df_path=Path("./data/synt_scaled_sir_data.csv"), # TODO: generate this
+        #     y_columns=["I_obs"],
+        # ),
+        training_data=GenerationConfig(
             batch_size=100,
             data_ratio=2,
-            data_noise_level=1.0,
             collocations=6000,
-            df_path=Path("./data/synt_sir_data.csv"),
-            y_columns=["I_obs"],
+            x=torch.linspace(start=0, end=1, steps=91),
+            y0=torch.tensor([N - 1, 1]) / C,
+            args_to_train={
+                BETA_KEY: Argument(0.6, name=BETA_KEY),
+            },
+            noise_level=0,
         ),
         fields_config=MLPConfig(
             in_dim=1,
@@ -373,14 +381,12 @@ if __name__ == "__main__":
         S, I = y
         b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
 
-        C = 1e5
-        x0, xf = domain.x0, domain.x1
+        dS = -b(x) * I * S * C / N(x)
+        dI = b(x) * I * S * C / N(x) - d(x) * I
 
-        C1 = (xf - x0) * C / N(x)
-        C2 = (xf - x0) * d(x)
-
-        dS = -C1 * b(x) * I * S
-        dI = C1 * b(x) * I * S - C2 * I
+        # TODO: deal with ts
+        dS = dS * 91
+        dI = dI * 91
         return torch.stack([dS, dI])
 
     delta = 1 / 5
@@ -388,7 +394,7 @@ if __name__ == "__main__":
         ode=SIR_s,
         args={
             DELTA_KEY: Argument(delta, name=DELTA_KEY),
-            N_KEY: Argument(56e6, name=N_KEY),
+            N_KEY: Argument(N, name=N_KEY),
         },
     )
 
@@ -399,7 +405,8 @@ if __name__ == "__main__":
     # ========================================================================
 
     validation: ValidationRegistry = {
-        BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * delta),
+        # BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * delta),
+        BETA_KEY: lambda x: torch.full_like(x, 0.6),
     }
 
     execute(props, hp, config, validation, args.predict)

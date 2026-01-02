@@ -17,7 +17,6 @@ from pinn.core import (
     Field,
     FieldsRegistry,
     GenerationConfig,
-    InferredContext,
     Parameter,
     PINNDataModule,
     PINNHyperparameters,
@@ -162,24 +161,21 @@ class SIRInvDataModule(PINNDataModule):
         self.props = props
 
     @override
-    def gen_coll(self, context: InferredContext) -> Tensor:
+    def gen_coll(self, domain: Domain1D) -> Tensor:
         """Generate collocation points."""
-        t0_s = torch.log1p(torch.tensor(context.domain.x0, dtype=torch.float32))
-        t1_s = torch.log1p(torch.tensor(context.domain.x1, dtype=torch.float32))
+        mul = 1e2
+        t0_s = torch.log1p(torch.tensor(domain.x0 * mul, dtype=torch.float32))
+        t1_s = torch.log1p(torch.tensor(domain.x1 * mul, dtype=torch.float32))
         t_s = torch.rand((self.hp.training_data.collocations, 1)) * (t1_s - t0_s) + t0_s
         t = torch.expm1(t_s)
-        return t
+        return t / mul
 
     @override
     def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
         """Generate synthetic data."""
         args = self.props.args.copy()
         args.update(config.args_to_train)
-
-        # workaround to build a domain before the context is created
-        x0, xf = config.x[0].item(), config.x[-1].item()
-        dx = (config.x[1] - config.x[0]).item()
-        domain = Domain1D(x0=x0, x1=xf, dx=dx)
+        domain = Domain1D.from_x(config.x)
 
         data = odeint(
             lambda x, y: self.props.ode(x, y, args, domain),
@@ -188,6 +184,13 @@ class SIRInvDataModule(PINNDataModule):
         )
 
         I_true = data[:, 1].clamp_min(0.0)
-        I_obs = torch.poisson(I_true / config.data_noise_level) * config.data_noise_level
+
+        I_obs = self._noise(I_true, config.noise_level)
 
         return config.x.unsqueeze(-1), I_obs.unsqueeze(-1)
+
+    def _noise(self, I_true: Tensor, noise_level: float) -> Tensor:
+        if noise_level < 1.0:
+            return I_true
+        else:
+            return torch.poisson(I_true / noise_level) * noise_level

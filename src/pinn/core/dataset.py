@@ -5,7 +5,6 @@ from collections.abc import Sequence
 from typing import Protocol, cast, override, runtime_checkable
 
 import lightning as pl
-from lightning.pytorch.trainer.states import TrainerFn
 import pandas as pd
 import torch
 from torch import Tensor
@@ -13,7 +12,8 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 
 from pinn.core.config import GenerationConfig, IngestionConfig, PINNHyperparameters
 from pinn.core.context import InferredContext
-from pinn.core.types import PredictionBatch, TrainingBatch
+from pinn.core.nn import Domain1D
+from pinn.core.types import DataBatch, PredictionBatch, TrainingBatch
 from pinn.core.validation import ValidationRegistry, resolve_validation
 
 
@@ -21,9 +21,8 @@ from pinn.core.validation import ValidationRegistry, resolve_validation
 class DataCallback(Protocol):
     """Abstract base class for building new data callbacks."""
 
-    def on_data(self, dm: "PINNDataModule", stage: TrainerFn | None = None) -> None:
-        """Called after data is loaded and before context is created."""
-        ...
+    def on_after_setup(self, dm: "PINNDataModule") -> None:
+        """Called after setup is complete."""
 
 
 class PINNDataset(Dataset[TrainingBatch]):
@@ -135,7 +134,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
         self._unresolved_validation = validation or {}
 
-    def load_data(self, ingestion: IngestionConfig) -> tuple[Tensor, Tensor]:
+    def load_data(self, ingestion: IngestionConfig) -> DataBatch:
         """Load raw data from IngestionConfig."""
         df = pd.read_csv(ingestion.df_path)
 
@@ -152,11 +151,11 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         return x.unsqueeze(-1), y
 
     @abstractmethod
-    def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
+    def gen_data(self, config: GenerationConfig) -> DataBatch:
         """Generate synthetic data from GenerationConfig."""
 
     @abstractmethod
-    def gen_coll(self, context: InferredContext) -> Tensor:
+    def gen_coll(self, domain: Domain1D) -> Tensor:
         """Generate collocation points."""
 
     @override
@@ -177,17 +176,10 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             if isinstance(config, IngestionConfig)
             else self.gen_data(config)
         )
-
-        # x tensor for arguments, not scaled or normalized.
-        self.x_args = self.data[0].clone()
-
-        # use a temporary context, create it again after callbacks are applied
-        self.coll = self.gen_coll(InferredContext(*self.data, self.validation))
-
-        for callback in self.callbacks:
-            callback.on_data(self, cast(TrainerFn, stage))
-
         x_data, y_data = self.data
+
+        self.coll = self.gen_coll(Domain1D.from_x(x_data))
+
         assert x_data.shape[0] == y_data.shape[0], "Size mismatch between x and y."
         assert x_data.ndim == 2, "x shape differs than (n, 1)."
         assert x_data.shape[1] == 1, "x shape differs than (n, 1)."
@@ -196,8 +188,13 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         assert self.coll.ndim == 2, "coll shape differs than (m, 1)."
         assert self.coll.shape[1] == 1, "coll shape differs than (m, 1)."
 
-        self._size = x_data.shape[0]
-        self._context = InferredContext(x_data, y_data, self.validation)
+        self._data_size = x_data.shape[0]
+
+        self._context = InferredContext(
+            x_data,
+            y_data,
+            self.validation,
+        )
 
         self.pinn_ds = PINNDataset(
             x_data,
@@ -210,8 +207,10 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         self.predict_ds = TensorDataset(
             x_data,
             y_data,
-            self.x_args,
         )
+
+        for callback in self.callbacks:
+            callback.on_after_setup(self)
 
     @override
     def train_dataloader(self) -> DataLoader[TrainingBatch]:
@@ -232,7 +231,7 @@ class PINNDataModule(pl.LightningDataModule, ABC):
         """
         return DataLoader[PredictionBatch](
             cast(Dataset[PredictionBatch], self.predict_ds),
-            batch_size=self._size,
+            batch_size=self._data_size,
             num_workers=7,
             persistent_workers=True,
         )
