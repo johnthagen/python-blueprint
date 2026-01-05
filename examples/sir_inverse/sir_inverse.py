@@ -20,12 +20,12 @@ from pinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
-    Domain1D,
     Field,
     GenerationConfig,
     MLPConfig,
     Parameter,
     Predictions,
+    ScalarConfig,
     SchedulerConfig,
     ValidationRegistry,
 )
@@ -210,6 +210,8 @@ def plot_and_save(
     I_pred = C * preds[I_KEY]
     R_pred = N - S_pred - I_pred
 
+    I_data = C * I_data
+
     beta_pred = preds[BETA_KEY]
     beta_true = trues[BETA_KEY] if trues else None
 
@@ -320,6 +322,7 @@ if __name__ == "__main__":
     # ========================================================================
     N = 56e6
     C = 1e5
+    T = 90
     hp = SIRInvHyperparameters(
         lr=5e-4,
         # training_data=IngestionConfig(
@@ -347,13 +350,16 @@ if __name__ == "__main__":
             activation="tanh",
             output_activation="softplus",
         ),
-        params_config=MLPConfig(
-            in_dim=1,
-            out_dim=1,
-            hidden_layers=[64, 64],
-            activation="tanh",
-            output_activation="softplus",
+        params_config=ScalarConfig(
+            init_value=0.5,
         ),
+        # params_config=MLPConfig(
+        #     in_dim=1,
+        #     out_dim=1,
+        #     hidden_layers=[64, 64],
+        #     activation="tanh",
+        #     output_activation="softplus",
+        # ),
         scheduler=SchedulerConfig(
             mode="min",
             factor=0.5,
@@ -366,7 +372,7 @@ if __name__ == "__main__":
         #     threshold=0.1,
         #     lookback=50,
         # ),
-        pde_weight=100.0,
+        pde_weight=1,
         ic_weight=1,
         data_weight=1,
     )
@@ -377,16 +383,15 @@ if __name__ == "__main__":
     # beta is learned.
     # ========================================================================
 
-    def SIR_s(x: Tensor, y: Tensor, args: ArgsRegistry, domain: Domain1D) -> Tensor:
+    def SIR_s(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
         S, I = y
         b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
 
         dS = -b(x) * I * S * C / N(x)
         dI = b(x) * I * S * C / N(x) - d(x) * I
 
-        # TODO: deal with ts
-        dS = dS * 91
-        dI = dI * 91
+        dS = dS * T
+        dI = dI * T
         return torch.stack([dS, dI])
 
     delta = 1 / 5

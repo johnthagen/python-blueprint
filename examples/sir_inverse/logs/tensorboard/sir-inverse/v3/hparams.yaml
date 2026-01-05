@@ -15,17 +15,10 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
     output_activation: softplus
   ic_weight: 1
   lr: 0.0005
-  params_config: !!python/object:pinn.core.config.MLPConfig
-    activation: tanh
-    encode: null
-    hidden_layers:
-    - 64
-    - 64
-    in_dim: 1
-    name: u
-    out_dim: 1
-    output_activation: softplus
-  pde_weight: 100.0
+  params_config: !!python/object:pinn.core.config.ScalarConfig
+    init_value: 0.5
+    name: p
+  pde_weight: 1
   scheduler: !!python/object:pinn.core.config.SchedulerConfig
     factor: 0.5
     min_lr: 1.0e-06
@@ -48,8 +41,8 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
         gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
         AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
         aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
-        Z2UKcQFYCwAAADM5ODUwNDIyNDY0cQJYAwAAAGNwdXEDS1tOdHEEUS6AAl1xAFgLAAAAMzk4NTA0
-        MjI0NjRxAWEuWwAAAAAAAAAAAAAAYQs2PGELtjyJiAg9YQs2PTmOYz2JiIg99UmfPWELtj3NzMw9
+        Z2UKcQFYCwAAADQzMzM2MDg0OTI4cQJYAwAAAGNwdXEDS1tOdHEEUS6AAl1xAFgLAAAANDMzMzYw
+        ODQ5MjhxAWEuWwAAAAAAAAAAAAAAYQs2PGELtjyJiAg9YQs2PTmOYz2JiIg99UmfPWELtj3NzMw9
         OY7jPaVP+j2JiAg+P+kTPvVJHz6rqio+YQs2PhdsQT7NzEw+gy1YPjmOYz7v7m4+pU96Pi7Ygj6J
         iIg+5DiOPj/pkz6amZk+9UmfPlD6pD6rqqo+BluwPmELtj68u7s+F2zBPnIcxz7NzMw+KH3SPoMt
         2D7e3d0+OY7jPpQ+6T7v7u4+Sp/0PqVP+j4AAAA/LdgCP1uwBT+IiAg/tmALP+M4Dj8RERE/PukT
@@ -70,8 +63,8 @@ hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
         gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
         AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
         aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
-        Z2UKcQFYCwAAADM5ODUwNDIyNTYwcQJYAwAAAGNwdXEDSwJOdHEEUS6AAl1xAFgLAAAAMzk4NTA0
-        MjI1NjBxAWEuAgAAAAAAAAAAAAxErMUnNw==
+        Z2UKcQFYCwAAADQzMzM2MDg1MDI0cQJYAwAAAGNwdXEDSwJOdHEEUS6AAl1xAFgLAAAANDMzMzYw
+        ODUwMjRxAWEuAgAAAAAAAAAAAAxErMUnNw==
     - 0
     - !!python/tuple
       - 2

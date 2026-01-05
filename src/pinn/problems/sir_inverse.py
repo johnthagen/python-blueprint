@@ -33,7 +33,7 @@ N_KEY = "N"
 Rt_KEY = "Rt"
 
 
-def SIR(x: Tensor, y: Tensor, args: ArgsRegistry, _: Domain1D) -> Tensor:
+def SIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     """
     The SIR ODE system.
     $$
@@ -60,7 +60,7 @@ def SIR(x: Tensor, y: Tensor, args: ArgsRegistry, _: Domain1D) -> Tensor:
     return torch.stack([dS, dI])
 
 
-def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry, _: Domain1D) -> Tensor:
+def rSIR(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
     """
     The reduced SIR ODE system.
     $$
@@ -175,10 +175,9 @@ class SIRInvDataModule(PINNDataModule):
         """Generate synthetic data."""
         args = self.props.args.copy()
         args.update(config.args_to_train)
-        domain = Domain1D.from_x(config.x)
 
         data = odeint(
-            lambda x, y: self.props.ode(x, y, args, domain),
+            lambda x, y: self.props.ode(x, y, args),
             config.y0,
             config.x,
         )

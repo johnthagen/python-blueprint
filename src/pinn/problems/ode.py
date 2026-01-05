@@ -9,7 +9,6 @@ import torch.nn as nn
 from pinn.core import (
     ArgsRegistry,
     Constraint,
-    Domain1D,
     Field,
     FieldsRegistry,
     InferredContext,
@@ -25,7 +24,6 @@ class ODECallable(Protocol):
         x: Tensor,
         y: Tensor,
         args: ArgsRegistry,
-        domain: Domain1D,
     ) -> Tensor: ...
 
 
@@ -72,13 +70,6 @@ class ResidualsConstraint(Constraint):
         self.args.update({p.name: p for p in params})
 
     @override
-    def inject_context(self, context: InferredContext) -> None:
-        """
-        Inject the domain form the problem context to pass it down to the ODE.
-        """
-        self.domain = context.domain
-
-    @override
     def loss(
         self,
         batch: TrainingBatch,
@@ -91,7 +82,7 @@ class ResidualsConstraint(Constraint):
         preds = [f(x_coll) for f in self.fields]
         y = torch.stack(preds)
 
-        dy_dt_pred = self.ode(x_coll, y, self.args, self.domain)
+        dy_dt_pred = self.ode(x_coll, y, self.args)
 
         dy_dt = torch.stack(
             [
