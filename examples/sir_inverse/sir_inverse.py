@@ -287,7 +287,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse"
-    run_name = "v3-new-constant-beta"
+    run_name = "v3-weighted-pde"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
@@ -377,7 +377,7 @@ if __name__ == "__main__":
         #     threshold=0.1,
         #     lookback=50,
         # ),
-        pde_weight=1,
+        pde_weight=10,
         ic_weight=1,
         data_weight=1,
     )
