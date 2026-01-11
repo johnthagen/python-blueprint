@@ -17,6 +17,7 @@ from pinn.core import (
     Field,
     FieldsRegistry,
     GenerationConfig,
+    InferredContext,
     Parameter,
     PINNDataModule,
     PINNHyperparameters,
@@ -99,6 +100,29 @@ class SIRInvHyperparameters(PINNHyperparameters):
     data_weight: float = 1.0
 
 
+class SIRInvICConstraint(ICConstraint):
+    """
+    Constraint enforcing Initial Conditions (IC).
+    Minimizes ||y(t0) - Y0||^2.
+    """
+
+    def __init__(self, props: ODEProperties, fields: list[Field], weight: float = 1.0):
+        self.props = props
+        super().__init__(fields, weight)
+
+    @override
+    def inject_context(self, context: InferredContext) -> None:
+        """
+        Inject the context into the constraint.
+        """
+        self.t0 = torch.tensor(context.domain.x0, dtype=torch.float32).reshape(1, 1)
+
+        N = self.props.args[N_KEY]
+        I0 = context.Y0
+        S0 = N(self.t0) - I0
+        self.Y0 = torch.stack([S0, I0]).unsqueeze(-1)
+
+
 class SIRInvProblem(Problem):
     """
     Definition of the SIR Inverse Problem.
@@ -124,7 +148,8 @@ class SIRInvProblem(Problem):
                 params=params,
                 weight=hp.pde_weight,
             ),
-            ICConstraint(
+            SIRInvICConstraint(
+                props=props,
                 fields=fields,
                 weight=hp.ic_weight,
             ),

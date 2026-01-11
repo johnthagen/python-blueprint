@@ -204,7 +204,9 @@ def plot_and_save(
     t_data, I_data = batch
 
     N = props.args[N_KEY](t_data)
-    C = 1e5
+    # C = 1e5
+    C = N
+    N /= C
 
     S_pred = C * preds[S_KEY]
     I_pred = C * preds[I_KEY]
@@ -285,7 +287,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse"
-    run_name = "v3"
+    run_name = "v3-new-constant-beta"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
@@ -321,7 +323,10 @@ if __name__ == "__main__":
     # Hyperparameters
     # ========================================================================
     N = 56e6
-    C = 1e5
+    # C = 1e5
+    C = N
+    N /= C
+    I0 = 1 / C
     T = 90
     hp = SIRInvHyperparameters(
         lr=5e-4,
@@ -337,7 +342,7 @@ if __name__ == "__main__":
             data_ratio=2,
             collocations=6000,
             x=torch.linspace(start=0, end=1, steps=91),
-            y0=torch.tensor([N - 1, 1]) / C,
+            y0=torch.tensor([N - I0, I0]),
             args_to_train={
                 BETA_KEY: Argument(0.6, name=BETA_KEY),
             },
@@ -387,8 +392,8 @@ if __name__ == "__main__":
         S, I = y
         b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
 
-        dS = -b(x) * I * S * C / N(x)
-        dI = b(x) * I * S * C / N(x) - d(x) * I
+        dS = -b(x) * I * S / N(x)
+        dI = b(x) * I * S / N(x) - d(x) * I
 
         dS = dS * T
         dI = dI * T
