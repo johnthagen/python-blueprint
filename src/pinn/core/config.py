@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from torch import Tensor
 
@@ -106,6 +106,7 @@ class IngestionConfig(TrainingDataConfig):
     """
 
     df_path: Path
+    x_transform: Callable[[Any], Any] | None = None
     x_column: str | None = None
     y_columns: list[str]
 
@@ -117,7 +118,6 @@ class GenerationConfig(TrainingDataConfig):
     """
 
     x: Tensor
-    y0: Tensor
     noise_level: float
     args_to_train: ArgsRegistry
 

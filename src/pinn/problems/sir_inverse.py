@@ -17,7 +17,6 @@ from pinn.core import (
     Field,
     FieldsRegistry,
     GenerationConfig,
-    InferredContext,
     Parameter,
     PINNDataModule,
     PINNHyperparameters,
@@ -100,29 +99,6 @@ class SIRInvHyperparameters(PINNHyperparameters):
     data_weight: float = 1.0
 
 
-class SIRInvICConstraint(ICConstraint):
-    """
-    Constraint enforcing Initial Conditions (IC).
-    Minimizes ||y(t0) - Y0||^2.
-    """
-
-    def __init__(self, props: ODEProperties, fields: list[Field], weight: float = 1.0):
-        self.props = props
-        super().__init__(fields, weight)
-
-    @override
-    def inject_context(self, context: InferredContext) -> None:
-        """
-        Inject the context into the constraint.
-        """
-        self.t0 = torch.tensor(context.domain.x0, dtype=torch.float32).reshape(1, 1)
-
-        N = self.props.args[N_KEY]
-        I0 = context.Y0
-        S0 = N(self.t0) - I0
-        self.Y0 = torch.stack([S0, I0]).unsqueeze(-1)
-
-
 class SIRInvProblem(Problem):
     """
     Definition of the SIR Inverse Problem.
@@ -148,7 +124,7 @@ class SIRInvProblem(Problem):
                 params=params,
                 weight=hp.pde_weight,
             ),
-            SIRInvICConstraint(
+            ICConstraint(
                 props=props,
                 fields=fields,
                 weight=hp.ic_weight,
@@ -177,33 +153,34 @@ class SIRInvDataModule(PINNDataModule):
 
     def __init__(
         self,
-        props: ODEProperties,
+        gen_props: ODEProperties,
         hp: SIRInvHyperparameters,
         validation: ValidationRegistry | None = None,
         callbacks: Sequence[DataCallback] | None = None,
     ):
         super().__init__(hp, validation, callbacks)
-        self.props = props
+        self.gen_props = gen_props
 
     @override
     def gen_coll(self, domain: Domain1D) -> Tensor:
         """Generate collocation points."""
-        mul = 1e2
-        t0_s = torch.log1p(torch.tensor(domain.x0 * mul, dtype=torch.float32))
-        t1_s = torch.log1p(torch.tensor(domain.x1 * mul, dtype=torch.float32))
-        t_s = torch.rand((self.hp.training_data.collocations, 1)) * (t1_s - t0_s) + t0_s
-        t = torch.expm1(t_s)
-        return t / mul
+        x0 = torch.tensor(domain.x0, dtype=torch.float32)
+        x1 = torch.tensor(domain.x1, dtype=torch.float32)
+
+        coll = torch.rand((self.hp.training_data.collocations, 1))
+        coll = coll * (torch.log1p(x1) - torch.log1p(x0)) + torch.log1p(x0)
+        coll = torch.expm1(coll)
+        return coll
 
     @override
     def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
         """Generate synthetic data."""
-        args = self.props.args.copy()
+        args = self.gen_props.args.copy()
         args.update(config.args_to_train)
 
         data = odeint(
-            lambda x, y: self.props.ode(x, y, args),
-            config.y0,
+            lambda x, y: self.gen_props.ode(x, y, args),
+            self.gen_props.y0,
             config.x,
         )
 

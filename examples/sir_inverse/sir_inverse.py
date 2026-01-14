@@ -30,9 +30,9 @@ from pinn.core import (
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
-from pinn.lightning.callbacks import FormattedProgressBar, Metric, PredictionsWriter
+from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
 from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
-from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY
+from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY, SIR
 
 # ============================================================================
 # Configuration
@@ -81,6 +81,7 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
 
 
 def execute(
+    gen_props: ODEProperties,
     props: ODEProperties,
     hp: SIRInvHyperparameters,
     config: SIRInvTrainConfig,
@@ -92,10 +93,12 @@ def execute(
         clean_dir(config.csv_dir / config.experiment_name / config.run_name)
         clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
 
+    C = 1e5
     dm = SIRInvDataModule(
-        props=props,
+        gen_props=gen_props,
         hp=hp,
         validation=validation,
+        callbacks=[DataScaling(scale_y=1 / C)],
     )
 
     # define problem
@@ -204,9 +207,7 @@ def plot_and_save(
     t_data, I_data = batch
 
     N = props.args[N_KEY](t_data)
-    # C = 1e5
-    C = N
-    N /= C
+    C = 1e5
 
     S_pred = C * preds[S_KEY]
     I_pred = C * preds[I_KEY]
@@ -287,7 +288,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse"
-    run_name = "v3-weighted-pde"
+    run_name = "v3-constant-beta"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
@@ -322,12 +323,10 @@ if __name__ == "__main__":
     # ========================================================================
     # Hyperparameters
     # ========================================================================
-    N = 56e6
-    # C = 1e5
-    C = N
-    N /= C
-    I0 = 1 / C
+
+    C = 1e5
     T = 90
+
     hp = SIRInvHyperparameters(
         lr=5e-4,
         # training_data=IngestionConfig(
@@ -341,8 +340,7 @@ if __name__ == "__main__":
             batch_size=100,
             data_ratio=2,
             collocations=6000,
-            x=torch.linspace(start=0, end=1, steps=91),
-            y0=torch.tensor([N - I0, I0]),
+            x=torch.linspace(start=0, end=T, steps=T + 1),
             args_to_train={
                 BETA_KEY: Argument(0.6, name=BETA_KEY),
             },
@@ -382,6 +380,17 @@ if __name__ == "__main__":
         data_weight=1,
     )
 
+    N = 56e6
+    d = 1 / 5
+    gen_props = ODEProperties(
+        ode=SIR,
+        y0=torch.tensor([N - 1, 1]),
+        args={
+            DELTA_KEY: Argument(d, name=DELTA_KEY),
+            N_KEY: Argument(N, name=N_KEY),
+        },
+    )
+
     # ========================================================================
     # Problem Properties: only system and constants
     # Domain, Y0 are inferred from training data.
@@ -392,18 +401,18 @@ if __name__ == "__main__":
         S, I = y
         b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
 
-        dS = -b(x) * I * S / N(x)
-        dI = b(x) * I * S / N(x) - d(x) * I
+        dS = -b(x) * I * S * C / N(x)
+        dI = b(x) * I * S * C / N(x) - d(x) * I
 
         dS = dS * T
         dI = dI * T
         return torch.stack([dS, dI])
 
-    delta = 1 / 5
     props = ODEProperties(
         ode=SIR_s,
+        y0=torch.tensor([N - 1, 1]) / C,
         args={
-            DELTA_KEY: Argument(delta, name=DELTA_KEY),
+            DELTA_KEY: Argument(d, name=DELTA_KEY),
             N_KEY: Argument(N, name=N_KEY),
         },
     )
@@ -419,4 +428,4 @@ if __name__ == "__main__":
         BETA_KEY: lambda x: torch.full_like(x, 0.6),
     }
 
-    execute(props, hp, config, validation, args.predict)
+    execute(gen_props, props, hp, config, validation, args.predict)

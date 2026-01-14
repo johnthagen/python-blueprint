@@ -5,7 +5,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 import shutil
-from typing import Any, cast
+from typing import Any
 
 from lightning.pytorch import LightningModule, Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -13,6 +13,7 @@ from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import torch
 
 from pinn.core import (
     LOSS_KEY,
@@ -29,13 +30,7 @@ from pinn.core import (
 )
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
-from pinn.problems import (
-    ODECallable,
-    ODEProperties,
-    SIRInvDataModule,
-    SIRInvHyperparameters,
-    SIRInvProblem,
-)
+from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
 from pinn.problems.sir_inverse import DELTA_KEY, I_KEY, Rt_KEY, rSIR
 
 # ============================================================================
@@ -97,12 +92,10 @@ def execute(
         clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
 
     dm = SIRInvDataModule(
-        props=props,
+        gen_props=props,
         hp=hp,
         validation=validation,
-        callbacks=[
-            DataScaling(scale=1 / 1e5, normalize_domain=True),
-        ],
+        callbacks=[DataScaling(scale_y=1 / 1e5)],
     )
 
     # define problem
@@ -307,7 +300,6 @@ if __name__ == "__main__":
         training_data=IngestionConfig(
             batch_size=100,
             data_ratio=2,
-            data_noise_level=1.0,
             collocations=6000,
             df_path=Path("./data/synt_h_data.csv"),
             y_columns=["I_obs"],
@@ -346,7 +338,8 @@ if __name__ == "__main__":
     # Rt is learned, not defined here.
     # ========================================================================
     props = ODEProperties(
-        ode=cast(ODECallable, rSIR),
+        ode=rSIR,
+        y0=torch.tensor([56e6 - 1, 1]) / 1e5,
         args={
             DELTA_KEY: Argument(1 / 5, name=DELTA_KEY),
         },

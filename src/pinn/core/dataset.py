@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Protocol, cast, override, runtime_checkable
+from typing import cast, override
 
 import lightning as pl
 import pandas as pd
@@ -17,12 +17,16 @@ from pinn.core.types import DataBatch, PredictionBatch, TrainingBatch
 from pinn.core.validation import ValidationRegistry, resolve_validation
 
 
-@runtime_checkable
-class DataCallback(Protocol):
+class DataCallback:
     """Abstract base class for building new data callbacks."""
+
+    def transform_data(self, data: DataBatch, coll: Tensor) -> tuple[DataBatch, Tensor]:
+        """Transform the data and collocation points."""
+        return data, coll
 
     def on_after_setup(self, dm: "PINNDataModule") -> None:
         """Called after setup is complete."""
+        return None
 
 
 class PINNDataset(Dataset[TrainingBatch]):
@@ -134,16 +138,21 @@ class PINNDataModule(pl.LightningDataModule, ABC):
 
         self._unresolved_validation = validation or {}
 
-    def load_data(self, ingestion: IngestionConfig) -> DataBatch:
+    def load_data(self, config: IngestionConfig) -> DataBatch:
         """Load raw data from IngestionConfig."""
-        df = pd.read_csv(ingestion.df_path)
+        df = pd.read_csv(config.df_path)
 
-        if ingestion.x_column is not None:
-            x = torch.tensor(df[ingestion.x_column].values, dtype=torch.float32)
+        if config.x_column is not None:
+            x_values = df[config.x_column].values
+
+            if config.x_transform is not None:
+                x_values = config.x_transform(x_values)
+
+            x = torch.tensor(x_values, dtype=torch.float32)
         else:
             x = torch.arange(len(df), dtype=torch.float32)
 
-        y = torch.tensor(df[ingestion.y_columns].values, dtype=torch.float32)
+        y = torch.tensor(df[config.y_columns].values, dtype=torch.float32)
 
         if y.shape[1] != 1:
             y = y.unsqueeze(-1)
@@ -176,9 +185,15 @@ class PINNDataModule(pl.LightningDataModule, ABC):
             if isinstance(config, IngestionConfig)
             else self.gen_data(config)
         )
-        x_data, y_data = self.data
 
-        self.coll = self.gen_coll(Domain1D.from_x(x_data))
+        self.coll = self.gen_coll(
+            Domain1D.from_x(self.data[0]),
+        )
+
+        for callback in self.callbacks:
+            self.data, self.coll = callback.transform_data(self.data, self.coll)
+
+        x_data, y_data = self.data
 
         assert x_data.shape[0] == y_data.shape[0], "Size mismatch between x and y."
         assert x_data.ndim == 2, "x shape differs than (n, 1)."

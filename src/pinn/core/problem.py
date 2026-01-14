@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import cast
 
 import torch
 from torch import Tensor
@@ -180,4 +179,5 @@ class Problem(nn.Module):
             return None
 
         pred = param(x_coll)
-        return cast(Tensor, torch.norm(true - pred))
+
+        return torch.mean((true - pred) ** 2)

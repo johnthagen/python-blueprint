@@ -32,6 +32,6 @@ class InferredContext:
             y: observations.
             validation: Resolved validation dictionary.
         """
+
         self.domain = Domain1D.from_x(x)
-        self.Y0 = y[0].clone()
         self.validation = validation

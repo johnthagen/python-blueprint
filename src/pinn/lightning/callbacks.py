@@ -7,8 +7,9 @@ from typing import Any, Literal, TypeAlias, override
 from lightning.pytorch import LightningModule, Trainer
 from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProgressBar
 import torch
+from torch import Tensor
 
-from pinn.core import Predictions, SMMAStoppingConfig
+from pinn.core import DataBatch, DataCallback, Predictions, SMMAStoppingConfig
 
 SMMA_KEY = "loss/smma"
 
@@ -167,3 +168,21 @@ class PredictionsWriter(BasePredictionWriter):
 
         if self.batch_indices_path is not None:
             torch.save(batch_indices, self.batch_indices_path)
+
+
+class DataScaling(DataCallback):
+    """
+    Callback to transform the data and collocation points.
+    """
+
+    def __init__(self, scale_y: float):
+        self.scale_y = scale_y
+
+    @override
+    def transform_data(self, data: DataBatch, coll: Tensor) -> tuple[DataBatch, Tensor]:
+        x, y = data
+
+        x = (x - x.min()) / (x.max() - x.min())
+        coll = (coll - coll.min()) / (coll.max() - coll.min())
+
+        return (x, y * self.scale_y), coll

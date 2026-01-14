@@ -35,10 +35,12 @@ class ODEProperties:
     Attributes:
         ode: The ODE function (callable).
         args: Arguments/Parameters for the ODE.
+        y0: Initial conditions.
     """
 
     ode: ODECallable
     args: ArgsRegistry
+    y0: Tensor
 
 
 class ResidualsConstraint(Constraint):
@@ -77,7 +79,7 @@ class ResidualsConstraint(Constraint):
         log: LogFn | None = None,
     ) -> Tensor:
         _, x_coll = batch
-        x_coll = x_coll.requires_grad_(True)
+        x_coll.requires_grad_()
 
         preds = [f(x_coll) for f in self.fields]
         y = torch.stack(preds)
@@ -116,9 +118,11 @@ class ICConstraint(Constraint):
 
     def __init__(
         self,
+        props: ODEProperties,
         fields: list[Field],
         weight: float = 1.0,
     ):
+        self.Y0 = props.y0.clone().reshape(-1, 1, 1)
         self.fields = fields
         self.weight = weight
 
@@ -127,7 +131,6 @@ class ICConstraint(Constraint):
         """
         Inject the context into the constraint.
         """
-        self.Y0 = context.Y0.reshape(-1, 1, 1)
         self.t0 = torch.tensor(context.domain.x0, dtype=torch.float32).reshape(1, 1)
 
     @override
@@ -142,11 +145,9 @@ class ICConstraint(Constraint):
         t0 = self.t0.to(device)
         Y0 = self.Y0.to(device)
 
-        Y0_preds = [f(t0) for f in self.fields]
+        Y0_preds = torch.stack([f(t0) for f in self.fields])
 
-        loss = torch.tensor(0.0, device=device)
-        for y0_target, y0_pred in zip(Y0, Y0_preds, strict=False):
-            loss = loss + criterion(y0_pred, y0_target)
+        loss: Tensor = criterion(Y0_preds, Y0)
         loss = self.weight * loss
 
         if log is not None:
