@@ -7,6 +7,8 @@ permissions:
 
 env:
   UV_VERSION: "0.9.21"
+  # Enforce that only actions/setup-python Python versions are used for consistency.
+  UV_PYTHON_DOWNLOADS: never
 
 jobs:
   test:
