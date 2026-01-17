@@ -6,5 +6,5 @@
 | mdurl             | 0.1.2   | MIT License        |
 | rich              | 14.2.0  | MIT License        |
 | shellingham       | 1.5.4   | ISC License (ISCL) |
-| typer-slim        | 0.20.0  | MIT License        |
+| typer-slim        | 0.21.1  | MIT                |
 | typing_extensions | 4.15.0  | PSF-2.0            |
