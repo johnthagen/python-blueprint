@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 env:
-  UV_VERSION: "0.9.21"
+  UV_VERSION: "0.9.26"
 
 jobs:
   test:
