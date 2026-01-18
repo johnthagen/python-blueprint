@@ -93,12 +93,7 @@ class ResidualsConstraint(Constraint):
             ]
         )
 
-        residuals = dy_dt - dy_dt_pred
-
-        loss = torch.tensor(0.0, device=x_coll.device)
-        for res in residuals:
-            loss = loss + criterion(res, torch.zeros_like(res))
-        loss = self.weight * loss
+        loss: Tensor = self.weight * criterion(dy_dt, dy_dt_pred)
 
         if log is not None:
             log("loss/res", loss)

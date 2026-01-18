@@ -1,0 +1,59 @@
+hp: !!python/object:pinn.problems.sir_inverse.SIRInvHyperparameters
+  data_weight: 1
+  early_stopping: null
+  fields_config: !!python/object:pinn.core.config.MLPConfig
+    activation: tanh
+    encode: null
+    hidden_layers:
+    - 64
+    - 128
+    - 128
+    - 64
+    in_dim: 1
+    name: u
+    out_dim: 1
+    output_activation: softplus
+  ic_weight: 1
+  lr: 0.0005
+  params_config: !!python/object:pinn.core.config.ScalarConfig
+    init_value: 0.5
+    name: p
+  pde_weight: 1
+  scheduler: !!python/object:pinn.core.config.SchedulerConfig
+    factor: 0.5
+    min_lr: 1.0e-06
+    mode: min
+    patience: 55
+    threshold: 0.005
+  smma_stopping: null
+  training_data: !!python/object:pinn.core.config.GenerationConfig
+    args_to_train:
+      beta: !!python/object:pinn.core.nn.Argument
+        _name: beta
+        _value: 0.6
+    batch_size: 100
+    collocations: 6000
+    data_ratio: 2
+    noise_level: 0
+    x: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYCwAAADUyMDE2MTMwNDY0cQJYAwAAAGNwdXEDS1tOdHEEUS6AAl1xAFgLAAAANTIwMTYx
+        MzA0NjRxAWEuWwAAAAAAAAAAAAAAAACAPwAAAEAAAEBAAACAQAAAoEAAAMBAAADgQAAAAEEAABBB
+        AAAgQQAAMEEAAEBBAABQQQAAYEEAAHBBAACAQQAAiEEAAJBBAACYQQAAoEEAAKhBAACwQQAAuEEA
+        AMBBAADIQQAA0EEAANhBAADgQQAA6EEAAPBBAAD4QQAAAEIAAARCAAAIQgAADEIAABBCAAAUQgAA
+        GEIAABxCAAAgQgAAJEIAAChCAAAsQgAAMEIAADRCAAA4QgAAPEIAAEBCAABEQgAASEIAAExCAABQ
+        QgAAVEIAAFhCAABcQgAAYEIAAGRCAABoQgAAbEIAAHBCAAB0QgAAeEIAAHxCAACAQgAAgkIAAIRC
+        AACGQgAAiEIAAIpCAACMQgAAjkIAAJBCAACSQgAAlEIAAJZCAACYQgAAmkIAAJxCAACeQgAAoEIA
+        AKJCAACkQgAApkIAAKhCAACqQgAArEIAAK5CAACwQgAAskIAALRC
+    - 0
+    - !!python/tuple
+      - 91
+    - !!python/tuple
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []

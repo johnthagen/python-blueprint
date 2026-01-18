@@ -78,7 +78,7 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
 # ============================================================================
 # Training / Prediction Execution
 # ============================================================================
-
+C = 1e6
 
 def execute(
     gen_props: ODEProperties,
@@ -93,7 +93,6 @@ def execute(
         clean_dir(config.csv_dir / config.experiment_name / config.run_name)
         clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
 
-    C = 1e5
     dm = SIRInvDataModule(
         gen_props=gen_props,
         hp=hp,
@@ -207,7 +206,6 @@ def plot_and_save(
     t_data, I_data = batch
 
     N = props.args[N_KEY](t_data)
-    C = 1e5
 
     S_pred = C * preds[S_KEY]
     I_pred = C * preds[I_KEY]
@@ -288,7 +286,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse"
-    run_name = "v3-constant-beta"
+    run_name = "v4-more-scaled"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
@@ -309,7 +307,7 @@ if __name__ == "__main__":
     # Experiment Configuration
     # ========================================================================
     config = SIRInvTrainConfig(
-        max_epochs=1000,
+        max_epochs=2000,
         gradient_clip_val=0.1,
         run_name=run_name,
         tensorboard_dir=tensorboard_dir,
@@ -324,7 +322,6 @@ if __name__ == "__main__":
     # Hyperparameters
     # ========================================================================
 
-    C = 1e5
     T = 90
 
     hp = SIRInvHyperparameters(
@@ -375,14 +372,17 @@ if __name__ == "__main__":
         #     threshold=0.1,
         #     lookback=50,
         # ),
-        pde_weight=10,
+        pde_weight=1,
         ic_weight=1,
         data_weight=1,
     )
 
+    # global constants for the ODE model
     N = 56e6
     d = 1 / 5
+
     gen_props = ODEProperties(
+        # add time domain
         ode=SIR,
         y0=torch.tensor([N - 1, 1]),
         args={
