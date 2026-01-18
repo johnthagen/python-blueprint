@@ -8,7 +8,10 @@
             "name": "Python Debugger: sir_inverse.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "sir_inversed.py",
+            "program": "sir_inverse.py",
+            "args": [
+                "--predict"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/examples/sir_inverse"
         }

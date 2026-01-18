@@ -142,6 +142,7 @@ class Problem(nn.Module):
         Get the true values for a given x coordinates.
         Returns None if no validation source is configured.
         """
+
         return {
             p.name: p_true.squeeze(-1)
             for p in self.params
@@ -161,6 +162,7 @@ class Problem(nn.Module):
         """
         if param_name not in self.context.validation:
             return None
+
         return self.context.validation[param_name](x)
 
     def _param_validation_loss(self, param: Parameter, x_coll: Tensor) -> Tensor | None:

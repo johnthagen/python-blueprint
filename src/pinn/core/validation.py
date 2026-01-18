@@ -112,7 +112,7 @@ def resolve_validation(
 
             def make_lookup_fn(values: Tensor) -> Callable[[Tensor], Tensor]:
                 def lookup(x: Tensor) -> Tensor:
-                    idx = x.squeeze(-1).long()
+                    idx = x.squeeze(-1).round().to(torch.int32)
                     return values.to(x.device)[idx]
 
                 return lookup

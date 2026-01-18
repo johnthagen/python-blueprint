@@ -9,7 +9,7 @@ from lightning.pytorch.callbacks import BasePredictionWriter, Callback, TQDMProg
 import torch
 from torch import Tensor
 
-from pinn.core import DataBatch, DataCallback, Predictions, SMMAStoppingConfig
+from pinn.core import DataBatch, DataCallback, PINNDataModule, Predictions, SMMAStoppingConfig
 
 SMMA_KEY = "loss/smma"
 
@@ -175,14 +175,25 @@ class DataScaling(DataCallback):
     Callback to transform the data and collocation points.
     """
 
-    def __init__(self, scale_y: float):
-        self.scale_y = scale_y
+    def __init__(self, y_scale: float):
+        self.y_scale = y_scale
 
     @override
     def transform_data(self, data: DataBatch, coll: Tensor) -> tuple[DataBatch, Tensor]:
         x, y = data
 
+        self.x_scale = x.max() - x.min()
+
         x = (x - x.min()) / (x.max() - x.min())
         coll = (coll - coll.min()) / (coll.max() - coll.min())
 
-        return (x, y * self.scale_y), coll
+        return (x, y * self.y_scale), coll
+
+    @override
+    def on_after_setup(self, dm: PINNDataModule) -> None:
+        """Called after setup is complete."""
+
+        for k in dm.validation:
+            orig_fn = dm.validation[k]
+            dm.validation[k] = (lambda fn, scale: (lambda x: fn(x * scale)))(orig_fn, self.x_scale)
+        return None

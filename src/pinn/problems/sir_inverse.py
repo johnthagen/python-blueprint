@@ -153,8 +153,8 @@ class SIRInvDataModule(PINNDataModule):
 
     def __init__(
         self,
-        gen_props: ODEProperties,
         hp: SIRInvHyperparameters,
+        gen_props: ODEProperties | None = None,
         validation: ValidationRegistry | None = None,
         callbacks: Sequence[DataCallback] | None = None,
     ):
@@ -175,6 +175,8 @@ class SIRInvDataModule(PINNDataModule):
     @override
     def gen_data(self, config: GenerationConfig) -> tuple[Tensor, Tensor]:
         """Generate synthetic data."""
+        assert self.gen_props is not None, "SIR properties are required to generate data"
+
         args = self.gen_props.args.copy()
         args.update(config.args_to_train)
 

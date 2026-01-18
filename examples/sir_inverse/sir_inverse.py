@@ -20,8 +20,9 @@ from pinn.core import (
     LOSS_KEY,
     ArgsRegistry,
     Argument,
+    ColumnRef,
     Field,
-    GenerationConfig,
+    IngestionConfig,
     MLPConfig,
     Parameter,
     Predictions,
@@ -31,7 +32,7 @@ from pinn.core import (
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
 from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
-from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY, SIR
+from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY
 
 # ============================================================================
 # Configuration
@@ -82,15 +83,15 @@ def main(config: RunConfig) -> None:
     N = 56e6
     d = 1 / 5
 
-    gen_props = ODEProperties(
-        # add time domain
-        ode=SIR,
-        y0=torch.tensor([N - 1, 1]),
-        args={
-            DELTA_KEY: Argument(d, name=DELTA_KEY),
-            N_KEY: Argument(N, name=N_KEY),
-        },
-    )
+    # gen_props = ODEProperties(
+    #     # add time domain
+    #     ode=SIR,
+    #     y0=torch.tensor([N - 1, 1]),
+    #     args={
+    #         DELTA_KEY: Argument(d, name=DELTA_KEY),
+    #         N_KEY: Argument(N, name=N_KEY),
+    #     },
+    # )
 
     # ========================================================================
     # Hyperparameters
@@ -98,23 +99,23 @@ def main(config: RunConfig) -> None:
 
     hp = SIRInvHyperparameters(
         lr=5e-4,
-        # training_data=IngestionConfig(
-        #     batch_size=100,
-        #     data_ratio=2,
-        #     collocations=6000,
-        #     df_path=Path("./data/synt_sir_data.csv"),
-        #     y_columns=["I_obs"],
-        # ),
-        training_data=GenerationConfig(
+        training_data=IngestionConfig(
             batch_size=100,
             data_ratio=2,
             collocations=6000,
-            x=torch.linspace(start=0, end=T, steps=T + 1),
-            args_to_train={
-                BETA_KEY: Argument(0.6, name=BETA_KEY),
-            },
-            noise_level=0,
+            df_path=Path("./data/synt_sir_data.csv"),
+            y_columns=["I_obs"],
         ),
+        # training_data=GenerationConfig(
+        #     batch_size=100,
+        #     data_ratio=2,
+        #     collocations=6000,
+        #     x=torch.linspace(start=0, end=T, steps=T + 1),
+        #     args_to_train={
+        #         BETA_KEY: Argument(0.6, name=BETA_KEY),
+        #     },
+        #     noise_level=0,
+        # ),
         fields_config=MLPConfig(
             in_dim=1,
             out_dim=1,
@@ -181,8 +182,8 @@ def main(config: RunConfig) -> None:
     # ========================================================================
 
     validation: ValidationRegistry = {
-        # BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * delta),
-        BETA_KEY: lambda x: torch.full_like(x, 0.6),
+        BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * d),
+        # BETA_KEY: lambda x: torch.full_like(x, 0.6),
     }
 
     # ============================================================================
@@ -190,10 +191,10 @@ def main(config: RunConfig) -> None:
     # ============================================================================
 
     dm = SIRInvDataModule(
-        gen_props=gen_props,
+        # gen_props=gen_props,
         hp=hp,
         validation=validation,
-        callbacks=[DataScaling(scale_y=1 / C)],
+        callbacks=[DataScaling(y_scale=1 / C)],
     )
 
     # define problem
@@ -383,7 +384,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse"
-    run_name = "v5-constant-beta-as-mlp"
+    run_name = "v6-ingested-data"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
