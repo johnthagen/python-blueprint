@@ -103,7 +103,7 @@ def main(config: RunConfig) -> None:
             batch_size=100,
             data_ratio=2,
             collocations=6000,
-            df_path=Path("./data/synt_sir_data.csv"),
+            df_path=Path("./data/real_sir_data.csv"),
             y_columns=["I_obs"],
         ),
         # training_data=GenerationConfig(
@@ -384,7 +384,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse"
-    run_name = "v6-ingested-data"
+    run_name = "v7-real-data"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
