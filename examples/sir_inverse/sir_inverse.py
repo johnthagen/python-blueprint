@@ -25,7 +25,6 @@ from pinn.core import (
     MLPConfig,
     Parameter,
     Predictions,
-    ScalarConfig,
     SchedulerConfig,
     ValidationRegistry,
 )
@@ -40,9 +39,10 @@ from pinn.problems.sir_inverse import BETA_KEY, DELTA_KEY, I_KEY, N_KEY, S_KEY, 
 
 
 @dataclass
-class SIRInvTrainConfig:
+class RunConfig:
     max_epochs: int
     gradient_clip_val: float
+    predict: bool
 
     run_name: str
     tensorboard_dir: Path
@@ -75,23 +75,119 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
     return value
 
 
-# ============================================================================
-# Training / Prediction Execution
-# ============================================================================
-C = 1e6
+def main(config: RunConfig) -> None:
+    # global constants for the ODE model
+    C = 1e6
+    T = 90
+    N = 56e6
+    d = 1 / 5
 
-def execute(
-    gen_props: ODEProperties,
-    props: ODEProperties,
-    hp: SIRInvHyperparameters,
-    config: SIRInvTrainConfig,
-    validation: ValidationRegistry,
-    predict: bool = False,
-) -> None:
-    clean_dir(config.checkpoint_dir)
-    if not predict:
-        clean_dir(config.csv_dir / config.experiment_name / config.run_name)
-        clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
+    gen_props = ODEProperties(
+        # add time domain
+        ode=SIR,
+        y0=torch.tensor([N - 1, 1]),
+        args={
+            DELTA_KEY: Argument(d, name=DELTA_KEY),
+            N_KEY: Argument(N, name=N_KEY),
+        },
+    )
+
+    # ========================================================================
+    # Hyperparameters
+    # ========================================================================
+
+    hp = SIRInvHyperparameters(
+        lr=5e-4,
+        # training_data=IngestionConfig(
+        #     batch_size=100,
+        #     data_ratio=2,
+        #     collocations=6000,
+        #     df_path=Path("./data/synt_sir_data.csv"),
+        #     y_columns=["I_obs"],
+        # ),
+        training_data=GenerationConfig(
+            batch_size=100,
+            data_ratio=2,
+            collocations=6000,
+            x=torch.linspace(start=0, end=T, steps=T + 1),
+            args_to_train={
+                BETA_KEY: Argument(0.6, name=BETA_KEY),
+            },
+            noise_level=0,
+        ),
+        fields_config=MLPConfig(
+            in_dim=1,
+            out_dim=1,
+            hidden_layers=[64, 128, 128, 64],
+            activation="tanh",
+            output_activation="softplus",
+        ),
+        # params_config=ScalarConfig(
+        #     init_value=0.5,
+        # ),
+        params_config=MLPConfig(
+            in_dim=1,
+            out_dim=1,
+            hidden_layers=[64, 128, 128, 64],
+            activation="tanh",
+            output_activation="softplus",
+        ),
+        scheduler=SchedulerConfig(
+            mode="min",
+            factor=0.5,
+            patience=55,
+            threshold=5e-3,
+            min_lr=1e-6,
+        ),
+        # smma_stopping=SMMAStoppingConfig(
+        #     window=50,
+        #     threshold=0.1,
+        #     lookback=50,
+        # ),
+        pde_weight=1,
+        ic_weight=1,
+        data_weight=1,
+    )
+
+    # ========================================================================
+    # Problem Properties: only system and constants
+    # beta is learned.
+    # ========================================================================
+
+    def SIR_s(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+        S, I = y
+        b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
+
+        dS = -b(x) * I * S * C / N(x)
+        dI = b(x) * I * S * C / N(x) - d(x) * I
+
+        dS = dS * T
+        dI = dI * T
+        return torch.stack([dS, dI])
+
+    props = ODEProperties(
+        ode=SIR_s,
+        y0=torch.tensor([N - 1, 1]) / C,
+        args={
+            DELTA_KEY: Argument(d, name=DELTA_KEY),
+            N_KEY: Argument(N, name=N_KEY),
+        },
+    )
+
+    # ========================================================================
+    # Validation Configuration
+    # This defines ground truth for logging/validation.
+    # Resolved lazily when data is loaded.
+    # ========================================================================
+
+    validation: ValidationRegistry = {
+        # BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * delta),
+        BETA_KEY: lambda x: torch.full_like(x, 0.6),
+    }
+
+    # ============================================================================
+    # Training / Prediction Execution
+    # ============================================================================
 
     dm = SIRInvDataModule(
         gen_props=gen_props,
@@ -112,7 +208,7 @@ def execute(
         params=[beta],
     )
 
-    if predict:
+    if config.predict:
         module = PINNModule.load_from_checkpoint(
             config.model_path,
             problem=problem,
@@ -130,7 +226,7 @@ def execute(
         predictions_list: Sequence[Predictions],
         _batch_indices: Sequence[Any],
     ) -> None:
-        plot_and_save(predictions_list[0], config.predictions_dir, props)
+        plot_and_save(predictions_list[0], config.predictions_dir, props, C)
 
     callbacks = [
         ModelCheckpoint(
@@ -178,12 +274,12 @@ def execute(
     trainer = Trainer(
         max_epochs=config.max_epochs,
         gradient_clip_val=config.gradient_clip_val,
-        logger=loggers if not predict else [],
+        logger=loggers if not config.predict else [],
         callbacks=callbacks,
         log_every_n_steps=0,
     )
 
-    if not predict:
+    if not config.predict:
         trainer.fit(module, dm)
         trainer.save_checkpoint(config.model_path, weights_only=False)
 
@@ -201,6 +297,7 @@ def plot_and_save(
     predictions: Predictions,
     predictions_dir: Path,
     props: ODEProperties,
+    C: float,
 ) -> None:
     batch, preds, trues = predictions
     t_data, I_data = batch
@@ -286,7 +383,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse"
-    run_name = "v4-more-scaled"
+    run_name = "v5-constant-beta-as-mlp"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
@@ -302,13 +399,15 @@ if __name__ == "__main__":
     create_dir(models_dir)
     create_dir(predictions_dir)
     create_dir(temp_dir)
+    clean_dir(temp_dir)
+    if not args.predict:
+        clean_dir(csv_dir / experiment_name / run_name)
+        clean_dir(tensorboard_dir / experiment_name / run_name)
 
-    # ========================================================================
-    # Experiment Configuration
-    # ========================================================================
-    config = SIRInvTrainConfig(
+    config = RunConfig(
         max_epochs=2000,
         gradient_clip_val=0.1,
+        predict=args.predict,
         run_name=run_name,
         tensorboard_dir=tensorboard_dir,
         csv_dir=csv_dir,
@@ -318,114 +417,4 @@ if __name__ == "__main__":
         experiment_name=experiment_name,
     )
 
-    # ========================================================================
-    # Hyperparameters
-    # ========================================================================
-
-    T = 90
-
-    hp = SIRInvHyperparameters(
-        lr=5e-4,
-        # training_data=IngestionConfig(
-        #     batch_size=100,
-        #     data_ratio=2,
-        #     collocations=6000,
-        #     df_path=Path("./data/synt_scaled_sir_data.csv"), # TODO: generate this
-        #     y_columns=["I_obs"],
-        # ),
-        training_data=GenerationConfig(
-            batch_size=100,
-            data_ratio=2,
-            collocations=6000,
-            x=torch.linspace(start=0, end=T, steps=T + 1),
-            args_to_train={
-                BETA_KEY: Argument(0.6, name=BETA_KEY),
-            },
-            noise_level=0,
-        ),
-        fields_config=MLPConfig(
-            in_dim=1,
-            out_dim=1,
-            hidden_layers=[64, 128, 128, 64],
-            activation="tanh",
-            output_activation="softplus",
-        ),
-        params_config=ScalarConfig(
-            init_value=0.5,
-        ),
-        # params_config=MLPConfig(
-        #     in_dim=1,
-        #     out_dim=1,
-        #     hidden_layers=[64, 64],
-        #     activation="tanh",
-        #     output_activation="softplus",
-        # ),
-        scheduler=SchedulerConfig(
-            mode="min",
-            factor=0.5,
-            patience=55,
-            threshold=5e-3,
-            min_lr=1e-6,
-        ),
-        # smma_stopping=SMMAStoppingConfig(
-        #     window=50,
-        #     threshold=0.1,
-        #     lookback=50,
-        # ),
-        pde_weight=1,
-        ic_weight=1,
-        data_weight=1,
-    )
-
-    # global constants for the ODE model
-    N = 56e6
-    d = 1 / 5
-
-    gen_props = ODEProperties(
-        # add time domain
-        ode=SIR,
-        y0=torch.tensor([N - 1, 1]),
-        args={
-            DELTA_KEY: Argument(d, name=DELTA_KEY),
-            N_KEY: Argument(N, name=N_KEY),
-        },
-    )
-
-    # ========================================================================
-    # Problem Properties: only system and constants
-    # Domain, Y0 are inferred from training data.
-    # beta is learned.
-    # ========================================================================
-
-    def SIR_s(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
-        S, I = y
-        b, d, N = args[BETA_KEY], args[DELTA_KEY], args[N_KEY]
-
-        dS = -b(x) * I * S * C / N(x)
-        dI = b(x) * I * S * C / N(x) - d(x) * I
-
-        dS = dS * T
-        dI = dI * T
-        return torch.stack([dS, dI])
-
-    props = ODEProperties(
-        ode=SIR_s,
-        y0=torch.tensor([N - 1, 1]) / C,
-        args={
-            DELTA_KEY: Argument(d, name=DELTA_KEY),
-            N_KEY: Argument(N, name=N_KEY),
-        },
-    )
-
-    # ========================================================================
-    # Validation Configuration
-    # This defines ground truth for logging/validation.
-    # Resolved lazily when data is loaded.
-    # ========================================================================
-
-    validation: ValidationRegistry = {
-        # BETA_KEY: ColumnRef(column="Rt", transform=lambda rt: rt * delta),
-        BETA_KEY: lambda x: torch.full_like(x, 0.6),
-    }
-
-    execute(gen_props, props, hp, config, validation, args.predict)
+    main(config)
