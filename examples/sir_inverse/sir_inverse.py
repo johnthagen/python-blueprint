@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import argparse
-from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 import shutil
-from typing import Any
 
-from lightning.pytorch import LightningModule, Trainer
+from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 import matplotlib.pyplot as plt
@@ -151,8 +149,7 @@ def main(config: RunConfig) -> None:
     )
 
     # ========================================================================
-    # Problem Properties: only system and constants
-    # beta is learned.
+    # Problem Properties
     # ========================================================================
 
     def SIR_s(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
@@ -221,14 +218,6 @@ def main(config: RunConfig) -> None:
             hp=hp,
         )
 
-    def on_prediction(
-        _trainer: Trainer,
-        _module: LightningModule,
-        predictions_list: Sequence[Predictions],
-        _batch_indices: Sequence[Any],
-    ) -> None:
-        plot_and_save(predictions_list[0], config.predictions_dir, props, C)
-
     callbacks = [
         ModelCheckpoint(
             dirpath=config.checkpoint_dir,
@@ -247,7 +236,9 @@ def main(config: RunConfig) -> None:
         ),
         PredictionsWriter(
             predictions_path=config.predictions_dir / "predictions.pt",
-            on_prediction=on_prediction,
+            on_prediction=lambda _, __, predictions_list, ___: plot_and_save(
+                predictions_list[0], config.predictions_dir, props, C
+            ),
         ),
     ]
 
@@ -400,6 +391,7 @@ if __name__ == "__main__":
     create_dir(models_dir)
     create_dir(predictions_dir)
     create_dir(temp_dir)
+
     clean_dir(temp_dir)
     if not args.predict:
         clean_dir(csv_dir / experiment_name / run_name)

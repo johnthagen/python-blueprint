@@ -39,6 +39,10 @@ class Domain1D:
 
         return cls(x0=x0, x1=x1, dx=dx)
 
+    @override
+    def __repr__(self) -> str:
+        return f"Domain1D(x0={self.x0}, x1={self.x1}, dx={self.dx})"
+
 
 def get_activation(name: Activations) -> nn.Module:
     """

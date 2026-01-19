@@ -1,22 +1,22 @@
 from __future__ import annotations
 
 import argparse
-from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 import shutil
-from typing import Any
 
-from lightning.pytorch import LightningModule, Trainer
+from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import torch
+from torch import Tensor
 
 from pinn.core import (
     LOSS_KEY,
+    ArgsRegistry,
     Argument,
     ColumnRef,
     Field,
@@ -25,13 +25,12 @@ from pinn.core import (
     Parameter,
     Predictions,
     SchedulerConfig,
-    SMMAStoppingConfig,
     ValidationRegistry,
 )
 from pinn.lightning import PINNModule, SMMAStopping
 from pinn.lightning.callbacks import DataScaling, FormattedProgressBar, Metric, PredictionsWriter
 from pinn.problems import ODEProperties, SIRInvDataModule, SIRInvHyperparameters, SIRInvProblem
-from pinn.problems.sir_inverse import DELTA_KEY, I_KEY, Rt_KEY, rSIR
+from pinn.problems.sir_inverse import DELTA_KEY, I_KEY, Rt_KEY
 
 # ============================================================================
 # Configuration
@@ -39,9 +38,10 @@ from pinn.problems.sir_inverse import DELTA_KEY, I_KEY, Rt_KEY, rSIR
 
 
 @dataclass
-class ReducedSIRInvTrainConfig:
+class RunConfig:
     max_epochs: int
     gradient_clip_val: float
+    predict: bool
 
     run_name: str
     tensorboard_dir: Path
@@ -74,28 +74,90 @@ def format_progress_bar(key: str, value: Metric) -> Metric:
     return value
 
 
-# ============================================================================
-# Training / Prediction Execution
-# ============================================================================
+def main(config: RunConfig) -> None:
+    # ========================================================================
+    # Hyperparameters
+    # ========================================================================
 
+    hp = SIRInvHyperparameters(
+        lr=5e-4,
+        training_data=IngestionConfig(
+            batch_size=100,
+            data_ratio=2,
+            collocations=6000,
+            df_path=Path("./data/synt_h_data.csv"),
+            y_columns=["I_obs"],
+        ),
+        fields_config=MLPConfig(
+            in_dim=1,
+            out_dim=1,
+            hidden_layers=[64, 128, 128, 64],
+            activation="tanh",
+            output_activation="softplus",
+        ),
+        params_config=MLPConfig(
+            in_dim=1,
+            out_dim=1,
+            hidden_layers=[64, 128, 128, 64],
+            activation="tanh",
+            output_activation="softplus",
+        ),
+        scheduler=SchedulerConfig(
+            mode="min",
+            factor=0.5,
+            patience=55,
+            threshold=5e-3,
+            min_lr=1e-6,
+        ),
+        # smma_stopping=SMMAStoppingConfig(
+        #     window=50,
+        #     threshold=0.01,
+        #     lookback=50,
+        # ),
+    )
 
-def execute(
-    props: ODEProperties,
-    hp: SIRInvHyperparameters,
-    config: ReducedSIRInvTrainConfig,
-    validation: ValidationRegistry,
-    predict: bool = False,
-) -> None:
-    clean_dir(config.checkpoint_dir)
-    if not predict:
-        clean_dir(config.csv_dir / config.experiment_name / config.run_name)
-        clean_dir(config.tensorboard_dir / config.experiment_name / config.run_name)
+    # ========================================================================
+    # Problem Properties
+    # ========================================================================
+
+    C = 1e6
+    T = 120
+    d = 1 / 5
+
+    def rSIR_s(x: Tensor, y: Tensor, args: ArgsRegistry) -> Tensor:
+        I = y
+        d, Rt = args[DELTA_KEY], args[Rt_KEY]
+
+        dI = d(x) * (Rt(x) - 1) * I
+        dI = dI * T
+        return dI
+
+    props = ODEProperties(
+        ode=rSIR_s,
+        y0=torch.tensor([1]) / C,
+        args={
+            DELTA_KEY: Argument(d, name=DELTA_KEY),
+        },
+    )
+
+    # ========================================================================
+    # Validation Configuration
+    # This defines ground truth for logging/validation.
+    # Resolved lazily when data is loaded.
+    # ========================================================================
+
+    validation: ValidationRegistry = {
+        Rt_KEY: ColumnRef(column="Rt"),
+    }
+
+    # ============================================================================
+    # Training / Prediction Execution
+    # ============================================================================
 
     dm = SIRInvDataModule(
-        gen_props=props,
         hp=hp,
         validation=validation,
-        callbacks=[DataScaling(scale_y=1 / 1e5)],
+        callbacks=[DataScaling(y_scale=1 / C)],
     )
 
     # define problem
@@ -109,7 +171,7 @@ def execute(
         params=[Rt],
     )
 
-    if predict:
+    if config.predict:
         module = PINNModule.load_from_checkpoint(
             config.model_path,
             problem=problem,
@@ -120,14 +182,6 @@ def execute(
             problem=problem,
             hp=hp,
         )
-
-    def on_prediction(
-        _trainer: Trainer,
-        _module: LightningModule,
-        predictions_list: Sequence[Predictions],
-        _batch_indices: Sequence[Any],
-    ) -> None:
-        plot_and_save(predictions_list[0], config.predictions_dir, props)
 
     callbacks = [
         ModelCheckpoint(
@@ -147,7 +201,9 @@ def execute(
         ),
         PredictionsWriter(
             predictions_path=config.predictions_dir / "predictions.pt",
-            on_prediction=on_prediction,
+            on_prediction=lambda _, __, predictions_list, ___: plot_and_save(
+                predictions_list[0], config.predictions_dir, props, C
+            ),
         ),
     ]
 
@@ -175,12 +231,12 @@ def execute(
     trainer = Trainer(
         max_epochs=config.max_epochs,
         gradient_clip_val=config.gradient_clip_val,
-        logger=loggers if not predict else [],
+        logger=loggers if not config.predict else [],
         callbacks=callbacks,
         log_every_n_steps=0,
     )
 
-    if not predict:
+    if not config.predict:
         trainer.fit(module, dm)
         trainer.save_checkpoint(config.model_path, weights_only=False)
 
@@ -198,6 +254,7 @@ def plot_and_save(
     predictions: Predictions,
     predictions_dir: Path,
     props: ODEProperties,
+    C: float,
 ) -> None:
     batch, preds, trues = predictions
     t_data, I_data = batch
@@ -205,7 +262,8 @@ def plot_and_save(
     Rt_pred = preds[Rt_KEY]
     Rt_true = trues[Rt_KEY] if trues else None
 
-    I_pred = preds[I_KEY]
+    I_pred = C * preds[I_KEY]
+    I_data = C * I_data
 
     # plot
     sns.set_theme(style="darkgrid")
@@ -259,7 +317,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     experiment_name = "sir-inverse-reduced"
-    run_name = "v1"
+    run_name = "v0"
 
     log_dir = Path("./logs")
     tensorboard_dir = log_dir / "tensorboard"
@@ -276,13 +334,15 @@ if __name__ == "__main__":
     create_dir(predictions_dir)
     create_dir(temp_dir)
 
-    # ========================================================================
-    # Experiment Configuration
-    # ========================================================================
+    clean_dir(temp_dir)
+    if not args.predict:
+        clean_dir(csv_dir / experiment_name / run_name)
+        clean_dir(tensorboard_dir / experiment_name / run_name)
 
-    config = ReducedSIRInvTrainConfig(
+    config = RunConfig(
         max_epochs=2000,
         gradient_clip_val=0.1,
+        predict=args.predict,
         run_name=run_name,
         tensorboard_dir=tensorboard_dir,
         csv_dir=csv_dir,
@@ -291,68 +351,4 @@ if __name__ == "__main__":
         checkpoint_dir=temp_dir,
         experiment_name=experiment_name,
     )
-
-    # ========================================================================
-    # Hyperparameters
-    # ========================================================================
-    hp = SIRInvHyperparameters(
-        lr=5e-4,
-        training_data=IngestionConfig(
-            batch_size=100,
-            data_ratio=2,
-            collocations=6000,
-            df_path=Path("./data/synt_h_data.csv"),
-            y_columns=["I_obs"],
-        ),
-        fields_config=MLPConfig(
-            in_dim=1,
-            out_dim=1,
-            hidden_layers=[64, 128, 128, 64],
-            activation="tanh",
-            output_activation="softplus",
-        ),
-        params_config=MLPConfig(
-            in_dim=1,
-            out_dim=1,
-            hidden_layers=[64, 64],
-            activation="tanh",
-            output_activation="softplus",
-        ),
-        scheduler=SchedulerConfig(
-            mode="min",
-            factor=0.5,
-            patience=55,
-            threshold=5e-3,
-            min_lr=1e-6,
-        ),
-        smma_stopping=SMMAStoppingConfig(
-            window=50,
-            threshold=0.01,
-            lookback=50,
-        ),
-    )
-
-    # ========================================================================
-    # Problem Properties - only define TRUE constants!
-    # Domain, Y0 are inferred from training data.
-    # Rt is learned, not defined here.
-    # ========================================================================
-    props = ODEProperties(
-        ode=rSIR,
-        y0=torch.tensor([56e6 - 1, 1]) / 1e5,
-        args={
-            DELTA_KEY: Argument(1 / 5, name=DELTA_KEY),
-        },
-    )
-
-    # ========================================================================
-    # Validation Configuration (separate from problem definition!)
-    # This defines ground truth for logging/validation.
-    # Resolved lazily when data is loaded.
-    # ========================================================================
-    validation: ValidationRegistry = {
-        # Rt is directly from the column - no transformation needed
-        Rt_KEY: ColumnRef(column="Rt"),
-    }
-
-    execute(props, hp, config, validation, args.predict)
+    main(config)
