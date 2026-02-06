@@ -33,10 +33,10 @@ To [install a specific version of Python](https://docs.astral.sh/uv/guides/insta
 uv python install 3.13
 ```
 
-To upgrade a specific version of Python to the latest patch release:
+To upgrade all uv-managed Python versions to their latest patch releases:
 
 ```shell
-uv python install --reinstall 3.13
+uv python upgrade
 ```
 
 ## Dependencies
