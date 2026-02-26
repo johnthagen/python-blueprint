@@ -1,0 +1,10 @@
+| Name              | Version | License            |
+|-------------------|---------|--------------------|
+| Pygments          | 2.19.2  | BSD License        |
+| click             | 8.3.1   | BSD-3-Clause       |
+| markdown-it-py    | 4.0.0   | MIT License        |
+| mdurl             | 0.1.2   | MIT License        |
+| rich              | 14.2.0  | MIT License        |
+| shellingham       | 1.5.4   | ISC License (ISCL) |
+| typer-slim        | 0.21.1  | MIT                |
+| typing_extensions | 4.15.0  | PSF-2.0            |
