@@ -75,7 +75,12 @@ def type_check(s: Session) -> None:
 
 
 # Environment variable needed for mkdocstrings-python to locate source files.
-doc_env = {"PYTHONPATH": "src"}
+doc_env = {
+    "PYTHONPATH": "src",
+    # Silence warning about unreleased MkDocs 2:
+    #   https://github.com/squidfunk/mkdocs-material/pull/8564
+    "NO_MKDOCS_2_WARNING": str(1),
+}
 
 
 @session(venv_backend="none")
@@ -95,7 +100,9 @@ def docs_offline(s: Session) -> None:
 
 @session(venv_backend="none")
 def docs_serve(s: Session) -> None:
-    s.run("mkdocs", "serve", env=doc_env)
+    # TODO: Remove --livereload when Click bug is fixed upstream:
+    #   https://github.com/squidfunk/mkdocs-material/issues/8478
+    s.run("mkdocs", "serve", "--livereload", env=doc_env)
 
 
 @session(venv_backend="none")
