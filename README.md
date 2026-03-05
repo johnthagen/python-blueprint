@@ -20,9 +20,6 @@ provides a simple implementation of the
 [factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`) and a command line
 interface (`fact.cli`).
 
-> [!TIP]
-> Support `python-blueprint` by adding a [badge](#badge).
-
 # Package Management
 
 This package uses [uv](https://docs.astral.sh/uv/) to manage dependencies and
