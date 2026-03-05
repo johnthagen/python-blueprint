@@ -5,6 +5,9 @@ status: new
 
 # `fact` User Guide
 
+[![Python Blueprint][python-blueprint-badge]](https://github.com/johnthagen/python-blueprint)
+[python-blueprint-badge]: https://img.shields.io/badge/%F0%9F%97%BA-python--blueprint-2dcf59.svg
+
 ??? info "`python-blueprint` Project"
 
     For more information on how this was built and deployed, as well as other Python best

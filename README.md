@@ -5,18 +5,23 @@
 [![Nox][nox-badge]](https://github.com/wntrblm/nox)
 [![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org/)
+[![Python Blueprint][python-blueprint-badge]](https://github.com/johnthagen/python-blueprint)
 
 [github-actions-badge]: https://github.com/johnthagen/python-blueprint/actions/workflows/ci.yml/badge.svg
 [uv-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
+[python-blueprint-badge]: https://img.shields.io/badge/%F0%9F%97%BA-python--blueprint-2dcf59.svg
 
 Example Python project that demonstrates how to create a Python package using the latest
 Python testing, linting, and type checking tooling. The project contains a `fact` package that
 provides a simple implementation of the
 [factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`) and a command line
 interface (`fact.cli`).
+
+> [!TIP]
+> Support `python-blueprint` by adding a [badge](#badge).
 
 # Package Management
 
@@ -464,6 +469,18 @@ fact v1.0.0
     ├── typing-extensions v4.12.2
     ├── rich v13.9.4 (extra: standard) (*)
     └── shellingham v1.5.4 (extra: standard)
+```
+
+# Badge
+
+Support [`python-blueprint`](https://github.com/johnthagen/python-blueprint) by adding the badge
+to your project:
+
+[![Python Blueprint][python-blueprint-badge]](https://github.com/johnthagen/python-blueprint)
+
+```md
+[![Python Blueprint][python-blueprint-badge]](https://github.com/johnthagen/python-blueprint)
+[python-blueprint-badge]: https://img.shields.io/badge/%F0%9F%97%BA-python--blueprint-2dcf59.svg
 ```
 
 # PyCharm Configuration
