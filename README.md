@@ -20,6 +20,9 @@ provides a simple implementation of the
 [factorial algorithm](https://en.wikipedia.org/wiki/Factorial) (`fact.lib`) and a command line
 interface (`fact.cli`).
 
+> [!TIP]
+> Support `python-blueprint` by adding a [badge](#badge).
+
 # Package Management
 
 This package uses [uv](https://docs.astral.sh/uv/) to manage dependencies and
@@ -468,7 +471,7 @@ fact v1.0.0
     └── shellingham v1.5.4 (extra: standard)
 ```
 
-# `python-blueprint` Badge
+# Badge
 
 Support [`python-blueprint`](https://github.com/johnthagen/python-blueprint) by adding the badge
 to your project:
