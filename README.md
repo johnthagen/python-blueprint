@@ -12,7 +12,7 @@
 [nox-badge]: https://img.shields.io/badge/%F0%9F%A6%8A-Nox-D85E00.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
-[python-blueprint-badge]: https://img.shields.io/badge/%F0%9F%97%BA-python--blueprint-2dcf59.svg
+[python-blueprint-badge]: https://img.shields.io/badge/%F0%9F%97%BA%EF%B8%8F-python--blueprint-2dcf59.svg
 
 Example Python project that demonstrates how to create a Python package using the latest
 Python testing, linting, and type checking tooling. The project contains a `fact` package that
@@ -477,7 +477,7 @@ to your project:
 
 ```md
 [![Python Blueprint][python-blueprint-badge]](https://github.com/johnthagen/python-blueprint)
-[python-blueprint-badge]: https://img.shields.io/badge/%F0%9F%97%BA-python--blueprint-2dcf59.svg
+[python-blueprint-badge]: https://img.shields.io/badge/%F0%9F%97%BA%EF%B8%8F-python--blueprint-2dcf59.svg
 ```
 
 # PyCharm Configuration
