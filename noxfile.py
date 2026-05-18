@@ -100,9 +100,7 @@ def docs_offline(s: Session) -> None:
 
 @session(venv_backend="none")
 def docs_serve(s: Session) -> None:
-    # TODO: Remove --livereload when Click bug is fixed upstream:
-    #   https://github.com/squidfunk/mkdocs-material/issues/8478
-    s.run("mkdocs", "serve", "--livereload", env=doc_env)
+    s.run("mkdocs", "serve", env=doc_env)
 
 
 @session(venv_backend="none")
