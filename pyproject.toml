@@ -58,7 +58,7 @@ docs = [
     "mkdocs-material",
     "mkdocs-htmlproofer-plugin",
 
-    # Python API documentation (not neccessary for applications).
+    # Python API documentation (not necessary for applications).
     "mkdocstrings[python]",
     # Autodoc.
     "mkdocs-api-autonav",
