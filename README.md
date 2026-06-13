@@ -450,7 +450,7 @@ On Windows, remove the `-S` from the shebang and execute the script using the `p
 ## Package Dependency Tree
 
 `uv tree` is a command for listing installed packages in the form of a dependency tree. For large
-projects, it is often difficult to determine dependency relationships soley from manually
+projects, it is often difficult to determine dependency relationships solely from manually
 inspecting `uv.lock`.
 
 ```shell
