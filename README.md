@@ -417,6 +417,11 @@ To run the image in a container:
 docker run --rm --interactive --tty fact 5
 ```
 
+# AI Agents
+
+AI agentic coding tools are configured in [AGENTS.md](./AGENTS.md). For more details, see
+<https://agents.md/>.
+
 # Miscellaneous
 
 ## Shebang Line
