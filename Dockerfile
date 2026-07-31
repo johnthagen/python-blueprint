@@ -27,9 +27,9 @@ WORKDIR ${WORKDIR}
 
 # Install any system dependencies required to build wheels, such as C compilers or system packages
 # For example:
-#RUN apt-get update && apt-get install -y \
+# RUN apt-get update && apt-get install -y --no-install-recommends \
 #    gcc \
-#    && rm -rf /var/lib/apt/lists/*
+# && rm -rf /var/lib/apt/lists/*
 
 # Install uv into the global environment to isolate it from the venv it creates.
 RUN pip install "uv==${UV_VERSION}"
@@ -67,15 +67,14 @@ ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 ENV HOME=/home/user
 ENV APP_HOME=${HOME}/app
 
-# Create the home directory for the new user.
-RUN mkdir -p ${HOME}
-
 # Create the user so the program doesn't run as root. This increases security of the container.
-RUN groupadd -r user && \
-    useradd -r -g user -d ${HOME} -s /sbin/nologin -c "Container image user" user
+RUN groupadd --system user && \
+    useradd --system --gid user --home-dir ${HOME} --shell /sbin/nologin \
+      --comment "Container image user" user
 
-# Setup application install directory.
-RUN mkdir ${APP_HOME}
+# Create writable directories with the correct ownership before copying application files.
+# A recursive chown after COPY would duplicate those files in a new container layer.
+RUN install -d -o user -g user ${HOME} ${APP_HOME}
 
 # If you use Docker Compose volumes, you might need to create the directories in the image,
 # otherwise when Docker Compose creates them they are owned by the root user and are inaccessible
@@ -88,10 +87,7 @@ COPY --from=python_builder ${UV_PROJECT_ENVIRONMENT} ${UV_PROJECT_ENVIRONMENT}
 ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
 
 # For non-package applications, COPY source files here rather than in the --no-editable step
-# in the python_builder stage.
-
-# Give access to the entire home folder to the new user so that files and folders can be written
-# there. Some packages such as matplotlib, want to write to the home folder.
-RUN chown -R user:user ${HOME}
+# in the python_builder stage. Set ownership during COPY to avoid a later chown layer.
+# COPY --chown=user:user src src
 
 ENTRYPOINT ["fact"]
