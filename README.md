@@ -191,8 +191,7 @@ VS Code are able to provide much richer auto-completion, refactoring, and type c
 user types, resulting in increased productivity and correctness.
 
 ```python
-def factorial(n: int) -> int:
-    ...
+def factorial(n: int) -> int: ...
 ```
 
 mypy is configured in [`pyproject.toml`](./pyproject.toml). To type check code, run:
