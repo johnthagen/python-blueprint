@@ -99,7 +99,8 @@ src = ["src"]
 [tool.ruff.lint]
 select = [
     "F", # pyflakes
-    "E", # pycodestyle
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
     "I", # isort
     "N", # pep8-naming
     "UP", # pyupgrade
