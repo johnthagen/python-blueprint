@@ -46,6 +46,7 @@ def test(s: Session) -> None:
             id="sort_imports",
         ),
         param(["ruff", "format", "."], id="format"),
+        param(["rumdl", "fmt", "."], id="md_format"),
     ],
 )
 def fmt(s: Session, command: list[str]) -> None:
@@ -58,6 +59,7 @@ def fmt(s: Session, command: list[str]) -> None:
     [
         param(["ruff", "check", "."], id="lint_check"),
         param(["ruff", "format", "--check", "."], id="format_check"),
+        param(["rumdl", "check", "."], id="md_format_check"),
     ],
 )
 def lint(s: Session, command: list[str]) -> None:

@@ -11,6 +11,6 @@ search:
 
 ## License Files
 
-```
+```text
 --8<-- "docs/licenses/license_files.txt"
 ```
