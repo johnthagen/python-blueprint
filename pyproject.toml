@@ -53,6 +53,7 @@ type_check = [
 ]
 lint = [
     "ruff",
+    "rumdl",
 ]
 docs = [
     "mkdocs-material",
@@ -132,6 +133,14 @@ split-on-trailing-comma = false
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
+
+[tool.rumdl]
+line-length = 99
+flavor = "mkdocs"
+disable = [
+    "MD033",
+]
+
 
 [tool.pytest.ini_options]
 addopts = [
