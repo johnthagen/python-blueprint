@@ -156,6 +156,10 @@ code. PEP 8 code compliance is verified using [Ruff][Ruff]. Ruff is configured i
 Some code style settings are included in [`.editorconfig`](./.editorconfig) and will be configured
 automatically in editors such as PyCharm.
 
+Markdown files are linted with [rumdl][rumdl].
+
+[rumdl]: https://rumdl.dev/
+
 To lint code, run:
 
 ```shell
@@ -170,7 +174,9 @@ uv run nox -s lint_fix
 
 ### Automated Code Formatting
 
-[Ruff][Ruff] is used to automatically format code and group and sort imports.
+[Ruff][Ruff] is used to automatically format Python source files and group and sort imports.
+
+Markdown files are formatted with [rumdl][rumdl].
 
 To automatically format code, run:
 
