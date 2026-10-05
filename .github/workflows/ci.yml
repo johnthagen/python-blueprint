@@ -34,7 +34,7 @@ jobs:
         run: uv sync --locked --only-group nox
 
       - name: Test with Nox
-        run: uv run nox -s test-${{ matrix.python-version }}
+        run: uv run --no-sync nox -s test-${{ matrix.python-version }}
 
   quality:
     runs-on: ubuntu-24.04
@@ -59,7 +59,7 @@ jobs:
         run: uv sync --locked
 
       - name: Test with Nox
-        run: uv run nox -s ${{ matrix.nox-session }}
+        run: uv run --no-sync nox -s ${{ matrix.nox-session }}
 
   container:
     runs-on: ubuntu-24.04

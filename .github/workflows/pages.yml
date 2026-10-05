@@ -33,4 +33,4 @@ jobs:
         run: uv sync --locked
 
       - name: Publish Docs
-        run: uv run nox -s docs_github_pages
+        run: uv run --no-sync nox -s docs_github_pages
