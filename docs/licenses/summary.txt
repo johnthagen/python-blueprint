@@ -6,4 +6,4 @@
 | mdurl          | 0.1.2   | MIT License        |
 | rich           | 15.0.0  | MIT License        |
 | shellingham    | 1.5.4   | ISC License (ISCL) |
-| typer          | 0.27.2  | MIT                |
+| typer          | 0.27.3  | MIT                |
