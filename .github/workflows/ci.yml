@@ -65,11 +65,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Validate build configuration
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           call: check
 
       - name: Build Container Image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: false
