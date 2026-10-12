@@ -32,7 +32,7 @@ onto your system.
 To [install a specific version of Python](https://docs.astral.sh/uv/guides/install-python/):
 
 ```shell
-uv python install 3.13
+uv python install 3.14
 ```
 
 To upgrade all uv-managed Python versions to their latest patch releases:
@@ -379,22 +379,20 @@ To automatically list the licenses for all dependencies and regenerate the licen
 $ uv run nox -s licenses
 ...
 nox > pip-licenses
- Name               Version  License
- Pygments           2.19.2   BSD License
- click              8.3.0    BSD-3-Clause
- markdown-it-py     4.0.0    MIT License
- mdurl              0.1.2    MIT License
- rich               14.2.0   MIT License
- shellingham        1.5.4    ISC License (ISCL)
- typer-slim         0.20.0   MIT License
- typing_extensions  4.15.0   PSF-2.0
+ Name            Version  License
+ Pygments        2.21.0   BSD-2-Clause
+ annotated-doc   0.0.5    MIT
+ markdown-it-py  4.2.0    MIT License
+ mdurl           0.1.2    MIT License
+ rich            15.0.0   MIT License
+ shellingham     1.5.4    ISC License (ISCL)
+ typer           0.27.3   MIT
 nox > pip-licenses --summary
  Count  License
- 1      BSD License
- 1      BSD-3-Clause
+ 1      BSD-2-Clause
  1      ISC License (ISCL)
- 4      MIT License
- 1      PSF-2.0
+ 2      MIT
+ 3      MIT License
 ```
 
 ## Container
@@ -444,15 +442,15 @@ to allow easy execution on macOS and Linux.
 ```py
 #!/usr/bin/env -S uv run --script
 # /// script
-# requires-python = ">=3.13"
+# requires-python = ">=3.14"
 # dependencies = [
-#     "httpx>=0.28.1",
+#     "httpx2>=0.28.1",
 # ]
 # ///
 
-import httpx
+import httpx2
 
-print(httpx.get("https://example.com").text)
+print(httpx2.get("https://example.com").text)
 ```
 
 On Windows, remove the `-S` from the shebang and execute the script using the `py` launcher.
@@ -467,15 +465,14 @@ inspecting `uv.lock`.
 $ uv tree --no-default-groups
 
 fact v1.0.0
-├── rich v13.9.4
-│   ├── markdown-it-py v3.0.0
+├── rich v15.0.0
+│   ├── markdown-it-py v4.2.0
 │   │   └── mdurl v0.1.2
-│   └── pygments v2.19.1
-└── typer-slim[standard] v0.15.2
-    ├── click v8.1.8
-    ├── typing-extensions v4.12.2
-    ├── rich v13.9.4 (extra: standard) (*)
-    └── shellingham v1.5.4 (extra: standard)
+│   └── pygments v2.21.0
+└── typer v0.27.3
+    ├── annotated-doc v0.0.5
+    ├── rich v15.0.0 (*)
+    └── shellingham v1.5.4
 ```
 
 ## Badge
