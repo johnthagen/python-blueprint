@@ -444,7 +444,7 @@ to allow easy execution on macOS and Linux.
 # /// script
 # requires-python = ">=3.14"
 # dependencies = [
-#     "httpx2>=0.28.1",
+#     "httpx2>=2.13.1",
 # ]
 # ///
 
